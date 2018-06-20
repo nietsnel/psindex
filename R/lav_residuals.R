@@ -7,7 +7,7 @@
 #
 #}
 
-setMethod("residuals", "lavaan",
+setMethod("residuals", "psindex",
 function(object, type="raw", labels=TRUE) {
 
     # lowercase type
@@ -24,13 +24,13 @@ function(object, type="raw", labels=TRUE) {
             stop("standardized and normalized residuals only availabe if estimator = ML (or MLF, MLR, MLM\n")
         }
         if(object@optim$npar > 0L && !object@optim$converged) {
-            stop("lavaan ERROR: model dit not converge")
+            stop("psindex ERROR: model dit not converge")
         }
         if(object@Model@conditional.x && type == "standardized") {
-            stop("lavaan ERROR: resid + standardized + conditional.x not supported yet")
+            stop("psindex ERROR: resid + standardized + conditional.x not supported yet")
         }
         if(object@Model@conditional.x && type == "normalized") {
-            stop("lavaan ERROR: resid + normalized + conditional.x not supported yet")
+            stop("psindex ERROR: resid + normalized + conditional.x not supported yet")
         }
     }
     # NOTE: for some reason, Mplus does not compute the normalized/standardized
@@ -56,7 +56,7 @@ function(object, type="raw", labels=TRUE) {
     # check for 0 parameters if type == standardized
     if(type == "standardized" &&
        object@optim$npar == 0) {
-        stop("lavaan ERROR: can not compute standardized residuals if there are no free parameters in the model")
+        stop("psindex ERROR: can not compute standardized residuals if there are no free parameters in the model")
     }
 
     G <- object@Model@ngroups
@@ -322,10 +322,10 @@ function(object, type="raw", labels=TRUE) {
         # prepare for pretty printing
         R[[g]]$mean <- as.numeric(R[[g]]$mean)
         if(labels) names(R[[g]]$mean) <- ov.names[[g]]
-        class(R[[g]]$mean) <- c("lavaan.vector", "numeric")
-        class(R[[g]]$cov) <- c("lavaan.matrix.symmetric", "matrix")
+        class(R[[g]]$mean) <- c("psindex.vector", "numeric")
+        class(R[[g]]$cov) <- c("psindex.matrix.symmetric", "matrix")
         if(object@Model@conditional.x) {
-            class(R[[g]]$slopes) <- c("lavaan.matrix", "matrix")
+            class(R[[g]]$slopes) <- c("psindex.matrix", "matrix")
         }
     }
 
@@ -347,7 +347,7 @@ function(object, type="raw", labels=TRUE) {
     R
 })
 
-setMethod("resid", "lavaan",
+setMethod("resid", "psindex",
 function(object, type="raw") {
     residuals(object, type=type)
 })
@@ -356,7 +356,7 @@ lav_residuals_casewise <- function(object, labels = labels) {
 
     # check if we have full data
     if(object@Data@data.type != "full") {
-        stop("lavaan ERROR: casewise residuals not available if sample statistics were used for fitting the model")
+        stop("psindex ERROR: casewise residuals not available if sample statistics were used for fitting the model")
     }
 
     G <- object@Data@ngroups
@@ -370,11 +370,11 @@ lav_residuals_casewise <- function(object, labels = labels) {
                     ret })
     }
     M <- lav_predict_yhat(object)
-    # Note: if M has already class lavaan.matrix, print goes crazy
+    # Note: if M has already class psindex.matrix, print goes crazy
     # with Error: C stack usage is too close to the limit
     OUT <- lapply(seq_len(G), function(x) { 
                out <- X[[x]] - M[[x]] 
-               class(out) <- c("lavaan.matrix", "matrix")
+               class(out) <- c("psindex.matrix", "matrix")
                out
            })
 

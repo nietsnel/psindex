@@ -1,9 +1,9 @@
 # this code is written by Michael Hallquist
-#First draft of parser to convert Mplus model syntax to lavaan model syntax
+#First draft of parser to convert Mplus model syntax to psindex model syntax
 
 #idea: build parTable and run model from mplus syntax
 #then perhaps write export function: parTable2Mplus
-#and/or parTable2lavaan
+#and/or parTable2psindex
 
 trimSpace <- function(string) {
   stringTrim <- sapply(string, function(x) {
@@ -267,7 +267,7 @@ expandGrowthCmd <- function(cmd) {
   
   #verify that this is not a random slope
   if (any(tolower(strsplit(cmd, "\\s+", perl=TRUE)[[1]]) %in% c("on", "at"))) {
-    stop("lavaan does not support random slopes or individually varying growth model time scores")
+    stop("psindex does not support random slopes or individually varying growth model time scores")
   }
   
   cmd.split <- strsplit(cmd, "\\s*\\|\\s*", perl=TRUE)[[1]]
@@ -353,10 +353,10 @@ wrapAfterPlus <- function(cmd, width=90, exdent=5) {
   return(unname(do.call(c, result)))
 }
 
-mplus2lavaan.constraintSyntax <- function(syntax) {
+mplus2psindex.constraintSyntax <- function(syntax) {
   #should probably pass in model syntax along with some tracking of which parameter labels are defined.
   
-  #convert MODEL CONSTRAINT section to lavaan model syntax
+  #convert MODEL CONSTRAINT section to psindex model syntax
   syntax <- paste(lapply(trimSpace(strsplit(syntax, "\n")), function(x) { if (length(x) == 0L && is.character(x)) "" else x}), collapse="\n")
   
   #replace ! with # for comment lines. Also strip newline and replace with semicolon 
@@ -463,7 +463,7 @@ mplus2lavaan.constraintSyntax <- function(syntax) {
   
 }
 
-mplus2lavaan.modelSyntax <- function(syntax) {
+mplus2psindex.modelSyntax <- function(syntax) {
   #initial strip of leading/trailing whitespace, which can interfere with splitting on spaces 
   #strsplit generates character(0) for empty strings, which causes problems in paste because paste actually includes it as a literal
   #example: paste(list(character(0), "asdf", character(0)), collapse=" ")
@@ -500,12 +500,12 @@ mplus2lavaan.modelSyntax <- function(syntax) {
 #  $ eq.id : int  0 0 0 0 0 0 0 0 0 0 ...
 #  $ unco  : int  0 1 2 0 3 4 5 0 6 7 ...
   
-  #vector of lavaan syntax
-  lavaan.out <- c()
+  #vector of psindex syntax
+  psindex.out <- c()
   
   for (cmd in syntax.split) {
     if (grepl("^\\s*#", cmd, perl=TRUE)) { #comment line
-      lavaan.out <- c(lavaan.out, gsub("\n", "", cmd, fixed=TRUE)) #drop any newlines (otherwise done by parseConstraints)
+      psindex.out <- c(psindex.out, gsub("\n", "", cmd, fixed=TRUE)) #drop any newlines (otherwise done by parseConstraints)
     } else if (grepl("^\\s*$", cmd, perl=TRUE)) {
       #do nothing, just a space or blank line
     } else {
@@ -602,18 +602,18 @@ mplus2lavaan.modelSyntax <- function(syntax) {
       #handle threshold substitution: $ -> |
       cmd <- gsub("$", "|", cmd, fixed=TRUE)
       
-      lavaan.out <- c(lavaan.out, cmd)
+      psindex.out <- c(psindex.out, cmd)
       
     }
   }
   
   #for now, include a final trimSpace call since some arguments have leading/trailing space stripped.
-  wrap <- paste(wrapAfterPlus(lavaan.out, width=90, exdent=5), collapse="\n") #trimSpace(
+  wrap <- paste(wrapAfterPlus(psindex.out, width=90, exdent=5), collapse="\n") #trimSpace(
   return(wrap)
   
 }
 
-mplus2lavaan <- function(inpfile, run=TRUE) {
+mplus2psindex <- function(inpfile, run=TRUE) {
   stopifnot(length(inpfile) == 1L)
   stopifnot(grepl("\\.inp$", inpfile))
   if (!file.exists(inpfile)) { stop("Could not find file: ", inpfile) }
@@ -637,12 +637,12 @@ mplus2lavaan <- function(inpfile, run=TRUE) {
   mplus.inp$variable <- divideIntoFields(sections$variable, required="names")
   mplus.inp$analysis <- divideIntoFields(sections$analysis)
   
-  meanstructure <- "default" #lavaan default
+  meanstructure <- "default" #psindex default
   if(!is.null(mplus.inp$analysis$model)) {
     if (tolower(mplus.inp$analysis$model) == "nomeanstructure") { meanstructure=FALSE } #explicitly disable mean structure
   }
   
-  information <- "default" #lavaan default
+  information <- "default" #psindex default
   if(!is.null(mplus.inp$analysis$information)) {
     information <- tolower(mplus.inp$analysis$information)
   }
@@ -668,12 +668,12 @@ mplus2lavaan <- function(inpfile, run=TRUE) {
   #expand hyphens in categorical declaration
   if (!is.null(mplus.inp$variable$categorical)) mplus.inp$variable$categorical <- strsplit(expandCmd(mplus.inp$variable$categorical), "\\s+", perl=TRUE)[[1]]
   
-  #convert mplus syntax to lavaan syntax
-  mplus.inp$model <- mplus2lavaan.modelSyntax(sections$model)
+  #convert mplus syntax to psindex syntax
+  mplus.inp$model <- mplus2psindex.modelSyntax(sections$model)
   
   #handle model constraint
   if ("model.constraint" %in% names(sections)) {
-    mplus.inp$model.constraint <- mplus2lavaan.constraintSyntax(sections$model.constraint)
+    mplus.inp$model.constraint <- mplus2psindex.constraintSyntax(sections$model.constraint)
     mplus.inp$model <- paste(mplus.inp$model, mplus.inp$model.constraint, sep="\n")
   }
   
@@ -704,7 +704,7 @@ mplus2lavaan <- function(inpfile, run=TRUE) {
     fit <- sem(mplus.inp$model, data=mplus.inp$data, meanstructure=meanstructure, mimic="Mplus", estimator=estimator, test=test, se=se, bootstrap=bootstrap, information=information)
     fit@external <- list(mplus.inp=mplus.inp)
   } else {
-    fit <- mplus.inp #just return the syntax outside of a lavaan object
+    fit <- mplus.inp #just return the syntax outside of a psindex object
   }
   
   return(fit)
@@ -790,7 +790,7 @@ splitFilePath <- function(abspath) {
 
 readMplusInputData <- function(mplus.inp, inpfile) {
   
-  #handle issue of mplus2lavaan being called with an absolute path, whereas mplus has only a local data file
+  #handle issue of mplus2psindex being called with an absolute path, whereas mplus has only a local data file
   inpfile.split <- splitFilePath(inpfile)
   datfile.split <- splitFilePath(mplus.inp$data$file)
   

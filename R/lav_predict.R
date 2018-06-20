@@ -11,7 +11,7 @@
 #
 
 # overload standard R function `predict'
-setMethod("predict", "lavaan",
+setMethod("predict", "psindex",
 function(object, newdata = NULL) {
     lavPredict(object = object, newdata = newdata, type="lv", method="EBM",
                fsm = FALSE,
@@ -23,7 +23,7 @@ lavPredict <- function(object, type = "lv", newdata = NULL, method = "EBM",
                        se = "none", label = TRUE, fsm = FALSE, level = 1L,
                        optim.method = "bfgs", ETA = NULL) {
 
-    stopifnot(inherits(object, "lavaan"))
+    stopifnot(inherits(object, "psindex"))
     lavmodel       <- object@Model
     lavdata        <- object@Data
     lavsamplestats <- object@SampleStats
@@ -43,7 +43,7 @@ lavPredict <- function(object, type = "lv", newdata = NULL, method = "EBM",
             se <- "standard"
         }
         if(type != "lv") {
-            stop("lavaan ERROR: standard errors only available if type = \"lv\"")
+            stop("psindex ERROR: standard errors only available if type = \"lv\"")
         }
     }
 
@@ -51,9 +51,9 @@ lavPredict <- function(object, type = "lv", newdata = NULL, method = "EBM",
     if(is.null(newdata)) {
         # use internal copy:
         if(lavdata@data.type != "full") {
-            stop("lavaan ERROR: sample statistics were used for fitting and newdata is empty")
+            stop("psindex ERROR: sample statistics were used for fitting and newdata is empty")
         } else if(is.null(lavdata@X[[1]])) {
-            stop("lavaan ERROR: no local copy of data; FIXME!")
+            stop("psindex ERROR: no local copy of data; FIXME!")
         } else {
             data.obs <- lavdata@X
         }
@@ -76,13 +76,13 @@ lavPredict <- function(object, type = "lv", newdata = NULL, method = "EBM",
 
     if(type == "lv") {
         if(!is.null(ETA)) {
-            warning("lavaan WARNING: lvs will be predicted here; supplying ETA has no effect")
+            warning("psindex WARNING: lvs will be predicted here; supplying ETA has no effect")
         }
             
         # post fit check (lv pd?)
         ok <- lav_object_post_check(object)
         #if(!ok) {
-        #    stop("lavaan ERROR: lavInspect(,\"post.check\") is not TRUE; factor scores can not be computed. See the WARNING message.")
+        #    stop("psindex ERROR: lavInspect(,\"post.check\") is not TRUE; factor scores can not be computed. See the WARNING message.")
         #}
 
         out <- lav_predict_eta(lavobject = NULL, lavmodel = lavmodel,
@@ -191,11 +191,11 @@ lavPredict <- function(object, type = "lv", newdata = NULL, method = "EBM",
         }
 
     } else {
-        stop("lavaan ERROR: type must be one of: lv yhat fy")
+        stop("psindex ERROR: type must be one of: lv yhat fy")
     }
 
-    # lavaan.matrix
-    out <- lapply(out, "class<-", c("lavaan.matrix", "matrix"))
+    # psindex.matrix
+    out <- lapply(out, "class<-", c("psindex.matrix", "matrix"))
 
     if(lavdata@ngroups == 1L) {
         out <- out[[1L]]
@@ -230,7 +230,7 @@ lav_predict_eta <- function(lavobject = NULL,  # for convenience
                             optim.method = "bfgs") {
 
     # full object?
-    if(inherits(lavobject, "lavaan")) {
+    if(inherits(lavobject, "psindex")) {
         lavdata <- lavobject@Data
     } else {
         stopifnot(!is.null(lavdata))
@@ -261,7 +261,7 @@ lav_predict_eta <- function(lavobject = NULL,  # for convenience
                        lavsamplestats = lavsamplestats,
                        data.obs = data.obs, eXo = eXo, fsm = fsm)
         } else {
-            stop("lavaan ERROR: unkown method: ", method)
+            stop("psindex ERROR: unkown method: ", method)
         }
     } else {
         if(method == "ebm") {
@@ -277,7 +277,7 @@ lav_predict_eta <- function(lavobject = NULL,  # for convenience
                        level = level, data.obs = data.obs, eXo = eXo, 
                        ML = TRUE, optim.method = optim.method)
         } else {
-            stop("lavaan ERROR: unkown method: ", method)
+            stop("psindex ERROR: unkown method: ", method)
         }
     }
 
@@ -299,7 +299,7 @@ lav_predict_eta_normal <- function(lavobject = NULL,  # for convenience
                                    fsm = FALSE) { 
 
     # full object?
-    if(inherits(lavobject, "lavaan")) {
+    if(inherits(lavobject, "psindex")) {
         lavmodel       <- lavobject@Model
         lavdata        <- lavobject@Data
         lavsamplestats <- lavobject@SampleStats
@@ -384,7 +384,7 @@ lav_predict_eta_normal <- function(lavobject = NULL,  # for convenience
                 Data.B[, ov.idx[[1]] ] <- MB.j
                 data.obs.g <- Data.B[, ov.idx[[2]] ]
             } else {
-                stop("lavaan ERROR: only 2 levels are supported")
+                stop("psindex ERROR: only 2 levels are supported")
             }
 
             gg <- (g-1)*lavdata@nlevels + level
@@ -476,7 +476,7 @@ lav_predict_eta_bartlett <- function(lavobject = NULL, # for convenience
                                      fsm = FALSE) { 
 
     # full object?
-    if(inherits(lavobject, "lavaan")) {
+    if(inherits(lavobject, "psindex")) {
         lavmodel       <- lavobject@Model
         lavdata        <- lavobject@Data
         lavsamplestats <- lavobject@SampleStats
@@ -564,7 +564,7 @@ lav_predict_eta_bartlett <- function(lavobject = NULL, # for convenience
                 Data.B[, ov.idx[[1]] ] <- MB.j
                 data.obs.g <- Data.B[, ov.idx[[2]] ]
             } else {
-                stop("lavaan ERROR: only 2 levels are supported")
+                stop("psindex ERROR: only 2 levels are supported")
             }
 
             gg <- (g-1)*lavdata@nlevels + level
@@ -666,7 +666,7 @@ lav_predict_eta_ebm_ml <- function(lavobject = NULL,  # for convenience
     ###        (perhaps after whitening, to get uncorrelated factors...)
 
     # full object?
-    if(inherits(lavobject, "lavaan")) {
+    if(inherits(lavobject, "psindex")) {
         lavmodel       <- lavobject@Model
         lavdata        <- lavobject@Data
         lavsamplestats <- lavobject@SampleStats
@@ -685,7 +685,7 @@ lav_predict_eta_ebm_ml <- function(lavobject = NULL,  # for convenience
 
     # se?
     if(se != "none") {
-        warning("lavaan WARNING: standard errors are not available (yet) for the non-normal case")
+        warning("psindex WARNING: standard errors are not available (yet) for the non-normal case")
     }
 
     VETAx <- computeVETAx(lavmodel = lavmodel)
@@ -769,7 +769,7 @@ lav_predict_eta_ebm_ml <- function(lavobject = NULL,  # for convenience
         # check for negative values
         neg.var.idx <- which(diag(THETA[[g]]) < 0)
         if(length(neg.var.idx) > 0) {
-            warning("lavaan WARNING: factor scores could not be computed due to at least one negative (residual) variance")
+            warning("psindex WARNING: factor scores could not be computed due to at least one negative (residual) variance")
             next
         }
 
@@ -855,7 +855,7 @@ lav_predict_yhat <- function(lavobject = NULL, # for convience
                              optim.method = "bfgs") {
 
     # full object?
-    if(inherits(lavobject, "lavaan")) {
+    if(inherits(lavobject, "psindex")) {
         lavmodel       <- lavobject@Model
         lavdata        <- lavobject@Data
         lavsamplestats <- lavobject@SampleStats
@@ -887,7 +887,7 @@ lav_predict_yhat <- function(lavobject = NULL, # for convience
                 tmp <- matrix(ETA, lavsamplestats@ntotal, length(ETA), 
                               byrow = TRUE)
             } else if(nrow(ETA) != lavsamplestats@ntotal) {
-                stop("lavaan ERROR: nrow(ETA) != lavsamplestats@ntotal")
+                stop("psindex ERROR: nrow(ETA) != lavsamplestats@ntotal")
             } else {
                 tmp <- ETA
             }
@@ -935,7 +935,7 @@ lav_predict_fy <- function(lavobject = NULL, # for convience
                            optim.method = "bfgs") {
 
     # full object?
-    if(inherits(lavobject, "lavaan")) {
+    if(inherits(lavobject, "psindex")) {
         lavmodel       <- lavobject@Model
         lavdata        <- lavobject@Data
         lavsamplestats <- lavobject@SampleStats
@@ -991,7 +991,7 @@ lav_predict_fy_internal <- function(X = NULL, yhat = NULL,
 
     # check size YHAT (either 1L or Nobs rows)
     if(! (nrow(yhat) == 1L || nrow(yhat) == nrow(X)) ) {
-        stop("lavaan ERROR: nrow(YHAT[[g]]) not 1L and not nrow(X))")
+        stop("psindex ERROR: nrow(YHAT[[g]]) not 1L and not nrow(X))")
     }
 
     FY.group <- matrix(0, nrow(X), ncol(X))
@@ -1050,7 +1050,7 @@ lav_predict_fy_internal <- function(X = NULL, yhat = NULL,
                 fy[,k] = plogis( (TH.Y[k+1] - yhat.v) / theta.v) -
                          plogis( (TH.Y[k  ] - yhat.v) / theta.v)
             } else {
-                stop("lavaan ERROR: link must be probit or logit")
+                stop("psindex ERROR: link must be probit or logit")
             }
         }
 
@@ -1136,7 +1136,7 @@ lav_predict_fy_eta.i <- function(lavmodel = NULL, lavdata = NULL,
                     }
                 }
             } else {
-                stop("lavaan ERROR: unknown type: ", 
+                stop("psindex ERROR: unknown type: ", 
                       lavdata@ov$type[v], " for variable", 
                       lavdata@ov$name[v])
             }

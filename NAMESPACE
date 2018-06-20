@@ -1,5 +1,5 @@
 # only when we have src code
-# useDynLib("lavaan")
+# useDynLib("psindex")
 
 importFrom("graphics",
            "abline", "axis", "box", "hist", "pairs", "par",
@@ -45,12 +45,13 @@ if(getRversion() >= "2.13.0") {
 
 
 # export ordinary functions defined in this package
-export("lavaan", "cfa", "sem", "growth",
-       "lavaanList", "cfaList", "semList",
+export("psindex",
+	"psindex", "cfa", "sem", "growth",
+       "psindexList", "cfaList", "semList",
        #"fsr", "twostep",
        # new name           # old name
-       "lavParTable",       "lavaanify",
-       "lavNames",          "lavaanNames",
+       "lavParTable",       "psindexify",
+       "lavNames",          "psindexNames",
        "lavParseModelString", # "parseModelString",
        "lavInspect",        "inspect",
        "lavTech",
@@ -58,7 +59,7 @@ export("lavaan", "cfa", "sem", "growth",
        # utilities
        "getCov", "char2num", "cor2cov",
        # options,
-       "lavOptions",
+       "lavOptions", "ps_index",
 
        "modindices", "modificationIndices", "modificationindices",
        "standardizedSolution", "standardizedsolution",
@@ -67,16 +68,16 @@ export("lavaan", "cfa", "sem", "growth",
        "varTable", "vartable",
        "fitMeasures", "fitmeasures",
        "inspectSampleCov",
-       "bootstrapLavaan", "bootstrapLRT", "InformativeTesting",
+       "bootstrapLRT", "InformativeTesting",
        "simulateData",
-       "estfun.lavaan", "lavScores",
+       "estfun.psindex", "lavScores",
        "lavTables",
        "lavTablesFitCp", "lavTablesFitCf", "lavTablesFitCm",
        "lavExport",
        "lavTestLRT", "lavTestWald", "lavTestScore",
        "lavMatrixRepresentation",
-       "mplus2lavaan",
-       "mplus2lavaan.modelSyntax",
+       "mplus2psindex",
+       "mplus2psindex.modelSyntax",
        #"prelav",
        #"lavData",
        "lavPredict",
@@ -161,8 +162,8 @@ export("lavaan", "cfa", "sem", "growth",
 
 # export Classes
 exportClasses(
-              "lavaan",
-              "lavaanList" 
+              "psindex",
+              "psindexList" 
              )
 
 # export Methods
@@ -178,24 +179,24 @@ exportMethods(
               "summary"
              )
 
-S3method(print, lavaan.data.frame)
-S3method(print, lavaan.list)
-S3method(print, lavaan.matrix)
-S3method(print, lavaan.matrix.symmetric)
-S3method(print, lavaan.vector)
-S3method(print, lavaan.parameterEstimates)
+S3method(print, psindex.data.frame)
+S3method(print, psindex.list)
+S3method(print, psindex.matrix)
+S3method(print, psindex.matrix.symmetric)
+S3method(print, psindex.vector)
+S3method(print, psindex.parameterEstimates)
 S3method(print, prelav)
-S3method(print, lavaan.fsr)
-S3method(summary, lavaan.fsr)
-S3method(pairs, lavaan)
+S3method(print, psindex.fsr)
+S3method(summary, psindex.fsr)
+S3method(pairs, psindex)
 S3method(print, InformativeTesting)
 S3method(plot, InformativeTesting)
-# S3method(print, lavaan.tables.fit.Cf)
-# S3method(print, lavaan.tables.fit.Cp)
-# S3method(print, lavaan.tables.fit.Cm)
-S3method(inspect,    lavaan)
-S3method(inspect,    lavaanList)
-S3method(lavInspect, lavaan)
-S3method(lavTech,    lavaan)
-S3method(lavInspect, lavaanList)
-S3method(lavTech,    lavaanList)
+# S3method(print, psindex.tables.fit.Cf)
+# S3method(print, psindex.tables.fit.Cp)
+# S3method(print, psindex.tables.fit.Cm)
+S3method(inspect,    psindex)
+S3method(inspect,    psindexList)
+S3method(lavInspect, psindex)
+S3method(lavTech,    psindex)
+S3method(lavInspect, psindexList)
+S3method(lavTech,    psindexList)

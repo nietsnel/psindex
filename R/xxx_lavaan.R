@@ -8,7 +8,7 @@
 
 # YR 26 Jan 2017: use '...' to capture the never-ending list of options
 
-lavaan <- function(# user-specified model: can be syntax, parameter Table, ...
+psindex <- function(# user-specified model: can be syntax, parameter Table, ...
                    model              = NULL,
                    # data (second argument, most used)
                    data               = NULL,
@@ -103,25 +103,25 @@ lavaan <- function(# user-specified model: can be syntax, parameter Table, ...
         tmp <- as.character(model)
         if(tmp[1] == "~" && length(tmp) == 2L) {
             # looks like an unquoted single factor model f =~ something
-            warning("lavaan WARNING: model seems to be a formula; please enclose the model syntax between quotes")
+            warning("psindex WARNING: model seems to be a formula; please enclose the model syntax between quotes")
             # create model and hope for the best
             model.bis <- paste("f =", paste(tmp, collapse= " "), sep = "")
             FLAT <- lavParseModelString(model.bis)
         } else if(tmp[1] == "~" && length(tmp) == 3L) {
             # looks like a (unquoted) regression formula
-            warning("lavaan WARNING: model seems to be a formula; please enclose the model syntax between quotes")
+            warning("psindex WARNING: model seems to be a formula; please enclose the model syntax between quotes")
             # create model and hope for the best
             model.bis <- paste(tmp[2], tmp[1], tmp[3])
             FLAT <- lavParseModelString(model.bis)
         } else {
-            stop("lavaan ERROR: model seems to be a formula; please enclose the model syntax between quotes")
+            stop("psindex ERROR: model seems to be a formula; please enclose the model syntax between quotes")
         }
-    } else if(inherits(model, "lavaan")) {
-        # hm, a lavaan model; let's try to extract the parameter table
+    } else if(inherits(model, "psindex")) {
+        # hm, a psindex model; let's try to extract the parameter table
         # and see what happens
         FLAT <- parTable(model)
     } else if(is.list(model)) {
-        # two possibilities: either model is already lavaanified
+        # two possibilities: either model is already psindexified
         # or it is something else...
 
         # look for the bare minimum columns: lhs - op - rhs
@@ -155,12 +155,12 @@ lavaan <- function(# user-specified model: can be syntax, parameter Table, ...
             bare.minimum <- c("lhs", "op", "rhs", "free")
             missing.idx <- is.na(match(bare.minimum, names(model)))
             missing.txt <- paste(bare.minimum[missing.idx], collapse = ", ")
-            stop("lavaan ERROR: model is a list, but not a parameterTable?",
-                 "\n  lavaan  NOTE: ",
+            stop("psindex ERROR: model is a list, but not a parameterTable?",
+                 "\n  psindex  NOTE: ",
                  "missing column(s) in parameter table: [", missing.txt, "]")
         }
     } else if(is.null(model)) {
-        stop("lavaan ERROR: model is NULL!")
+        stop("psindex ERROR: model is NULL!")
     }
 
     # group blocks?
@@ -168,13 +168,13 @@ lavaan <- function(# user-specified model: can be syntax, parameter Table, ...
         # here, we only need to figure out:
         # - ngroups
         # - ov's per group
-        # - FIXME: we need a more efficient way, avoiding lavaanify/vnames
+        # - FIXME: we need a more efficient way, avoiding psindexify/vnames
         group.idx <- which(FLAT$op == ":" & tolower(FLAT$lhs) == "group")
         # replace by 'group' (in case we got 'Group'):
         FLAT$lhs[group.idx] <- "group"
         tmp.group.values <- unique(FLAT$rhs[group.idx])
         tmp.ngroups <- length(tmp.group.values)
-        tmp.lav <- lavaanify(FLAT, ngroups = tmp.ngroups, warn = FALSE)
+        tmp.lav <- psindexify(FLAT, ngroups = tmp.ngroups, warn = FALSE)
         ov.names <- ov.names.y <- ov.names.x <- vector("list",
                                                        length = tmp.ngroups)
         for(g in seq_len(tmp.ngroups)) {
@@ -197,13 +197,13 @@ lavaan <- function(# user-specified model: can be syntax, parameter Table, ...
 
         # check for cluster argument
         if(!is.null(data) && is.null(cluster)) {
-            stop("lavaan ERROR: cluster argument is missing.")
+            stop("psindex ERROR: cluster argument is missing.")
         }
 
         # here, we only need to figure out:
         # - nlevels
         # - ov's per level
-        # - FIXME: we need a more efficient way, avoiding lavaanify/vnames
+        # - FIXME: we need a more efficient way, avoiding psindexify/vnames
 
         group.idx <- which(FLAT$op == ":" & FLAT$lhs == "group")
         tmp.group.values <- unique(FLAT$rhs[group.idx])
@@ -214,7 +214,7 @@ lavaan <- function(# user-specified model: can be syntax, parameter Table, ...
         FLAT$lhs[level.idx] <- "level"
         tmp.level.values <- unique(FLAT$rhs[level.idx])
         tmp.nlevels <- length(tmp.level.values)
-        tmp.lav <- lavaanify(FLAT, ngroups = tmp.ngroups, warn = FALSE) 
+        tmp.lav <- psindexify(FLAT, ngroups = tmp.ngroups, warn = FALSE) 
         ov.names.l <- vector("list", length = tmp.ngroups) # per group
 
         for(g in seq_len(tmp.ngroups)) {
@@ -241,7 +241,7 @@ lavaan <- function(# user-specified model: can be syntax, parameter Table, ...
 
             # check for cluster argument (only if we have data)
             if(!is.null(data) && is.null(cluster)) {
-                stop("lavaan ERROR: cluster argument is missing.")
+                stop("psindex ERROR: cluster argument is missing.")
             }
 
             ngroups <- lav_partable_ngroups(FLAT)
@@ -273,7 +273,7 @@ lavaan <- function(# user-specified model: can be syntax, parameter Table, ...
         if(length(dotdotdot) > 0L) {
             dot.names <- names(dotdotdot)
             op.idx <- which(dot.names %in% names(slotOptions))
-            warning("lavaan WARNING: the following argument(s) override(s) the options in slotOptions:\n\t\t", paste(dot.names[op.idx], collapse = " ")) 
+            warning("psindex WARNING: the following argument(s) override(s) the options in slotOptions:\n\t\t", paste(dot.names[op.idx], collapse = " ")) 
             lavoptions[ dot.names[op.idx] ] <- dotdotdot[ op.idx ]
         }
     } else {
@@ -288,7 +288,7 @@ lavaan <- function(# user-specified model: can be syntax, parameter Table, ...
         if(length(wrong.idx) > 0L) {
             idx <- wrong.idx[1L] # only show first one
             # stop or warning?? stop for now (there could be more)
-            stop("lavaan ERROR: unknown argument `", dot.names[idx],"'")
+            stop("psindex ERROR: unknown argument `", dot.names[idx],"'")
         }
 
         # modifyList
@@ -343,7 +343,7 @@ lavaan <- function(# user-specified model: can be syntax, parameter Table, ...
             (is.character(ov.names.x) && length(ov.names.x) == 0L) ) {
             # if explicitly set to TRUE, give warning
             if(is.logical(dotdotdot$conditional.x) && dotdotdot$conditional.x) {
-                warning("lavaan WARNING: no exogenous covariates; conditional.x will be set to FALSE")
+                warning("psindex WARNING: no exogenous covariates; conditional.x will be set to FALSE")
             }
             opt$conditional.x <- FALSE
         }
@@ -405,17 +405,17 @@ lavaan <- function(# user-specified model: can be syntax, parameter Table, ...
     } else if(lavdata@data.type == "moment") {
         # catch here some options that will not work with moments
         if(lavoptions$se == "bootstrap") {
-            stop("lavaan ERROR: bootstrapping requires full data")
+            stop("psindex ERROR: bootstrapping requires full data")
         }
         if(lavoptions$estimator %in% c("MLM", "MLMV", "MLMVS", "MLR", "ULSM",
            "ULSMV", "ULSMVS") && is.null(NACOV)) {
-            stop("lavaan ERROR: estimator ", lavoptions$estimator,
+            stop("psindex ERROR: estimator ", lavoptions$estimator,
                  " requires full data or user-provided NACOV")
         }
         if(lavoptions$estimator %in%
                c("WLS", "WLSM", "WLSMV", "WLSMVS", "DWLS") &&
            is.null(WLS.V)) {
-            stop("lavaan ERROR: estimator ", lavoptions$estimator,
+            stop("psindex ERROR: estimator ", lavoptions$estimator,
                  " requires full data or user-provided WLS.V")
         }
     }
@@ -454,7 +454,7 @@ lavaan <- function(# user-specified model: can be syntax, parameter Table, ...
             tmp <- try(vnames(FLAT, type = "ov.x", ov.x.fatal = TRUE),
                        silent = TRUE)
             if(inherits(tmp, "try-error")) {
-                warning("lavaan WARNING: syntax contains parameters involving exogenous covariates; switching to fixed.x = FALSE")
+                warning("psindex WARNING: syntax contains parameters involving exogenous covariates; switching to fixed.x = FALSE")
                 lavoptions$fixed.x <- FALSE
             }
         }
@@ -463,7 +463,7 @@ lavaan <- function(# user-specified model: can be syntax, parameter Table, ...
         }
 
         lavpartable <-
-            lavaanify(model            = FLAT,
+            psindexify(model            = FLAT,
                       constraints      = constraints,
                       varTable         = lavdata@ov,
                       ngroups          = lavdata@ngroups,
@@ -491,7 +491,7 @@ lavaan <- function(# user-specified model: can be syntax, parameter Table, ...
 
                       as.data.frame.   = FALSE)
 
-    } else if(inherits(model, "lavaan")) {
+    } else if(inherits(model, "psindex")) {
         lavpartable <- parTable(model)
     } else if(is.list(model)) {
         # we already checked this when creating FLAT
@@ -500,7 +500,7 @@ lavaan <- function(# user-specified model: can be syntax, parameter Table, ...
         # complete table
         lavpartable <- lav_partable_complete(lavpartable)
     } else {
-        stop("lavaan ERROR: model [type = ", class(model),
+        stop("psindex ERROR: model [type = ", class(model),
              "] is not of type character or list")
     }
     if(lavoptions$debug) {
@@ -508,7 +508,7 @@ lavaan <- function(# user-specified model: can be syntax, parameter Table, ...
     }
 
     # at this point, we should check if the partable is complete
-    # or not; this is especially relevant if the lavaan() function
+    # or not; this is especially relevant if the psindex() function
     # was used, but the user has forgotten some variances/intercepts...
     junk <- lav_partable_check(lavpartable,
                                categorical = lavoptions$categorical,
@@ -624,10 +624,10 @@ lavaan <- function(# user-specified model: can be syntax, parameter Table, ...
             }
         } else {
             if(!is.logical(lavoptions$h1)) {
-                stop("lavaan ERROR: argument `h1' must be logical (for now)")
+                stop("psindex ERROR: argument `h1' must be logical (for now)")
             }
             # TODO: allow h1 to be either a model syntax, a parameter table,
-            # or a fitted lavaan object
+            # or a fitted psindex object
         }
     }
     timing$h1 <- (proc.time()[3] - start.time)
@@ -644,8 +644,8 @@ lavaan <- function(# user-specified model: can be syntax, parameter Table, ...
     if(!is.null(slotModel)) {
         lavmodel <- slotModel
         # FIXME
-        #lavaanStart <- lav_model_get_parameters(lavmodel, type="user")
-        #lavpartable$start <- lavaanStart
+        #psindexStart <- lav_model_get_parameters(lavmodel, type="user")
+        #lavpartable$start <- psindexStart
         timing$start <- (proc.time()[3] - start.time)
         start.time <- proc.time()[3]
         timing$Model <- (proc.time()[3] - start.time)
@@ -723,7 +723,7 @@ lavaan <- function(# user-specified model: can be syntax, parameter Table, ...
                            lavpartable$lhs %in% unlist(lavpta$vnames$ov.ord) &
                            lavpartable$user == 1L)
                     if(length(user.var.idx)) {
-                        warning("lavaan WARNING: ", 
+                        warning("psindex WARNING: ", 
               "variance (theta) values for categorical variables are ignored", 
               "\n\t\t  if parameterization = \"delta\"!")
                     }
@@ -734,7 +734,7 @@ lavaan <- function(# user-specified model: can be syntax, parameter Table, ...
                             lavpartable$lhs %in% unlist(lavpta$vnames$ov.ord) &
                             lavpartable$user == 1L)
                     if(length(user.delta.idx)) {
-                        warning("lavaan WARNING: ",
+                        warning("psindex WARNING: ",
               "scaling (~*~) values for categorical variables are ignored",
               "\n\t\t  if parameterization = \"theta\"!")
                     }
@@ -784,10 +784,10 @@ lavaan <- function(# user-specified model: can be syntax, parameter Table, ...
                 # check whether the probabilities pairwiseProbGivObs and
                 # univariateProbGivObs are given by the user
                 if(is.null(lavoptions$control$pairwiseProbGivObs)) {
-                    stop("lavaan ERROR: could not find `pairwiseProbGivObs' in control() list")
+                    stop("psindex ERROR: could not find `pairwiseProbGivObs' in control() list")
                 }
                 if(is.null(lavoptions$control$univariateProbGivObs)) {
-                    stop("lavaan ERROR: could not find `univariateProbGivObs' in control() list")
+                    stop("psindex ERROR: could not find `univariateProbGivObs' in control() list")
                 }
             }
 
@@ -980,7 +980,7 @@ lavaan <- function(# user-specified model: can be syntax, parameter Table, ...
             lavmodel@con.lambda <- attr(x, "con.lambda")
         # check if model has converged or not
         if(!attr(x, "converged") && lavoptions$warn) {
-           warning("lavaan WARNING: model has NOT converged!")
+           warning("psindex WARNING: model has NOT converged!")
         }
     } else {
         x <- numeric(0L)
@@ -1109,7 +1109,7 @@ lavaan <- function(# user-specified model: can be syntax, parameter Table, ...
             lavpartable$se <- lav_model_vcov_se(lavmodel = lavmodel,
                                                 lavpartable = lavpartable,
                                                 VCOV = NULL, BOOT = NULL)
-            warning("lavaan WARNING: se = \"external\" but parameter table does not contain a `se' column")
+            warning("psindex WARNING: se = \"external\" but parameter table does not contain a `se' column")
         }
     }
 
@@ -1190,10 +1190,10 @@ lavaan <- function(# user-specified model: can be syntax, parameter Table, ...
 
 
     ####################
-    #### 16. lavaan ####
+    #### 16. psindex ####
     ####################
-    lavaan <- new("lavaan",
-                  version      = as.character(packageVersion("lavaan")),
+    psindex <- new("psindex",
+                  version      = as.character(packageVersion("psindex")),
                   call         = mc,                  # match.call
                   timing       = timing,              # list
                   Options      = lavoptions,          # list
@@ -1218,8 +1218,8 @@ lavaan <- function(# user-specified model: can be syntax, parameter Table, ...
 
 
     # post-fitting check
-    if("post" %in% lavoptions$check && lavTech(lavaan, "converged")) {
-        lavInspect(lavaan, "post.check")
+    if("post" %in% lavoptions$check && lavTech(psindex, "converged")) {
+        lavInspect(psindex, "post.check")
     }
 
     ########################
@@ -1227,11 +1227,11 @@ lavaan <- function(# user-specified model: can be syntax, parameter Table, ...
     ########################
     #lavbaseline <- list()
     #if(is.logical(lavoptions$baseline) && lavoptions$baseline) {
-    #    fit.indep <- try(lav_object_independence(lavaan), silent = TRUE)
+    #    fit.indep <- try(lav_object_independence(psindex), silent = TRUE)
     #    X2.null <- df.null <- as.numeric(NA)
     #    X2.null.scaled <- df.null.scaled <- as.numeric(NA)
     #    if(inherits(fit.indep, "try-error")) {
-    #        warning("lavaan WARNING: estimation of the baseline model failed.")
+    #        warning("psindex WARNING: estimation of the baseline model failed.")
     #    } else {
     #        X2.null <- fit.indep@test[[1]]$stat
     #        df.null <- fit.indep@test[[1]]$df
@@ -1247,13 +1247,13 @@ lavaan <- function(# user-specified model: can be syntax, parameter Table, ...
     #                        X2.null.scaled = X2.null.scaled,
     #                        df.null.scaled = df.null.scaled)
     #
-    #    # add to lavaan object
-    #    lavaan@baseline <- lavbaseline
+    #    # add to psindex object
+    #    psindex@baseline <- lavbaseline
     #}
 
 
 
-    lavaan
+    psindex
 }
 
 
@@ -1318,7 +1318,7 @@ cfa <- sem <- function(# user-specified model: can be syntax, parameter Table
     mc$auto.delta      = TRUE
 
     # call mother function
-    mc[[1L]] <- quote(lavaan::lavaan)
+    mc[[1L]] <- quote(psindex::psindex)
     eval(mc, parent.frame())
 }
 
@@ -1383,6 +1383,6 @@ growth <- function(# user-specified model: can be syntax, parameter Table
     mc$auto.delta      = TRUE
 
     # call mother function
-    mc[[1L]] <- quote(lavaan::lavaan)
+    mc[[1L]] <- quote(psindex::psindex)
     eval(mc, parent.frame())
 }

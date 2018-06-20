@@ -49,7 +49,7 @@ lav2bugs <- function(partable, pta = NULL, as.function.=FALSE) {
                                     partable$lhs == partable$rhs &
                                     partable$lhs == ov.names.nox[i])
             if(length(theta.free.idx) != 1L) {
-                stop("lavaan ERROR: parameter for residual variance ", 
+                stop("psindex ERROR: parameter for residual variance ", 
                      ov.names.nox[i], " not found")
             } else {
                 theta.idx <- partable$free[ theta.free.idx ]
@@ -143,7 +143,7 @@ lav2bugs <- function(partable, pta = NULL, as.function.=FALSE) {
                                         partable$lhs == partable$rhs &
                                         partable$lhs == lv.y[j])
                 if(length(theta.free.idx) != 1L) {
-                    stop("lavaan ERROR: parameter for residual variance ",
+                    stop("psindex ERROR: parameter for residual variance ",
                          lv.y[j], " not found")
                 } else {
                     theta.idx <- partable$free[ theta.free.idx ]
@@ -254,7 +254,7 @@ lav2bugs <- function(partable, pta = NULL, as.function.=FALSE) {
                 TXT <- paste(TXT, "\n", t1,
                     "theta[", free.idx, "] <- 1/itheta[", free.idx, "]", sep="")
             } else {
-                stop("lavaan ERROR: FIXME!! parameter ", i)
+                stop("psindex ERROR: FIXME!! parameter ", i)
             }
         } else if(op == "~~" && lhs != rhs) {
             # covariance
@@ -267,21 +267,21 @@ lav2bugs <- function(partable, pta = NULL, as.function.=FALSE) {
                 next
             } else if(lhs %in% vnames$lv.y[[g]] && rhs %in% vnames$lv.y[[g]]) {
                 # lv.y
-                stop("lavaan ERROR: FIXME!! parameter ", i)
+                stop("psindex ERROR: FIXME!! parameter ", i)
             } else if(lhs %in% vnames$ov[[g]] && rhs %in% vnames$ov[[g]]) {
                 TXT <- paste(TXT, "\n", t1,
                     "itheta[", free.idx, "] ~ dgamma(9, 4)", sep="")
                 TXT <- paste(TXT, "\n", t1,
                     "theta[", free.idx, "] <- 1/itheta[", free.idx, "]", sep="")
             } else {
-                stop("lavaan ERROR: FIXME!! parameter ", i)
+                stop("psindex ERROR: FIXME!! parameter ", i)
             }
         } else if(op == "~1") {
             # intercept
             TXT <- paste(TXT, "\n", t1,
                 "theta[", free.idx, "] ~ dnorm(0, 1)", sep="")
         } else {
-            stop("lavaan ERROR: op not supported yet for parameter ", i)
+            stop("psindex ERROR: op not supported yet for parameter ", i)
         }
     }
 
@@ -319,7 +319,7 @@ lav2bugs <- function(partable, pta = NULL, as.function.=FALSE) {
         body(out) <- parse(file="", text=TXT)
     } else {
         out <- TXT
-        class(out) <- c("lavaan.character", "character")
+        class(out) <- c("psindex.character", "character")
     }
 
     out

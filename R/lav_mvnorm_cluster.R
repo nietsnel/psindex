@@ -1378,7 +1378,7 @@ lav_mvnorm_cluster_em_h0 <- function(lavsamplestats = NULL,
         free.idx <- which(lavpartable$free > 0L)
         local.partable$ustart[ free.idx ] <- x.current
 
-        local.fit <- lavaan(local.partable,
+        local.fit <- psindex(local.partable,
                             sample.cov   = list(within  = implied$Sigma.W,
                                                 between = implied$Sigma.B),
                             sample.mean  = list(within  = implied$Mu.W,

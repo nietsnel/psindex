@@ -1,13 +1,13 @@
-# lavaanList: fit the *same* model, on different datasets
+# psindexList: fit the *same* model, on different datasets
 # YR - 29 Jun 2016
 # YR - 27 Jan 2017: change lavoptions; add dotdotdot to each call
 
-lavaanList <- function(model         = NULL,             # model
+psindexList <- function(model         = NULL,             # model
                        dataList      = NULL,             # list of datasets
                        dataFunction  = NULL,             # generating function
                        dataFunction.args = list(),       # optional arguments
                        ndat          = length(dataList), # how many datasets?
-                       cmd           = "lavaan",
+                       cmd           = "psindex",
                        ...,
                        store.slots   = c("partable"),    # default is partable
                        FUN           = NULL,             # arbitrary FUN
@@ -31,7 +31,7 @@ lavaanList <- function(model         = NULL,             # model
     # dataList or function?
     if(is.function(dataFunction)) {
         if(ndat == 0L) {
-            stop("lavaan ERROR: please specify number of requested datasets (ndat)")
+            stop("psindex ERROR: please specify number of requested datasets (ndat)")
         }
         firstData <- do.call(dataFunction, args = dataFunction.args)
         #dataList  <- vector("list", length = ndat)
@@ -44,12 +44,12 @@ lavaanList <- function(model         = NULL,             # model
         # check if we have column names?
         NAMES <- colnames(firstData)
         if(is.null(NAMES)) {
-            stop("lavaan ERROR: data is a matrix without column names")
+            stop("psindex ERROR: data is a matrix without column names")
         }
     } else if(inherits(firstData, "data.frame")) {
         # check?
     } else {
-        stop("lavaan ERROR: (generated) data is not a data.frame (or a matrix)")
+        stop("psindex ERROR: (generated) data is not a data.frame (or a matrix)")
     }
 
     # parallel (see boot package)
@@ -74,9 +74,9 @@ lavaanList <- function(model         = NULL,             # model
     # dot dot dot
     dotdotdot <- list(...)
 
-    # if 'model' is a lavaan object (perhaps from lavSimulate), no need to
+    # if 'model' is a psindex object (perhaps from lavSimulate), no need to
     # call `cmd'
-    if(inherits(model, "lavaan")) {
+    if(inherits(model, "psindex")) {
         FIT <- model
     } else {
         # adapt for FIT
@@ -191,9 +191,9 @@ lavaanList <- function(model         = NULL,             # model
 
         # fit model with this (new) dataset
         if(data.ok.flag) {
-            if(cmd %in% c("lavaan", "sem", "cfa", "growth")) {
+            if(cmd %in% c("psindex", "sem", "cfa", "growth")) {
                 #lavoptions$start <- FIT # FIXME: needed?
-                lavobject <- try(do.call("lavaan",
+                lavobject <- try(do.call("psindex",
                                      args = c(list(slotOptions  = lavoptions,
                                                    slotParTable = lavpartable,
                                                    slotModel    = lavmodel,
@@ -222,13 +222,13 @@ lavaanList <- function(model         = NULL,             # model
                                                    slotModel    = lavmodel,
                                                    #start        = FIT,
                                                    data         = DATA,
-                                                   cmd          = "lavaan", 
+                                                   cmd          = "psindex", 
                                                    fs.method    = fs.method,
                                                    fsr.method   = fsr.method),
                                                    dotdotdot)),
                              silent = TRUE)
             } else {
-                stop("lavaan ERROR: unknown cmd: ", cmd)
+                stop("psindex ERROR: unknown cmd: ", cmd)
             }
         } # data.ok.flag
 
@@ -237,7 +237,7 @@ lavaanList <- function(model         = NULL,             # model
                     test = NULL, optim = NULL, implied = NULL,
                     fun = NULL)
 
-        if(data.ok.flag && inherits(lavobject, "lavaan") && 
+        if(data.ok.flag && inherits(lavobject, "psindex") && 
            lavInspect(lavobject, "converged")) {
             RES$ok <- TRUE
 
@@ -284,7 +284,7 @@ lavaanList <- function(model         = NULL,             # model
         } else { # failed!
             if(show.progress) {
                 if(data.ok.flag) {
-                    if(inherits(lavobject, "lavaan")) {
+                    if(inherits(lavobject, "psindex")) {
                         cat("   FAILED: no convergence\n")
                     } else {
                         cat("   FAILED: could not construct lavobject\n")
@@ -302,11 +302,11 @@ lavaanList <- function(model         = NULL,             # model
                 RES$ParTable$se[ RES$ParTable$free > 0 ] <- as.numeric(NA)
             }
             if(store.failed) {
-                tmpfile <- tempfile(pattern = "lavaanListData") 
+                tmpfile <- tempfile(pattern = "psindexListData") 
                 datfile <- paste0(tmpfile, ".csv")
                 write.csv(DATA, file = datfile, row.names = FALSE) 
                 if(data.ok.flag) {
-                    # or only if lavobject is of class lavaan?
+                    # or only if lavobject is of class psindex?
                     objfile <- paste0(tmpfile, ".RData")
                     write(lavobject, file = objfile)
                 }
@@ -375,8 +375,8 @@ lavaanList <- function(model         = NULL,             # model
         funList <- lapply(RES, "[[", "fun")
     }
 
-    # create lavaanList object
-    lavaanList <- new("lavaanList",
+    # create psindexList object
+    psindexList <- new("psindexList",
                       call         = mc,
                       Options      = lavoptions,
                       ParTable     = lavpartable,
@@ -402,7 +402,7 @@ lavaanList <- function(model         = NULL,             # model
                       external     = list()
                      )
 
-    lavaanList
+    psindexList
 }
 
 semList <- function(model         = NULL,
@@ -420,7 +420,7 @@ semList <- function(model         = NULL,
                     cl            = NULL,
                     iseed         = NULL) {
 
-    lavaanList(model = model, dataList = dataList, 
+    psindexList(model = model, dataList = dataList, 
                dataFunction = dataFunction, 
                dataFunction.args = dataFunction.args, ndat = ndat, 
                cmd = "sem",
@@ -445,7 +445,7 @@ cfaList <- function(model         = NULL,
                     cl            = NULL,
                     iseed         = NULL) {
 
-    lavaanList(model = model, dataList = dataList, 
+    psindexList(model = model, dataList = dataList, 
                dataFunction = dataFunction, 
                dataFunction.args = dataFunction.args, ndat = ndat, 
                cmd = "cfa",

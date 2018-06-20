@@ -226,23 +226,23 @@ LongVecTH.Rho.Generalised <- function(no.x, TH, th.idx,
 }
 
 # LongVecTH.Rho.Generalised is a generalisation  of the function
-#  lavaan:::LongVecTH.Rho . The latter assumes that all y* follow standard
+#  psindex:::LongVecTH.Rho . The latter assumes that all y* follow standard
 #  normal so the thresholds are automatically the standardised ones.
 # LongVecTH.Rho.Generalised does not assume that, each of y*'s can follow
 # a normal distribution with mean mu and standard deviation sigma.
 # LongVecTH.Rho.Generalised has the following input arguments:
-# no.x (same as in lavaan:::LongVecTH.Rho), 
-# TH (similar to the TH in lavaan:::LongVecTH.Rho but here they are the unstandardised thresholds, i.e. of the normal distribution with mean mu and standard deviation sigma)
-# th.idx (same as index.var.of.thres in lavaan:::LongVecTH.Rho)
-# cov.xixj which are the polychoric covariances of the pairs of underlying variables provided in a similar fashion as rho.xixj in lavaan:::LongVecTH.Rho)
+# no.x (same as in psindex:::LongVecTH.Rho), 
+# TH (similar to the TH in psindex:::LongVecTH.Rho but here they are the unstandardised thresholds, i.e. of the normal distribution with mean mu and standard deviation sigma)
+# th.idx (same as index.var.of.thres in psindex:::LongVecTH.Rho)
+# cov.xixj which are the polychoric covariances of the pairs of underlying variables provided in a similar fashion as rho.xixj in psindex:::LongVecTH.Rho)
 # mean.x  is a vector including the means of y*'s provided in the order mean.x1, mean.x2, ...., mean.xp
 # stddev.x  is a vector including the standard deviations of y*'s provided in the order stddev.x1, stddev.x2, ...., stddev.xp
 
-# The output of the new function is similar to that of lavaan:::LongVecTH.Rho#############################################
+# The output of the new function is similar to that of psindex:::LongVecTH.Rho#############################################
 
 
 
-#lavobject is the output of lavaan function where either the unconstrained
+#lavobject is the output of psindex function where either the unconstrained
 #or a hypothesized model has been fitted   
 pairwiseExpProbVec_GivenObs_UncMod <- function(lavobject) {
  ngroups <- lavobject@Data@ngroups
@@ -260,7 +260,7 @@ pairwiseExpProbVec_GivenObs_UncMod <- function(lavobject) {
    Cor.hat.g <- cov2cor(Sigma.hat.g)
    cors <- Cor.hat.g[lower.tri(Cor.hat.g)]
     if(any(abs(cors) > 1)) {
-         warning("lavaan WARNING: some model-implied correlations
+         warning("psindex WARNING: some model-implied correlations
                   are larger than 1.0")
     }
     nvar <- nrow(Sigma.hat.g)

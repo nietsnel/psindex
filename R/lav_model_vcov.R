@@ -232,16 +232,16 @@ lav_model_nvcov_two_stage <- function(lavmodel       = NULL,
     # - or information is observed but with observed.information == "h1"
     if(lavoptions$information == "observed" && 
        lavoptions$observed.information != "h1") {
-            stop("lavaan ERROR: two.stage + observed information currently only works with observed.information = ", dQuote("h1"))
+            stop("psindex ERROR: two.stage + observed information currently only works with observed.information = ", dQuote("h1"))
     }
     # no weights (yet)
     if(!is.null(lavdata@weights[[1]])) {
-        stop("lavaan ERROR: two.stage + sampling.weights is not supported yet")
+        stop("psindex ERROR: two.stage + sampling.weights is not supported yet")
     }
     # no fixed.x (yet)
     if(!is.null(lavsamplestats@x.idx) && 
        length(lavsamplestats@x.idx[[1]]) > 0L) {
-        stop("lavaan ERROR: two.stage + fixed.x = TRUE is not supported yet")
+        stop("psindex ERROR: two.stage + fixed.x = TRUE is not supported yet")
     }
 
 
@@ -268,7 +268,7 @@ lav_model_nvcov_two_stage <- function(lavmodel       = NULL,
 
     # check WLS.V = A1
     if(is.null(WLS.V)) {
-        stop("lavaan ERROR: WLS.V/H/A1 is NULL, observed.information = hessian?")
+        stop("psindex ERROR: WLS.V/H/A1 is NULL, observed.information = hessian?")
     }
 
     # Gamma
@@ -328,7 +328,7 @@ lav_model_nvcov_two_stage <- function(lavmodel       = NULL,
 
     NVarCov <- (E.inv %*% tDVGVD %*% E.inv)
 
-    # to be reused by lavaanTest
+    # to be reused by psindexTest
     attr(NVarCov, "Delta") <- Delta
     attr(NVarCov, "Gamma") <- Gamma
     #if(lavoptions$h1.information.se == lavoptions$h1.information.test) {
@@ -437,7 +437,7 @@ lav_model_vcov <- function(lavmodel       = NULL,
                                         lavpartable    = lavpartable),
                         silent=TRUE )
     } else {
-        warning("lavaan WARNING: unknown se type: ", se)
+        warning("psindex WARNING: unknown se type: ", se)
     }
 
     if(! inherits(NVarCov, "try-error") ) {
@@ -461,7 +461,7 @@ lav_model_vcov <- function(lavmodel       = NULL,
         VarCov <- 1/N * NVarCov
 
     } else {
-        warning("lavaan WARNING: could not compute standard errors!\n  lavaan NOTE: this may be a symptom that the model is not identified.\n")
+        warning("psindex WARNING: could not compute standard errors!\n  psindex NOTE: this may be a symptom that the model is not identified.\n")
         VarCov <- NULL
     }
 

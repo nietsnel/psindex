@@ -14,23 +14,23 @@
 # YR 16 Feb 2016: adapt to changed @Mp slot elements; add remove.empty.cases=
 #                 argument
 
-estfun.lavaan <- lavScores <- function(object, scaling = FALSE,
+estfun.psindex <- lavScores <- function(object, scaling = FALSE,
                                        ignore.constraints = FALSE,
                                        remove.duplicated = TRUE,
                                        remove.empty.cases = TRUE) {
 
-  stopifnot(inherits(object, "lavaan"))
+  stopifnot(inherits(object, "psindex"))
 
   # what if estimator != ML? 
   # avoid hard error (using stop); throw a warning, and return an empty matrix
   if(object@Options$estimator != "ML") {
-      warning("lavaan WARNING: scores only availalbe if estimator is ML")
+      warning("psindex WARNING: scores only availalbe if estimator is ML")
       return(matrix(0,0,0))
   }
 
   # check if conditional.x = TRUE
   if(object@Model@conditional.x) {
-      stop("lavaan ERROR: scores not available (yet) if conditional.x = TRUE")
+      stop("psindex ERROR: scores not available (yet) if conditional.x = TRUE")
   }
 
   # shortcuts
@@ -197,7 +197,7 @@ estfun.lavaan <- lavScores <- function(object, scaling = FALSE,
           K <- lav_constraints_R2K(lavmodel)
           Score.mat <- Score.mat %*% K
       } else {
-          warning("lavaan WARNING: remove.duplicated is TRUE, but equality constraints do not appear to be simple; returning full scores")
+          warning("psindex WARNING: remove.duplicated is TRUE, but equality constraints do not appear to be simple; returning full scores")
       }
   }
 

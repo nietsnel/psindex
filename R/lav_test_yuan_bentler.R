@@ -9,7 +9,7 @@ lav_test_yuan_bentler <- function(lavobject      = NULL,
                                   E.inv          = NULL,
                                   B0.group       = NULL,
                                   test           = "yuan.bentler",
-                                  mimic          = "lavaan",
+                                  mimic          = "psindex",
                                   #method         = "default",
                                   return.ugamma  = FALSE) {
 
@@ -31,7 +31,7 @@ lav_test_yuan_bentler <- function(lavobject      = NULL,
     # check test
     if(!all(test %in% c("yuan.bentler",
                         "yuan.bentler.mplus"))) {
-        warning("lavaan WARNING: test must be one of `yuan.bentler', or `yuan.bentler.mplus'; will use `yuan.bentler' only")
+        warning("psindex WARNING: test must be one of `yuan.bentler', or `yuan.bentler.mplus'; will use `yuan.bentler' only")
         test <- "yuan.bentler"
     }
 
@@ -62,7 +62,7 @@ lav_test_yuan_bentler <- function(lavobject      = NULL,
                 stat.group = rep(as.numeric(NA), lavsamplestats@ngroups),
                 df = TEST$standard$df, refdistr = TEST$standard$refdistr,
                 pvalue = as.numeric(NA), scaling.factor = as.numeric(NA))
-            warning("lavaan WARNING: could not invert information matrix\n")
+            warning("psindex WARNING: could not invert information matrix\n")
             return(TEST)
         }
     }

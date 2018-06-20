@@ -22,7 +22,7 @@ lav_partable_complete <- function(partable = NULL, start = TRUE) {
          short.idx <- which(nel < N)
          long.idx <- which(nel > N)
          if(length(long.idx) > 0L) {
-             warning("lavaan WARNING: partable columns have unequal length")
+             warning("psindex WARNING: partable columns have unequal length")
          }
          if(length(short.idx) > 0L) {
              # try to extend them in a 'natural' way

@@ -22,7 +22,7 @@ lav_model_h1_information <- function(lavobject      = NULL,
                                      lavcache       = NULL,
                                      lavoptions     = NULL) {
 
-    if(!is.null(lavobject) && inherits(lavobject, "lavaan")) {
+    if(!is.null(lavobject) && inherits(lavobject, "psindex")) {
         lavmodel       <- lavobject@Model
         lavsamplestats <- lavobject@SampleStats
         lavdata        <- lavobject@Data
@@ -68,7 +68,7 @@ lav_model_h1_information_expected <- function(lavobject      = NULL,
                                               lavh1          = NULL,
                                               lavcache       = NULL) {
 
-    if(!is.null(lavobject) && inherits(lavobject, "lavaan")) {
+    if(!is.null(lavobject) && inherits(lavobject, "psindex")) {
         lavmodel       <- lavobject@Model
         lavsamplestats <- lavobject@SampleStats
         lavdata        <- lavobject@Data
@@ -258,7 +258,7 @@ lav_model_h1_information_observed <- function(lavobject      = NULL,
                                               lavcache       = NULL,
                                               lavoptions     = NULL) {
 
-    if(!is.null(lavobject) && inherits(lavobject, "lavaan")) {
+    if(!is.null(lavobject) && inherits(lavobject, "psindex")) {
         lavmodel       <- lavobject@Model
         lavsamplestats <- lavobject@SampleStats
         lavdata        <- lavobject@Data
@@ -456,7 +456,7 @@ lav_model_h1_information_firstorder <- function(lavobject      = NULL,
                                                 lavcache       = NULL,
                                                 lavoptions     = NULL) {
 
-    if(!is.null(lavobject) && inherits(lavobject, "lavaan")) {
+    if(!is.null(lavobject) && inherits(lavobject, "psindex")) {
         lavmodel       <- lavobject@Model
         lavsamplestats <- lavobject@SampleStats
         lavdata        <- lavobject@Data
@@ -468,7 +468,7 @@ lav_model_h1_information_firstorder <- function(lavobject      = NULL,
 
     estimator <- lavmodel@estimator
     if(!estimator %in% c("ML", "PML")) {
-        stop("lavaan ERROR: information = \"first.order\" not available for estimator ", sQuote(estimator))
+        stop("psindex ERROR: information = \"first.order\" not available for estimator ", sQuote(estimator))
     }
 
     if(!is.null(lavoptions) &&

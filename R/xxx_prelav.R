@@ -72,7 +72,7 @@ print.prelav <- function(x, ..., nd=3) {
     ngroups <- lav.data@ngroups
 
     # header
-    version <- read.dcf(file=system.file("DESCRIPTION", package="lavaan"),
+    version <- read.dcf(file=system.file("DESCRIPTION", package="psindex"),
                         fields="Version")
     cat("This is prelav ", version, ".\n", sep="")
 

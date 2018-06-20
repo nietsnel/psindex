@@ -1,7 +1,7 @@
 # check if a fitted model is admissible
 lav_object_post_check <- function(object, verbose = FALSE) {
 
-    stopifnot(inherits(object, "lavaan"))
+    stopifnot(inherits(object, "psindex"))
     lavpartable    <- object@ParTable
     lavmodel       <- object@Model
     lavdata        <- object@Data
@@ -14,7 +14,7 @@ lav_object_post_check <- function(object, verbose = FALSE) {
                      lavpartable$lhs == lavpartable$rhs)
     if(length(var.idx) > 0L && any(lavpartable$est[var.idx] < 0.0)) {
         result.ok <- var.ov.ok <- FALSE
-        warning("lavaan WARNING: some estimated ov variances are negative")
+        warning("psindex WARNING: some estimated ov variances are negative")
     }
 
     # 1b. check for negative variances lv
@@ -23,7 +23,7 @@ lav_object_post_check <- function(object, verbose = FALSE) {
                      lavpartable$lhs == lavpartable$rhs)
     if(length(var.idx) > 0L && any(lavpartable$est[var.idx] < 0.0)) {
         result.ok <- var.lv.ok <- FALSE
-        warning("lavaan WARNING: some estimated lv variances are negative")
+        warning("psindex WARNING: some estimated lv variances are negative")
     }
 
     # 2. is cov.lv (PSI) positive definite? (only if we did not already warn
@@ -37,7 +37,7 @@ lav_object_post_check <- function(object, verbose = FALSE) {
             eigvals <- eigen(ETA[[g]], symmetric=TRUE, only.values=TRUE)$values
             if(any(eigvals < -1 * .Machine$double.eps^(3/4))) {
                 warning(
-"lavaan WARNING: covariance matrix of latent variables\n",
+"psindex WARNING: covariance matrix of latent variables\n",
 "                is not positive definite", txt.group, ";\n", 
 "                use inspect(fit,\"cov.lv\") to investigate.")
                 result.ok <- FALSE
@@ -59,7 +59,7 @@ lav_object_post_check <- function(object, verbose = FALSE) {
                                  only.values = TRUE)$values
                 if(any(eigvals < -1 * .Machine$double.eps^(3/4))) {
                     warning(
-"lavaan WARNING: the covariance matrix of the residuals of the observed\n", 
+"psindex WARNING: the covariance matrix of the residuals of the observed\n", 
 "                variables (theta) is not positive definite", txt.group, ";\n",
 "                use inspect(fit,\"theta\") to investigate.")
                     result.ok <- FALSE

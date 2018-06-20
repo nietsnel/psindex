@@ -46,7 +46,7 @@ lavSimulate <- function(pop.model     = NULL,             # population model
     # dotdotdot$warn <- FALSE
 
     # generate simulations
-    fit <- do.call("lavaanList", args = c(list(model = model, 
+    fit <- do.call("psindexList", args = c(list(model = model, 
                    dataFunction = dataFunction,
                    dataFunction.args = dataFunction.args,
                    ndat = ndat, cmd = cmd,
@@ -67,7 +67,7 @@ lavSimulate <- function(pop.model     = NULL,             # population model
     est1 <- fit@ParTable$est
     na.idx <- which(is.na(p2.id))
     if(length(na.idx) > 0L) {
-        warning("lavaan WARNING: some estimated parameters were not mentioned",
+        warning("psindex WARNING: some estimated parameters were not mentioned",
                 "\n\t\t in the population model;",
                 " partable user model idx = ", paste(na.idx))
 

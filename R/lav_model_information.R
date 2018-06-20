@@ -276,7 +276,7 @@ lav_model_information_observed <- function(lavmodel       = NULL,
         # NOTE! What is the relationship between the Hessian of the objective
         # function, and the `information' matrix (unit or total)
       
-        # 1. in lavaan, we ALWAYS minimize, so the Hessian is already pos def
+        # 1. in psindex, we ALWAYS minimize, so the Hessian is already pos def
         # 2. currently, all estimators give unit information, except MML and PML
         #    so, no need to divide by N
         Information <- Hessian
@@ -371,7 +371,7 @@ lav_model_information_firstorder <- function(lavmodel       = NULL,
                                              inverted       = FALSE,
                                              use.ginv       = FALSE) {
     if(!lavmodel@estimator %in% c("ML", "PML")) {
-        stop("lavaan ERROR: information = \"first.order\" not available for estimator ", sQuote(lavmodel@estimator))
+        stop("psindex ERROR: information = \"first.order\" not available for estimator ", sQuote(lavmodel@estimator))
     }
 
     if(inverted) {
@@ -479,7 +479,7 @@ lav_model_information_augment_invert <- function(lavmodel    = NULL,
         eigvals <- eigen(information, symmetric = TRUE, 
                          only.values = TRUE)$values
         if(any(eigvals < -1 * .Machine$double.eps^(3/4))) {
-            warning("lavaan WARNING: matrix based on first order outer product of the derivatives is not positive definite; the model may not be identified")
+            warning("psindex WARNING: matrix based on first order outer product of the derivatives is not positive definite; the model may not be identified")
         }
     }
 

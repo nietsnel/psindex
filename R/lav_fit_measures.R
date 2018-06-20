@@ -1,10 +1,10 @@
-setMethod("fitMeasures", signature(object = "lavaan"),
+setMethod("fitMeasures", signature(object = "psindex"),
 function(object, fit.measures = "all", baseline.model = NULL) {
     lav_fit_measures(object = object, fit.measures = fit.measures,
                      baseline.model = baseline.model)
 })
 
-setMethod("fitmeasures", signature(object = "lavaan"),
+setMethod("fitmeasures", signature(object = "psindex"),
 function(object, fit.measures = "all", baseline.model = NULL) {
     lav_fit_measures(object = object, fit.measures = fit.measures,
                      baseline.model = baseline.model)
@@ -15,7 +15,7 @@ lav_fit_measures <- function(object, fit.measures="all",
 
     # has the model converged?
     if(object@optim$npar > 0L && !object@optim$converged) {
-        stop("lavaan ERROR: fit measures not available if model did not converge")
+        stop("psindex ERROR: fit measures not available if model did not converge")
     }
 
     TEST <- lavInspect(object, "test")
@@ -27,7 +27,7 @@ lav_fit_measures <- function(object, fit.measures="all",
         #if(object@Fit@test[[1]]$test != "none") {
         #    TEST <- object@Fit@test
         #} else {
-            stop("lavaan ERROR: please refit the model with test=\"standard\"")
+            stop("psindex ERROR: please refit the model with test=\"standard\"")
         #}
     }
 
@@ -37,7 +37,7 @@ lav_fit_measures <- function(object, fit.measures="all",
        class.flag <- FALSE
     }
 
-    # collect info from the lavaan slots
+    # collect info from the psindex slots
     GLIST <- object@Model@GLIST
 
     # N versus N-1
@@ -273,10 +273,10 @@ lav_fit_measures <- function(object, fit.measures="all",
         # this is not strictly needed for ML, but it is for
         # GLS and WLS
         # and MLM and MLR to get the scaling factor(s)!
-        if (!is.null(baseline.model) && inherits(baseline.model, "lavaan")) {
+        if (!is.null(baseline.model) && inherits(baseline.model, "psindex")) {
             fit.indep <- baseline.model
         } else if (!is.null(object@external$baseline.model) &&
-                   inherits(object@external$baseline.model, "lavaan")) {
+                   inherits(object@external$baseline.model, "psindex")) {
             fit.indep <- object@external$baseline.model
             ## check baseline converged
             if (!fit.indep@optim$converged) {
@@ -458,7 +458,7 @@ lav_fit_measures <- function(object, fit.measures="all",
             # same as
             # NNFI - nonnormed fit index (NNFI, Bentler & Bonett, 1980)
             if("tli" %in% fit.measures || "nnfi" %in% fit.measures) {
-                # note: formula in lavaan <= 0.5-20:
+                # note: formula in psindex <= 0.5-20:
                 # t1 <- X2.null/df.null - X2/df
                 # t2 <- X2.null/df.null - 1
                 # if(t1 < 0 && t2 < 0) {
@@ -470,7 +470,7 @@ lav_fit_measures <- function(object, fit.measures="all",
                 # then, t1 <- fx_0/df.null - fx/df
                 #       t2 <- fx_0/df.null - 1/N (or N-1 for wishart)
 
-                # note: in lavaan 0.5-21, we use the alternative formula:
+                # note: in psindex 0.5-21, we use the alternative formula:
                 # TLI <- 1 - ((X2 - df)/(X2.null - df.null) * df.null/df)
                 # - this one has the advantage that a 'robust' version
                 #   can be derived; this seems non-trivial for the original one
@@ -758,7 +758,7 @@ lav_fit_measures <- function(object, fit.measures="all",
             }
 
             #  multiple group correction
-            if(object@Options$mimic %in% c("Mplus", "lavaan")) {
+            if(object@Options$mimic %in% c("Mplus", "psindex")) {
                 RMSEA <- RMSEA * sqrt(G)
                 if(scaled) {
                     RMSEA.scaled <- RMSEA.scaled * sqrt(G)
@@ -792,7 +792,7 @@ lav_fit_measures <- function(object, fit.measures="all",
             lambda.l <- try(uniroot(f=lower.lambda, lower=0, upper=X2)$root,
                             silent=TRUE)
             if(inherits(lambda.l, "try-error")) { lambda.l <- NA }
-            if(object@Options$mimic %in% c("lavaan", "Mplus")) {
+            if(object@Options$mimic %in% c("psindex", "Mplus")) {
                 GG <- 0
                 indices["rmsea.ci.lower"] <-
                     sqrt( lambda.l/((N-GG)*df) ) * sqrt(G)
@@ -825,7 +825,7 @@ lav_fit_measures <- function(object, fit.measures="all",
             lambda.l <- try(uniroot(f=lower.lambda, lower=0, upper=XX2)$root,
                             silent=TRUE)
             if(inherits(lambda.l, "try-error")) { lambda.l <- NA }
-            if(object@Options$mimic %in% c("lavaan", "Mplus")) {
+            if(object@Options$mimic %in% c("psindex", "Mplus")) {
                 indices["rmsea.ci.lower.scaled"] <-
                         sqrt( lambda.l/(N*df2) ) * sqrt(G)
             } else {
@@ -843,7 +843,7 @@ lav_fit_measures <- function(object, fit.measures="all",
                 lambda.l <- try(uniroot(f=lower.lambda, lower=0, upper=XX2)$root,
                                 silent=TRUE)
                 if(inherits(lambda.l, "try-error")) { lambda.l <- NA }
-                if(object@Options$mimic %in% c("lavaan", "Mplus")) {
+                if(object@Options$mimic %in% c("psindex", "Mplus")) {
                     indices["rmsea.ci.lower.robust"] <-
                             sqrt( (c.hat*lambda.l)/(N*df2) ) * sqrt(G)
                 } else {
@@ -869,7 +869,7 @@ lav_fit_measures <- function(object, fit.measures="all",
             lambda.u <- try(uniroot(f=upper.lambda, lower=0,upper=N.RMSEA)$root,
                             silent=TRUE)
             if(inherits(lambda.u, "try-error")) { lambda.u <- NA }
-            if(object@Options$mimic %in% c("lavaan", "Mplus")) {
+            if(object@Options$mimic %in% c("psindex", "Mplus")) {
                 GG <- 0
                 indices["rmsea.ci.upper"] <-
                     sqrt( lambda.u/((N-GG)*df) ) * sqrt(G)
@@ -903,7 +903,7 @@ lav_fit_measures <- function(object, fit.measures="all",
             lambda.u <- try(uniroot(f=upper.lambda, lower=0,upper=N.RMSEA)$root,
                             silent=TRUE)
             if(inherits(lambda.u, "try-error")) { lambda.u <- NA }
-            if(object@Options$mimic %in% c("lavaan", "Mplus")) {
+            if(object@Options$mimic %in% c("psindex", "Mplus")) {
                 indices["rmsea.ci.upper.scaled"] <-
                     sqrt( lambda.u/(N*df2) ) * sqrt(G)
             } else {
@@ -922,7 +922,7 @@ lav_fit_measures <- function(object, fit.measures="all",
                 lambda.u <- try(uniroot(f=upper.lambda, lower=0,upper=N.RMSEA)$root,
                                 silent=TRUE)
                 if(inherits(lambda.u, "try-error")) { lambda.u <- NA }
-                if(object@Options$mimic %in% c("lavaan", "Mplus")) {
+                if(object@Options$mimic %in% c("psindex", "Mplus")) {
                     indices["rmsea.ci.upper.robust"] <-
                         sqrt( (c.hat*lambda.u)/(N*df2) ) * sqrt(G)
                 } else {
@@ -940,7 +940,7 @@ lav_fit_measures <- function(object, fit.measures="all",
         if(is.na(X2) || is.na(df)) {
             indices["rmsea.pvalue"] <- as.numeric(NA)
         } else if(df > 0) {
-            if(object@Options$mimic %in% c("lavaan","Mplus")) {
+            if(object@Options$mimic %in% c("psindex","Mplus")) {
                 ncp <- N*df*0.05^2/G
                 indices["rmsea.pvalue"] <-
                     1 - pchisq(X2, df=df, ncp=ncp)
@@ -967,7 +967,7 @@ lav_fit_measures <- function(object, fit.measures="all",
             indices["rmsea.pvalue.robust"] <- as.numeric(NA)
         } else if(df > 0) {
             # scaled
-            if(object@Options$mimic %in% c("lavaan", "Mplus")) {
+            if(object@Options$mimic %in% c("psindex", "Mplus")) {
                 ncp <- N*df2*0.05^2/G
                 indices["rmsea.pvalue.scaled"] <-
                     1 - pchisq(XX2, df=df2, ncp=ncp)
@@ -983,7 +983,7 @@ lav_fit_measures <- function(object, fit.measures="all",
                 # scaling factor
                 c.hat <- TEST[[2]]$scaling.factor
 
-                #if(object@Options$mimic %in% c("lavaan", "Mplus")) {
+                #if(object@Options$mimic %in% c("psindex", "Mplus")) {
                 #    ncp <- N*(df2/c.hat)*0.05^2/G
                 #    indices["rmsea.pvalue.robust"] <-
                 #        1 - pchisq(XX2, df=df2, ncp=ncp)
@@ -1118,7 +1118,7 @@ lav_fit_measures <- function(object, fit.measures="all",
         }
 
         # the default!
-        if(object@Options$mimic == "lavaan") {
+        if(object@Options$mimic == "psindex") {
             if(categorical) {
                 indices["srmr"] <- SRMR_BENTLER_NOMEAN
             } else {
@@ -1345,7 +1345,7 @@ lav_fit_measures <- function(object, fit.measures="all",
     # do we have everything that we requested?
     #idx.missing <- which(is.na(match(fit.measures, names(indices))))
     #if(length(idx.missing) > 0L) {
-    #    cat("lavaan WARNING: some requested fit measure(s) are not available for this model:\n")
+    #    cat("psindex WARNING: some requested fit measure(s) are not available for this model:\n")
     #    print( fit.measures[ idx.missing ] )
     #    cat("\n")
     #}
@@ -1353,7 +1353,7 @@ lav_fit_measures <- function(object, fit.measures="all",
     out <- unlist(indices[fit.measures])
 
     if(length(out) > 0L) {
-        class(out) <- c("lavaan.vector", "numeric")
+        class(out) <- c("psindex.vector", "numeric")
     } else {
         return( invisible(numeric(0)) )
     }

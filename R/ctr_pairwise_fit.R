@@ -1,4 +1,4 @@
-# This code is written by YR (using lavaan components), but based on 
+# This code is written by YR (using psindex components), but based on 
 # research code written by Mariska Barendse (Groningen/Amsterdam, NL)
 #
 # September 2013
@@ -57,15 +57,15 @@ lavTablesFitCp <- function(object, alpha = 0.05) {
 
     attr(out, "CpMax") <- extra
 
-    class(out) <- c("lavaan.tables.fit.Cp", "lavaan.data.frame", "data.frame")
+    class(out) <- c("psindex.tables.fit.Cp", "psindex.data.frame", "data.frame")
 
     out
 }
 
-print.lavaan.tables.fit.Cp <- function(x, ...) {
+print.psindex.tables.fit.Cp <- function(x, ...) {
    cat("CP-values that are significant at a Bonferroni adjusted level of significance\n")
    tmp <- x
-   class(tmp) <- c("lavaan.data.frame", "data.frame")
+   class(tmp) <- c("psindex.data.frame", "data.frame")
    print(tmp)
 }
 
@@ -73,8 +73,8 @@ print.lavaan.tables.fit.Cp <- function(x, ...) {
 lavTablesFitCf <- function(object) {
 
     # check object class
-    if(!inherits(object, "lavaan")) {
-        stop("lavaan ERROR: object must be an object of class lavaan")
+    if(!inherits(object, "psindex")) {
+        stop("psindex ERROR: object must be an object of class psindex")
     }
     lavdata  <- object@Data
     lavpta   <- object@pta
@@ -124,12 +124,12 @@ lavTablesFitCf <- function(object) {
     attr(CF, "rpat.total")    <- sapply(lavdata@Rp, "[[", "total.patterns")
     attr(CF, "rpat.empty")    <- sapply(lavdata@Rp, "[[", "empty.patterns") 
 
-    class(CF) <- c("lavaan.tables.fit.Cf", "numeric")
+    class(CF) <- c("psindex.tables.fit.Cf", "numeric")
 
     CF
 }
 
-print.lavaan.tables.fit.Cf <- function(x, ...) {
+print.psindex.tables.fit.Cf <- function(x, ...) {
     cat("Total response patterns: ", attr(x, "rpat.total"), "\n")
     cat("Observed response patterns: ", attr(x, "rpat.observed"), "\n")
     cat("Empty response patterns: ", attr(x, "rpat.empty"), "\n")
@@ -155,7 +155,7 @@ lavTablesFitCm <- function(object) {
 
     # fit unrestricted model
     h1 <- lavCor(lavdata, estimator = lavoptions$estimator,
-                 se = "none", test = "none", output = "lavaan")
+                 se = "none", test = "none", output = "psindex")
     CF.h1 <- lavTablesFitCf(h1)
 
     CF.h0.group <- attr(CF.h0, "CF.group")
@@ -170,13 +170,13 @@ lavTablesFitCm <- function(object) {
     attr(CM, "CM.group") <- CF.h0.group - CF.h1.group
     attr(CM, "DF") <- DF.h0 - DF.h1
 
-    class(CM) <- c("lavaan.tables.fit.Cm", "numeric")
+    class(CM) <- c("psindex.tables.fit.Cm", "numeric")
 
     CM
 }
 
 
-print.lavaan.tables.fit.Cm <- function(x, ...) {
+print.psindex.tables.fit.Cm <- function(x, ...) {
     #cat("The percentage of empty cells\n") #weet niet goed want FML werkt niet
     #cat("CM results may be a little biased because of large numbers of empty cells in the multivariate contingency table\n")
     cat("Cm-value, overall:\n")

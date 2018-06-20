@@ -18,7 +18,7 @@ lav_test_diff_Satorra2000 <- function(m1, m0, H1 = TRUE, A.method = "delta",
     Gamma <- lavTech(m1, "Gamma") # the same for m1 and m0
     # check for NULL
     if(is.null(Gamma)) {
-        stop("lavaan ERROR: can not compute Gamma matrix; perhaps missing = \"ml\"?")
+        stop("psindex ERROR: can not compute Gamma matrix; perhaps missing = \"ml\"?")
     }
 
     if(H1) {
@@ -134,7 +134,7 @@ lav_test_diff_SatorraBentler2001 <- function(m1, m0) {
 
     # warn if cd is negative
     if(cd < 0) {
-        warning("lavaan WARNING: scaling factor is negative")
+        warning("psindex WARNING: scaling factor is negative")
         cd <- as.numeric(NA)
     }
 
@@ -178,7 +178,7 @@ lav_test_diff_SatorraBentler2010 <- function(m1, m0, H1 = FALSE) {
                          symmetric=TRUE, only.values=TRUE)$values
         if(any(eigvals < -1 * .Machine$double.eps^(3/4))) {
             warning(
-  "lavaan WARNING: information matrix of the M10 model is not positive definite.\n",
+  "psindex WARNING: information matrix of the M10 model is not positive definite.\n",
 "                  As a result, the scale-factor can not be computed.")
             cd <- as.numeric(NA)
         } else {
@@ -198,7 +198,7 @@ lav_test_diff_SatorraBentler2010 <- function(m1, m0, H1 = FALSE) {
                          symmetric=TRUE, only.values=TRUE)$values
         if(any(eigvals < -1 * .Machine$double.eps^(3/4))) {
             warning(
-  "lavaan WARNING: information matrix of the M10 model is not positive definite.\n",
+  "psindex WARNING: information matrix of the M10 model is not positive definite.\n",
 "                  As a result, the scale-factor can not be computed.")
             cd <- as.numeric(NA)
         } else {
@@ -253,7 +253,7 @@ lav_test_diff_m10 <- function(m1, m0, test = FALSE) {
     Options$optim.method          = "none"
     Options$optim.force.converged = TRUE
     Options$start                 = PE.M0.extended # new in 0.6!
-    m10 <- lavaan(model = PT.M1.extended,
+    m10 <- psindex(model = PT.M1.extended,
                   #start = PE.M0.extended,
                   slotOptions     = Options,
                   slotSampleStats = m1@SampleStats,
@@ -301,7 +301,7 @@ lav_test_diff_A <- function(m1, m0, method = "delta", reference = "H1") {
         # take into account equality constraints m1
         if(m1@Model@eq.constraints) {
             # we need a better solution here...
-            warning("lavaan WARNING: H1 contains equality constraints; this routine can not handle this (yet)")
+            warning("psindex WARNING: H1 contains equality constraints; this routine can not handle this (yet)")
             return( m0@Model@ceq.JAC )
         }
 
@@ -347,7 +347,7 @@ lav_test_diff_af_h1 <- function(m1, m0) {
 
     # check if parameter space is the same
     if(np0 != np1) {
-        stop("lavaan ERROR: unconstrained parameter set is not the same in m0 and m1")
+        stop("psindex ERROR: unconstrained parameter set is not the same in m0 and m1")
     }
 
     # split partable in 'parameter' and 'constraints' section
@@ -447,7 +447,7 @@ lav_test_diff_af_h1 <- function(m1, m0) {
         p0.idx <- which(p0$lhs == lhs & p0$op == op & p0$rhs == rhs &
                         p0$group == group)
         if(length(p0.idx) == 0L) {
-            stop("lavaan ERROR: parameter in H1 not found in H0: ", 
+            stop("psindex ERROR: parameter in H1 not found in H0: ", 
                  paste(lhs, op, rhs, "(group = ", group, ")", sep=" "))
         }
 
@@ -456,7 +456,7 @@ lav_test_diff_af_h1 <- function(m1, m0) {
             if(p0$free[p0.idx] == 0L) {
                 # match, nothing to do
             } else {
-                warning("lavaan WARNING: fixed parameter in H1 is free in H0: ",
+                warning("psindex WARNING: fixed parameter in H1 is free in H0: ",
                      paste("\"", lhs, " ", op, " ", rhs, 
                            "\" (group = ", group, ")", sep=""))
             }

@@ -131,7 +131,7 @@ lav_mvnorm_h1_loglik_samplestats <- function(sample.cov.logdet = NULL,
     if(!is.null(x.idx) && length(x.idx) > 0L) {
         if(is.null(sample.cov)) {
             if(is.null(x.cov)) {
-                stop("lavaan ERROR: when x.idx is not NULL, we need sample.cov or x.cov")
+                stop("psindex ERROR: when x.idx is not NULL, we need sample.cov or x.cov")
             } else {
                 sample.cov.x <- x.cov
             }

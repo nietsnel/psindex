@@ -148,7 +148,7 @@ pml_deriv1 <- function(Sigma.hat  = NULL,       # model-based var/cov/cor
             }
             if(ov.types[i] == "numeric" && ov.types[j] == "numeric") {
                 if(nexo > 1L) {
-                    stop("lavaan ERROR: mixed + exo in PML not implemented; try optim.gradient = \"numerical\"")
+                    stop("psindex ERROR: mixed + exo in PML not implemented; try optim.gradient = \"numerical\"")
                 }
 
                 SC <- lav_mvnorm_scores_mu_vech_sigma(Y = X[,c(i,j)],
@@ -197,7 +197,7 @@ pml_deriv1 <- function(Sigma.hat  = NULL,       # model-based var/cov/cor
             } else if(ov.types[i] == "numeric" && ov.types[j] == "ordered") {
                 # polyserial correlation
                 if(nexo > 1L) {
-                    stop("lavaan ERROR: mixed + exo in PML not implemented; try optim.gradient = \"numerical\"")
+                    stop("psindex ERROR: mixed + exo in PML not implemented; try optim.gradient = \"numerical\"")
                 }
 
                 SC.COR.UNI <- ps_cor_scores_no_exo(Y1 = X[,i], Y2 = X[,j],
@@ -242,7 +242,7 @@ pml_deriv1 <- function(Sigma.hat  = NULL,       # model-based var/cov/cor
             } else if(ov.types[j] == "numeric" && ov.types[i] == "ordered") {
                 # polyserial correlation
                 if(nexo > 1L) {
-                    stop("lavaan ERROR: mixed + exo in PML not implemented; try optim.gradient = \"numerical\"")
+                    stop("psindex ERROR: mixed + exo in PML not implemented; try optim.gradient = \"numerical\"")
                 }
 
                 SC.COR.UNI <- ps_cor_scores_no_exo(Y1 = X[,j], Y2 = X[,i],

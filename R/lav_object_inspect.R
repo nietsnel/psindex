@@ -1,8 +1,8 @@
-# inspect a fitted lavaan object
+# inspect a fitted psindex object
 
 # backward compatibility -- wrapper around lavInspect
-inspect.lavaan <- function(object, what = "free", ...) {
-    lavInspect.lavaan(object              = object,
+inspect.psindex <- function(object, what = "free", ...) {
+    lavInspect.psindex(object              = object,
                       what                   = what,
                       add.labels             = TRUE,
                       add.class              = TRUE,
@@ -10,29 +10,29 @@ inspect.lavaan <- function(object, what = "free", ...) {
 }
 
 # the `tech' version: no labels, full matrices, ... for further processing
-lavTech.lavaan <- function(object, 
+lavTech.psindex <- function(object, 
                            what                   = "free",
                            add.labels             = FALSE,
                            add.class              = FALSE,
                            list.by.group          = FALSE,  
                            drop.list.single.group = FALSE) {
 
-    lavInspect.lavaan(object, what = what,
+    lavInspect.psindex(object, what = what,
                       add.labels = add.labels, add.class = add.class,
                       list.by.group = list.by.group,
                       drop.list.single.group =  drop.list.single.group)
 }
 
 # the `user' version: with defaults for display only
-lavInspect.lavaan <- function(object,
+lavInspect.psindex <- function(object,
                               what                   = "free",
                               add.labels             = TRUE,
                               add.class              = TRUE,
                               list.by.group          = TRUE,
                               drop.list.single.group = TRUE) {
 
-    # object must inherit from class lavaan
-    stopifnot(inherits(object, "lavaan"))
+    # object must inherit from class psindex
+    stopifnot(inherits(object, "psindex"))
 
     # only a single argument
     if(length(what) > 1) {
@@ -465,7 +465,7 @@ lavInspect.lavaan <- function(object,
 # been saved somewhere)
 lav_object_inspect_est <- function(object) {
     
-    if(inherits(object, "lavaan")) {
+    if(inherits(object, "psindex")) {
         # from 0.5-19, they are in the partable
         if(!is.null(object@ParTable$est)) {
             OUT <- object@ParTable$est
@@ -480,7 +480,7 @@ lav_object_inspect_est <- function(object) {
         # try generic coef()
         OUT <- coef(object, type = "user")
         if(is.matrix(OUT)) {
-            # lavaanList?
+            # psindexList?
             OUT <- rowMeans(OUT)
         }
     }
@@ -596,7 +596,7 @@ lav_object_inspect_modelmatrices <- function(object, what = "free",
                 m.el.idx <- object@Model@m.user.idx[[mm]]
                 x.el.idx <- object@Model@x.user.idx[[mm]]
             } else {
-                stop("lavaan ERROR: unknown type argument:", type, )
+                stop("psindex ERROR: unknown type argument:", type, )
             }
             # erase everything
             GLIST[[mm]][,] <- 0.0
@@ -634,9 +634,9 @@ lav_object_inspect_modelmatrices <- function(object, what = "free",
         # class
         if(add.class) {
             if(object@Model@isSymmetric[mm]) {
-                class(GLIST[[mm]]) <- c("lavaan.matrix.symmetric", "matrix")
+                class(GLIST[[mm]]) <- c("psindex.matrix.symmetric", "matrix")
             } else {
-                class(GLIST[[mm]]) <- c("lavaan.matrix", "matrix")
+                class(GLIST[[mm]]) <- c("psindex.matrix", "matrix")
             }
         }
     }
@@ -727,9 +727,9 @@ lav_object_inspect_modelmatrices <- function(object, what = "free",
         attr(OUT, "header") <- CON
     }
 
-    # lavaan.list
+    # psindex.list
     if(add.class) {
-        class(OUT) <- c("lavaan.list", "list")
+        class(OUT) <- c("psindex.list", "list")
     }
 
     OUT
@@ -769,7 +769,7 @@ lav_object_inspect_sampstat <- function(object, h1 = FALSE,
 
     # if h1 = FALSE and nlevels > 1L, nothing can show...
     if(!h1 && object@Data@nlevels > 1L) {
-        stop("lavaan ERROR: sample statistics not available; refit with option h1 = TRUE")
+        stop("psindex ERROR: sample statistics not available; refit with option h1 = TRUE")
     }
 
     OUT <- vector("list", length = nblocks)
@@ -788,7 +788,7 @@ lav_object_inspect_sampstat <- function(object, h1 = FALSE,
                     ov.names[[b]]
             }
             if(add.class) {
-                class(OUT[[b]]$cov) <- c("lavaan.matrix.symmetric", "matrix")
+                class(OUT[[b]]$cov) <- c("psindex.matrix.symmetric", "matrix")
             }
 
             # mean vector
@@ -801,7 +801,7 @@ lav_object_inspect_sampstat <- function(object, h1 = FALSE,
                 names(OUT[[b]]$mean) <- ov.names[[b]]
             }
             if(add.class) {
-                class(OUT[[b]]$mean) <- c("lavaan.vector", "numeric")
+                class(OUT[[b]]$mean) <- c("psindex.vector", "numeric")
             }
 
             # thresholds
@@ -819,7 +819,7 @@ lav_object_inspect_sampstat <- function(object, h1 = FALSE,
                     names(OUT[[b]]$th) <- object@pta$vnames$th[[b]]
                 }
                 if(add.class) {
-                    class(OUT[[b]]$th) <- c("lavaan.vector", "numeric")
+                    class(OUT[[b]]$th) <- c("psindex.vector", "numeric")
                 }
             }
         } # !conditional.x
@@ -838,7 +838,7 @@ lav_object_inspect_sampstat <- function(object, h1 = FALSE,
             }
             if(add.class) {
                 class(OUT[[b]]$res.cov) <- 
-                    c("lavaan.matrix.symmetric", "matrix")
+                    c("psindex.matrix.symmetric", "matrix")
             }
    
             # intercepts
@@ -852,7 +852,7 @@ lav_object_inspect_sampstat <- function(object, h1 = FALSE,
                     names(OUT[[b]]$res.int) <- ov.names.res[[b]]
                 }
                 if(add.class) {
-                    class(OUT[[b]]$res.int) <- c("lavaan.vector", "numeric")
+                    class(OUT[[b]]$res.int) <- c("psindex.vector", "numeric")
                 }
             }
 
@@ -871,7 +871,7 @@ lav_object_inspect_sampstat <- function(object, h1 = FALSE,
                     names(OUT[[b]]$res.th) <- object@pta$vnames$th[[b]]
                 }
                 if(add.class) {
-                    class(OUT[[b]]$res.th) <- c("lavaan.vector", "numeric")
+                    class(OUT[[b]]$res.th) <- c("psindex.vector", "numeric")
                 }
             }
 
@@ -887,7 +887,7 @@ lav_object_inspect_sampstat <- function(object, h1 = FALSE,
                     colnames(OUT[[b]]$res.slopes) <- ov.names.x[[b]]
                 }
                 if(add.class) {
-                    class(OUT[[b]]$res.slopes) <- c("lavaan.matrix", "matrix")
+                    class(OUT[[b]]$res.slopes) <- c("psindex.matrix", "matrix")
                 }
             }
 
@@ -900,7 +900,7 @@ lav_object_inspect_sampstat <- function(object, h1 = FALSE,
                 }
                 if(add.class) {
                     class(OUT[[b]]$cov.x) <- 
-                        c("lavaan.matrix.symmetric", "matrix")
+                        c("psindex.matrix.symmetric", "matrix")
                 }
             }
 
@@ -911,7 +911,7 @@ lav_object_inspect_sampstat <- function(object, h1 = FALSE,
                     names(OUT[[b]]$mean.x) <- ov.names.x[[b]]
                 }
                 if(add.class) {
-                    class(OUT[[b]]$mean.x) <- c("lavaan.vector", "numeric")
+                    class(OUT[[b]]$mean.x) <- c("psindex.vector", "numeric")
                 }
             }
 
@@ -927,7 +927,7 @@ lav_object_inspect_sampstat <- function(object, h1 = FALSE,
                 names(OUT[[b]]$group.w) <- "w"
             }
             if(add.class) {
-                class(OUT[[b]]$group.w) <- c("lavaan.vector", "numeric")
+                class(OUT[[b]]$group.w) <- c("psindex.vector", "numeric")
             }
         }
     }
@@ -1019,7 +1019,7 @@ lav_object_inspect_rsquare <- function(object, est.std.all=NULL,
             names(tmp) <- partable$lhs[idx]
         }
         if(add.class) {
-            class(tmp) <- c("lavaan.vector", "numeric")
+            class(tmp) <- c("psindex.vector", "numeric")
         }
 
         OUT[[b]] <- tmp
@@ -1062,7 +1062,7 @@ lav_object_inspect_implied <- function(object,
                     ov.names[[b]]
             }
             if(add.class) {
-                class(OUT[[b]]$cov) <- c("lavaan.matrix.symmetric", "matrix")
+                class(OUT[[b]]$cov) <- c("psindex.matrix.symmetric", "matrix")
             }
 
             # mean vector
@@ -1071,7 +1071,7 @@ lav_object_inspect_implied <- function(object,
                 names(OUT[[b]]$mean) <- ov.names[[b]]
             }
             if(add.class) {
-                class(OUT[[b]]$mean) <- c("lavaan.vector", "numeric")
+                class(OUT[[b]]$mean) <- c("psindex.vector", "numeric")
             }
 
             # thresholds
@@ -1085,7 +1085,7 @@ lav_object_inspect_implied <- function(object,
                     names(OUT[[b]]$th) <- object@pta$vnames$th[[b]]
                 }
                 if(add.class) {
-                    class(OUT[[b]]$th) <- c("lavaan.vector", "numeric")
+                    class(OUT[[b]]$th) <- c("psindex.vector", "numeric")
                 }
             }
         } # !conditional.x
@@ -1100,7 +1100,7 @@ lav_object_inspect_implied <- function(object,
             }
             if(add.class) {
                 class(OUT[[b]]$res.cov) <-
-                    c("lavaan.matrix.symmetric", "matrix")
+                    c("psindex.matrix.symmetric", "matrix")
             }
 
             # intercepts
@@ -1110,7 +1110,7 @@ lav_object_inspect_implied <- function(object,
                     names(OUT[[b]]$res.int) <- ov.names.res[[b]]
                 }
                 if(add.class) {
-                    class(OUT[[b]]$res.int) <- c("lavaan.vector", "numeric")
+                    class(OUT[[b]]$res.int) <- c("psindex.vector", "numeric")
                 }
             }
 
@@ -1125,7 +1125,7 @@ lav_object_inspect_implied <- function(object,
                     names(OUT[[b]]$res.th) <- object@pta$vnames$th[[b]]
                 }
                 if(add.class) {
-                    class(OUT[[b]]$res.th) <- c("lavaan.vector", "numeric")
+                    class(OUT[[b]]$res.th) <- c("psindex.vector", "numeric")
                 }
             }
 
@@ -1137,7 +1137,7 @@ lav_object_inspect_implied <- function(object,
                     colnames(OUT[[b]]$res.slopes) <- ov.names.x[[b]]
                 }
                 if(add.class) {
-                    class(OUT[[b]]$res.slopes) <- c("lavaan.matrix", "matrix")
+                    class(OUT[[b]]$res.slopes) <- c("psindex.matrix", "matrix")
                 }
             }
 
@@ -1150,7 +1150,7 @@ lav_object_inspect_implied <- function(object,
                 }
                 if(add.class) {
                     class(OUT[[b]]$cov.x) <-
-                        c("lavaan.matrix.symmetric", "matrix")
+                        c("psindex.matrix.symmetric", "matrix")
                 }
             }
 
@@ -1161,7 +1161,7 @@ lav_object_inspect_implied <- function(object,
                     names(OUT[[b]]$mean.x) <- ov.names.x[[b]]
                 }
                 if(add.class) {
-                    class(OUT[[b]]$mean.x) <- c("lavaan.vector", "numeric")
+                    class(OUT[[b]]$mean.x) <- c("psindex.vector", "numeric")
                 }
             }
             
@@ -1175,7 +1175,7 @@ lav_object_inspect_implied <- function(object,
                 names(OUT[[b]]$group.w) <- "w" # somewhat redundant
             }
             if(add.class) {
-                class(OUT[[b]]$group.w) <- c("lavaan.vector", "numeric")
+                class(OUT[[b]]$group.w) <- c("psindex.vector", "numeric")
             }
         }
     }
@@ -1220,7 +1220,7 @@ lav_object_inspect_residuals <- function(object, h1 = TRUE,
                                           estList[[b]]$res.cov )
                 if(add.class) {
                     class(resList[[b]]$res.cov) <- 
-                        c("lavaan.matrix.symmetric", "matrix")
+                        c("psindex.matrix.symmetric", "matrix")
                 }
             }
             if(!is.null(estList[[b]]$res.int)) {
@@ -1228,7 +1228,7 @@ lav_object_inspect_residuals <- function(object, h1 = TRUE,
                                            estList[[b]]$res.int )
                 if(add.class) {
                     class(resList[[b]]$res.int) <-
-                        c("lavaan.vector", "numeric")
+                        c("psindex.vector", "numeric")
                 }
             }
             if(!is.null(estList[[b]]$res.th)) {
@@ -1236,7 +1236,7 @@ lav_object_inspect_residuals <- function(object, h1 = TRUE,
                                           estList[[b]]$res.th )
                 if(add.class) {
                     class(resList[[b]]$res.th) <-
-                        c("lavaan.vector", "numeric")
+                        c("psindex.vector", "numeric")
                 }
             }
             if(!is.null(estList[[b]]$res.slopes)) {
@@ -1244,7 +1244,7 @@ lav_object_inspect_residuals <- function(object, h1 = TRUE,
                                              estList[[b]]$res.slopes )
                 if(add.class) {
                     class(resList[[b]]$res.slopes) <-
-                        c("lavaan.matrix", "matrix")
+                        c("psindex.matrix", "matrix")
                 }
             }
             if(!is.null(estList[[b]]$cov.x)) {
@@ -1252,14 +1252,14 @@ lav_object_inspect_residuals <- function(object, h1 = TRUE,
                                          estList[[b]]$cov.x )
                 if(add.class) {
                     class(resList[[b]]$cov.x) <- 
-                        c("lavaan.matrix.symmetric", "matrix")
+                        c("psindex.matrix.symmetric", "matrix")
                 }
             }
             if(!is.null(estList[[b]]$mean.x)) {
                  resList[[b]]$mean.x <- ( obsList[[b]]$mean.x -
                                           estList[[b]]$mean.x )
                 if(add.class) {
-                    class(resList[[b]]$mean.x) <- c("lavaan.vector", "numeric")
+                    class(resList[[b]]$mean.x) <- c("psindex.vector", "numeric")
                 }
             }
 
@@ -1270,7 +1270,7 @@ lav_object_inspect_residuals <- function(object, h1 = TRUE,
                                       estList[[b]]$cov )
                 if(add.class) {
                     class(resList[[b]]$cov) <- 
-                        c("lavaan.matrix.symmetric", "matrix")
+                        c("psindex.matrix.symmetric", "matrix")
                 }
             }
             if(!is.null(estList[[b]]$mean)) {
@@ -1278,7 +1278,7 @@ lav_object_inspect_residuals <- function(object, h1 = TRUE,
                                         estList[[b]]$mean )
                  if(add.class) {
                     class(resList[[b]]$mean) <-
-                        c("lavaan.vector", "numeric")
+                        c("psindex.vector", "numeric")
                  }
             }
             if(!is.null(estList[[b]]$th)) {
@@ -1286,7 +1286,7 @@ lav_object_inspect_residuals <- function(object, h1 = TRUE,
                                       estList[[b]]$th )
                 if(add.class) {
                     class(resList[[b]]$th) <-
-                        c("lavaan.vector", "numeric")
+                        c("psindex.vector", "numeric")
                 }
             }
         }
@@ -1297,7 +1297,7 @@ lav_object_inspect_residuals <- function(object, h1 = TRUE,
                                       estList[[b]]$group.w )
             if(add.class) {
                 class(resList[[b]]$group.w) <-
-                    c("lavaan.vector", "numeric")
+                    c("psindex.vector", "numeric")
             }
         }
     }
@@ -1342,7 +1342,7 @@ lav_object_inspect_cov_lv <- function(object, correlation.metric = FALSE,
         }
 
         if(add.class) {
-            class(OUT[[b]]) <- c("lavaan.matrix.symmetric", "matrix")
+            class(OUT[[b]]) <- c("psindex.matrix.symmetric", "matrix")
         }
     }
 
@@ -1381,7 +1381,7 @@ lav_object_inspect_mean_lv <- function(object,
             names(OUT[[b]]) <- object@pta$vnames$lv.regular[[b]]
         }
         if(add.class) {
-            class(OUT[[b]]) <- c("lavaan.vector", "numeric")
+            class(OUT[[b]]) <- c("psindex.vector", "numeric")
         }
     }
 
@@ -1424,7 +1424,7 @@ lav_object_inspect_cov_all <- function(object, correlation.metric = FALSE,
             colnames(OUT[[b]]) <- rownames(OUT[[b]]) <- NAMES
         }
         if(add.class) {
-            class(OUT[[b]]) <- c("lavaan.matrix.symmetric", "matrix")
+            class(OUT[[b]]) <- c("psindex.matrix.symmetric", "matrix")
         }
     }
 
@@ -1469,7 +1469,7 @@ lav_object_inspect_cov_ov <- function(object, correlation.metric = FALSE,
                 object@pta$vnames$ov.model[[b]]
         }
         if(add.class) {
-            class(OUT[[b]]) <- c("lavaan.matrix.symmetric", "matrix")
+            class(OUT[[b]]) <- c("psindex.matrix.symmetric", "matrix")
         }
     }
 
@@ -1510,7 +1510,7 @@ lav_object_inspect_mean_ov <- function(object,
             names(OUT[[b]]) <- object@pta$vnames$ov.model[[b]]
         }
         if(add.class) {
-            class(OUT[[b]]) <- c("lavaan.vector", "numeric")
+            class(OUT[[b]]) <- c("psindex.vector", "numeric")
         }
     }
 
@@ -1555,7 +1555,7 @@ lav_object_inspect_th <- function(object,
             names(OUT[[b]]) <- object@pta$vnames$th[[b]]
         }
         if(add.class) {
-            class(OUT[[b]]) <- c("lavaan.vector", "numeric")
+            class(OUT[[b]]) <- c("psindex.vector", "numeric")
         }
     }
 
@@ -1598,7 +1598,7 @@ lav_object_inspect_vy <- function(object,
             }
         }
         if(add.class) {
-            class(OUT[[b]]) <- c("lavaan.vector", "numeric")
+            class(OUT[[b]]) <- c("psindex.vector", "numeric")
         }
     }
 
@@ -1640,7 +1640,7 @@ lav_object_inspect_theta <- function(object, correlation.metric = FALSE,
         }
 
         if(add.class) {
-            class(OUT[[b]]) <- c("lavaan.matrix.symmetric", "matrix")
+            class(OUT[[b]]) <- c("psindex.matrix.symmetric", "matrix")
         }
     }
 
@@ -1680,7 +1680,7 @@ lav_object_inspect_missing_coverage <- function(object,
         }
 
         if(add.class) {
-            class(OUT[[g]]) <- c("lavaan.matrix.symmetric", "matrix")
+            class(OUT[[g]]) <- c("psindex.matrix.symmetric", "matrix")
         }
     }
 
@@ -1715,7 +1715,7 @@ lav_object_inspect_missing_patterns <- function(object,
         }
 
         if(add.class) {
-            class(OUT[[g]]) <- c("lavaan.matrix", "matrix")
+            class(OUT[[g]]) <- c("psindex.matrix", "matrix")
         }
     }
 
@@ -1773,7 +1773,7 @@ lav_object_inspect_wls_est <- function(object,
         }
 
         if(add.class) {
-            class(OUT[[b]]) <- c("lavaan.vector", "numeric")
+            class(OUT[[b]]) <- c("psindex.vector", "numeric")
         }
     }
 
@@ -1807,7 +1807,7 @@ lav_object_inspect_wls_obs <- function(object,
         }
 
         if(add.class) {
-            class(OUT[[b]]) <- c("lavaan.vector", "numeric")
+            class(OUT[[b]]) <- c("psindex.vector", "numeric")
         }
     }
 
@@ -1856,7 +1856,7 @@ lav_object_inspect_wls_v <- function(object,
         }
 
         if(add.class) {
-            class(OUT[[b]]) <- c("lavaan.matrix", "matrix")
+            class(OUT[[b]]) <- c("psindex.matrix", "matrix")
         }
     }
 
@@ -1930,7 +1930,7 @@ lav_object_inspect_gradient <- function(object,
 
     # class
     if(add.class) {
-        class(OUT) <- c("lavaan.vector", "numeric")
+        class(OUT) <- c("psindex.vector", "numeric")
     }
 
     OUT
@@ -1954,7 +1954,7 @@ lav_object_inspect_hessian <- function(object,
 
     # class
     if(add.class) {
-        class(OUT) <- c("lavaan.matrix.symmetric", "matrix")
+        class(OUT) <- c("psindex.matrix.symmetric", "matrix")
     }
 
     OUT
@@ -1993,7 +1993,7 @@ lav_object_inspect_information <- function(object,
 
     # class
     if(add.class) {
-        class(OUT) <- c("lavaan.matrix.symmetric", "matrix")
+        class(OUT) <- c("psindex.matrix.symmetric", "matrix")
     }
 
     OUT
@@ -2022,7 +2022,7 @@ lav_object_inspect_firstorder <- function(object,
 
     # class
     if(add.class) {
-        class(OUT) <- c("lavaan.matrix.symmetric", "matrix")
+        class(OUT) <- c("psindex.matrix.symmetric", "matrix")
     }
 
     OUT
@@ -2111,13 +2111,13 @@ lav_object_inspect_vcov <- function(object, standardized = FALSE,
             dup.flag <- duplicated(LAB)
             OUT <- OUT[!dup.flag, !dup.flag, drop = FALSE]
         } else {
-            warning("lavaan WARNING: alias is TRUE, but equality constraints do not appear to be simple; returning full vcov")
+            warning("psindex WARNING: alias is TRUE, but equality constraints do not appear to be simple; returning full vcov")
         }
     }
 
     # class
     if(add.class) {
-        class(OUT) <- c("lavaan.matrix.symmetric", "matrix")
+        class(OUT) <- c("psindex.matrix.symmetric", "matrix")
     }
 
     OUT
@@ -2183,7 +2183,7 @@ lav_object_inspect_vcov_def <- function(object, standardized = FALSE,
 
     # class
     if(add.class) {
-        class(OUT) <- c("lavaan.matrix.symmetric", "matrix")
+        class(OUT) <- c("psindex.matrix.symmetric", "matrix")
     }
 
     OUT
@@ -2203,7 +2203,7 @@ lav_object_inspect_UGamma <- function(object,
 
     # class
     if(add.class) {
-        class(OUT) <- c("lavaan.matrix.symmetric", "matrix")
+        class(OUT) <- c("psindex.matrix.symmetric", "matrix")
     }
 
     OUT
@@ -2333,7 +2333,7 @@ lav_object_inspect_delta_internal <- function(lavmodel = NULL, lavdata  = NULL,
                                         names.cov, names.var, names.cor)
                 # class
                 if(add.class) {
-                    class(OUT[[g]]) <- c("lavaan.matrix", "matrix")
+                    class(OUT[[g]]) <- c("psindex.matrix", "matrix")
                 }
             } else {
                 NAMES[[g]] <- c(names.gw,
@@ -2354,7 +2354,7 @@ lav_object_inspect_delta_internal <- function(lavmodel = NULL, lavdata  = NULL,
                                         NAMES[[(g-1)*2 + 2]] )
             }
             if(add.class) {
-                class(OUT[[g]]) <- c("lavaan.matrix", "matrix")
+                class(OUT[[g]]) <- c("psindex.matrix", "matrix")
             }
         }
     }
@@ -2376,7 +2376,7 @@ lav_object_inspect_zero_cell_tables <- function(object,
 
     # categorical?
     if(!object@Model@categorical) {
-        warning("lavaan WARNING: no categorical variables in fitted model")
+        warning("psindex WARNING: no categorical variables in fitted model")
         return(invisible(list()))
     }
 
@@ -2414,7 +2414,7 @@ lav_object_inspect_coef <- function(object, type = "free",
     } else if(type == "free") {
         idx <- which(object@ParTable$free > 0L & !duplicated(object@ParTable$free))
     } else {
-        stop("lavaan ERROR: argument `type' must be one of free or user")
+        stop("psindex ERROR: argument `type' must be one of free or user")
     }
     EST <- lav_object_inspect_est(object)
     cof <- EST[idx]
@@ -2426,7 +2426,7 @@ lav_object_inspect_coef <- function(object, type = "free",
 
     # class
     if(add.class) {
-        class(cof) <- c("lavaan.vector", "numeric")
+        class(cof) <- c("psindex.vector", "numeric")
     }
 
     cof
@@ -2454,11 +2454,11 @@ lav_object_inspect_icc <- function(object, add.labels = FALSE,
 
     # multilevel?
     if(lavdata@nlevels == 1L) {
-        stop("lavaan ERROR: intraclass correlation only available for clustered data")
+        stop("psindex ERROR: intraclass correlation only available for clustered data")
     }
 
     if(length(object@h1) == 0L) {
-        stop("lavaan ERROR: h1 slot is of available; refit with h1 = TRUE")
+        stop("psindex ERROR: h1 slot is of available; refit with h1 = TRUE")
     }
 
     # implied statistics
@@ -2487,7 +2487,7 @@ lav_object_inspect_icc <- function(object, add.labels = FALSE,
 
         # class
         if(add.class) {
-            class(OUT[[g]]) <- c("lavaan.vector", "numeric")
+            class(OUT[[g]]) <- c("psindex.vector", "numeric")
         }
     } # g
 
@@ -2514,7 +2514,7 @@ lav_object_inspect_ranef <- function(object, add.labels = FALSE,
 
     # multilevel?
     if(lavdata@nlevels == 1L) {
-        stop("lavaan ERROR: random effects only available for clustered data (in the long format)")
+        stop("psindex ERROR: random effects only available for clustered data (in the long format)")
     }
 
     # implied statistics
@@ -2547,7 +2547,7 @@ lav_object_inspect_ranef <- function(object, add.labels = FALSE,
 
         # class
         if(add.class) {
-            class(OUT[[g]]) <- c("lavaan.matrix", "matrix")
+            class(OUT[[g]]) <- c("psindex.matrix", "matrix")
 
         }
     } # g

@@ -61,7 +61,7 @@ lav_model <- function(lavpartable      = NULL,
     if(lavoptions$representation == "LISREL") {
         REP <- representation.LISREL(lavpartable, target = NULL, extra = TRUE)
     } else {
-        stop("lavaan ERROR: only representation \"LISREL\" has been implemented.")
+        stop("psindex ERROR: only representation \"LISREL\" has been implemented.")
     }
     if(lavoptions$debug) print(REP)
 
@@ -74,7 +74,7 @@ lav_model <- function(lavpartable      = NULL,
         label <- paste(lavpartable$lhs[bad.idx[1]], 
                        lavpartable$op[bad.idx[1]],
                        lavpartable$rhs[bad.idx[1]], sep = " ")
-        stop("lavaan ERROR: parameter is not defined: ", label)
+        stop("psindex ERROR: parameter is not defined: ", label)
     }
 
     # prepare nG-sized slots
@@ -247,7 +247,7 @@ lav_model <- function(lavpartable      = NULL,
 
     # dirty hack to mimic MUML
     if(!is.null(lavoptions$tech.muml.scale)) {
-        warning("lavaan WARNING: using muml scale in group 2")
+        warning("psindex WARNING: using muml scale in group 2")
 
         # find matrix
         lambda.idx <- which(names(GLIST) == "lambda")[2L]
@@ -327,7 +327,7 @@ lav_model <- function(lavpartable      = NULL,
                  estimator           = lavoptions$estimator)
 
     if(lavoptions$debug) {
-         cat("lavaan lavoptions$debug: lavaanModel\n")
+         cat("psindex lavoptions$debug: psindexModel\n")
          print( str(Model) )
          print( Model@GLIST )
     }

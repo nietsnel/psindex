@@ -40,7 +40,7 @@ lav_model_gradient_mml <- function(lavmodel    = NULL,
     VETAx <- computeVETAx.LISREL(MLIST = MLIST)
     # check for negative values?
     if(any(diag(VETAx) < 0)) {
-        warning("lavaan WARNING: --- VETAx contains negative values")
+        warning("psindex WARNING: --- VETAx contains negative values")
         print(VETAx)
         return(0)
     }
@@ -51,7 +51,7 @@ lav_model_gradient_mml <- function(lavmodel    = NULL,
     #} else {
     #    CHOLESKY <- as.logical(lavmodel@control$cholesky)
         #if(nfac > 1L && !CHOLESKY) {
-        #    warning("lavaan WARNING: CHOLESKY is OFF but nfac > 1L")
+        #    warning("psindex WARNING: CHOLESKY is OFF but nfac > 1L")
         #}
     #}
 
@@ -63,7 +63,7 @@ lav_model_gradient_mml <- function(lavmodel    = NULL,
         ETA.sd <- rep(1, nfac)
         tchol.VETA <- try(chol(VETAx), silent = TRUE)
         if(inherits(tchol.VETA, "try-error")) {
-            warning("lavaan WARNING: --- VETAx not positive definite")
+            warning("psindex WARNING: --- VETAx not positive definite")
             print(VETAx)
             return(0)
         }

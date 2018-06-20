@@ -50,7 +50,7 @@ lav_mvnorm_missing_loglik_data <- function(Y           = NULL,
                                            minus.two   = FALSE) {
 
     if(!is.null(x.idx) && length(x.idx) > 0L) {
-        warning("lavaan WARNING: x.idx not supported yet (ignored)")
+        warning("psindex WARNING: x.idx not supported yet (ignored)")
     }
 
     if(pattern) {
@@ -84,7 +84,7 @@ lav_mvnorm_missing_loglik_samplestats <- function(Yp          = NULL,
                                                   minus.two   = FALSE) {
 
     if(!is.null(x.idx) && length(x.idx) > 0L) {
-        #warning("lavaan WARNING: x.idx not supported yet (ignored)")
+        #warning("psindex WARNING: x.idx not supported yet (ignored)")
         
     }
 
@@ -138,7 +138,7 @@ lav_mvnorm_missing_loglik_samplestats <- function(Yp          = NULL,
 
     # x.idx
     if(!is.null(x.idx) && length(x.idx) > 0L) {
-        #warning("lavaan WARNING: x.idx not supported yet (ignored)")
+        #warning("psindex WARNING: x.idx not supported yet (ignored)")
         P.x <- length(x.idx); N <- sum(sapply(Yp, "[[", "freq"))
         Sigma.x <- Sigma[x.idx, x.idx, drop = FALSE]
         Sigma.inv.x <- lav_matrix_symmetric_inverse(S = Sigma.x, logdet = TRUE,
@@ -1301,7 +1301,7 @@ lav_mvnorm_missing_impute_pattern <- function(Y           = NULL,
                             Sigma.inv, rm.idx = na.idx, logdet = FALSE),
                             silent = TRUE)
         if(inherits(Sigma_22.inv, "try-error")) {
-            stop("lavaan ERROR: Sigma_22.inv cannot be inverted")
+            stop("psindex ERROR: Sigma_22.inv cannot be inverted")
         }
 
         # estimate missing values in this pattern
@@ -1383,7 +1383,7 @@ lav_mvnorm_missing_estep <- function(Y           = NULL,
                             Sigma.inv, rm.idx = na.idx, logdet = FALSE),
                             silent = TRUE)
         if(inherits(Sigma_22.inv, "try-error")) {
-            stop("lavaan ERROR: Sigma_22.inv cannot be inverted")
+            stop("psindex ERROR: Sigma_22.inv cannot be inverted")
         }
 
         # estimate missing values in this pattern

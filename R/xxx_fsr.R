@@ -24,7 +24,7 @@ fsr <- function(model      = NULL,
    
     # we need full data
     if(is.null(data)) {
-        stop("lavaan ERROR: full data is required for factor score regression")
+        stop("psindex ERROR: full data is required for factor score regression")
     }
 
     # check fsr.method argument
@@ -40,7 +40,7 @@ fsr <- function(model      = NULL,
         # force fs.method to Bartlett!
         fs.method <- "Bartlett"
     } else {
-        stop("lavaan ERROR: invalid option for argument fsr.method: ",
+        stop("psindex ERROR: invalid option for argument fsr.method: ",
              fsr.method)
     }
 
@@ -51,7 +51,7 @@ fsr <- function(model      = NULL,
     } else if(fs.method == "regression") {
         # nothing to do
     } else {
-        stop("lavaan ERROR: invalid option for argument fs.method: ",
+        stop("psindex ERROR: invalid option for argument fs.method: ",
              fs.method)
     }
 
@@ -102,7 +102,7 @@ fsr <- function(model      = NULL,
 
     # FIXME: not ready for multiple groups yet
     if(ngroups > 1L) {
-        stop("lavaan ERROR: fsr code not ready for multiple groups (yet)")
+        stop("psindex ERROR: fsr code not ready for multiple groups (yet)")
     }
 
     # if missing = "listwise", make data complete
@@ -132,7 +132,7 @@ fsr <- function(model      = NULL,
     lv.names <- lv.names[ good.idx ]
 
     if(length(lv.names) == 0L) {
-        stop("lavaan ERROR: model does not contain any (measured) latent variables")
+        stop("psindex ERROR: model does not contain any (measured) latent variables")
     }
     nfac     <- length(lv.names)
 
@@ -145,7 +145,7 @@ fsr <- function(model      = NULL,
     #                                 PT$rhs %in% lv.names))
     # FIXME: we should allow for just correlations too?
     #if(length(eqs.idx) == 0L) {
-    #    stop("lavaan ERROR: regressions do not involve any latent variables")
+    #    stop("psindex ERROR: regressions do not involve any latent variables")
     #}
 
     # determine eqs.y and eqs.x names
@@ -156,7 +156,7 @@ fsr <- function(model      = NULL,
     # check if we can use skrondal & laake (no mediational terms?)
     if(fsr.method == "skrondal.laake") {
         if(any(eqs.x.names %in% eqs.y.names)) {
-            stop("lavaan ERROR: mediational relationships are not allowed for the Skrondal.Laake method; use ", sQuote("Croon"), " instead.")
+            stop("psindex ERROR: mediational relationships are not allowed for the Skrondal.Laake method; use ", sQuote("Croon"), " instead.")
         }
     }
 
@@ -167,14 +167,14 @@ fsr <- function(model      = NULL,
     if(!is.null(mm.list)) {
 
         if(fsr.method != "simple") {
-            stop("lavaan ERROR: mm.list only available if fsr.method = \"simple\"")
+            stop("psindex ERROR: mm.list only available if fsr.method = \"simple\"")
         }
 
         nblocks <- length(mm.list)
         # check each measurement block
         for(b in seq_len(nblocks)) {
             if(!all(mm.list[[b]] %in% lv.names)) {
-              stop("lavaan ERROR: mm.list contains unknown latent variable(s):", 
+              stop("psindex ERROR: mm.list contains unknown latent variable(s):", 
                 paste( mm.list[[b]][ mm.list[[b]] %in% lv.names ], sep = " "),
                 "\n")
             }
@@ -223,7 +223,7 @@ fsr <- function(model      = NULL,
                                                   add.lv.cov = TRUE,
                                                   lv.names = mm.list[[b]])
         # fit 1-factor model
-        fit.block <- do.call("lavaan",
+        fit.block <- do.call("psindex",
                             args =  c(list(model  = PT.block,
                                            data   = data), dotdotdot2) )
         MM.FIT[[b]] <- fit.block
@@ -401,7 +401,7 @@ fsr <- function(model      = NULL,
                     }
                     Omega.y <- lav_matrix_symmetric_inverse(Info)
                 } else {
-                    stop("lavaan ERROR: can not handle missing = ", 
+                    stop("psindex ERROR: can not handle missing = ", 
                          lavoptions$missing)
                 }
 
@@ -420,7 +420,7 @@ fsr <- function(model      = NULL,
                              Mu = MU, Sigma = SIGMA,
                              information = lavoptions$information)
                 } else {
-                    stop("lavaan ERROR: can not handle missing = ", 
+                    stop("psindex ERROR: can not handle missing = ", 
                          lavoptions$missing)
                 }
             }
@@ -461,7 +461,7 @@ fsr <- function(model      = NULL,
     #lavoptions2$se <- "none"
     #lavoptions2$test <- "none"
     lavoptions2$missing <- "listwise" # always complete data anyway...
-    fit <- lavaan(PT.PA, 
+    fit <- psindex(PT.PA, 
                   sample.cov = FSR.COV, 
                   sample.mean = FS.MEAN,
                   sample.nobs = FIT@SampleStats@nobs,
@@ -498,9 +498,9 @@ fsr <- function(model      = NULL,
             out$lvinfo <- extra
         }
 
-        class(out) <- c("lavaan.fsr", "list")
+        class(out) <- c("psindex.fsr", "list")
 
-    } else if(output %in% c("lavaan", "fit")) {
+    } else if(output %in% c("psindex", "fit")) {
         out <- fit
     } else if(output == "extra") {
         out <- extra
@@ -514,7 +514,7 @@ fsr <- function(model      = NULL,
     } else if(output %in% c("FS.COV", "fs.cov")) {
         out <- FS.COV
     } else {
-        stop("lavaan ERROR: unknown output= argument: ", output)
+        stop("psindex ERROR: unknown output= argument: ", output)
     } 
 
     out

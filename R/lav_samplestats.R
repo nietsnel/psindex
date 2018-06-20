@@ -15,7 +15,7 @@ lav_samplestats_from_data <- function(lavdata           = NULL,
                                       rescale           = FALSE,
                                       missing.h1        = TRUE,
                                       estimator         = "ML",
-                                      mimic             = "lavaan",
+                                      mimic             = "psindex",
                                       meanstructure     = FALSE,
                                       conditional.x     = FALSE,
                                       fixed.x           = FALSE,
@@ -122,12 +122,12 @@ lav_samplestats_from_data <- function(lavdata           = NULL,
             if(ngroups == 1L) {
                 WLS.V <- list(WLS.V)
             } else {
-                stop("lavaan ERROR: WLS.V argument should be a list of length ",
+                stop("psindex ERROR: WLS.V argument should be a list of length ",
                      ngroups)
             }
         } else {
             if(length(WLS.V) != ngroups)
-                stop("lavaan ERROR: WLS.V assumes ", length(WLS.V),
+                stop("psindex ERROR: WLS.V assumes ", length(WLS.V),
                      " groups; data contains ", ngroups, " groups")
         }
 
@@ -163,12 +163,12 @@ lav_samplestats_from_data <- function(lavdata           = NULL,
             if(ngroups == 1L) {
                 NACOV <- list(NACOV)
             } else {
-                stop("lavaan ERROR: NACOV argument should be a list of length ",
+                stop("psindex ERROR: NACOV argument should be a list of length ",
                      ngroups)
             }
         } else {
             if(length(NACOV) != ngroups)
-                stop("lavaan ERROR: NACOV assumes ", length(NACOV),
+                stop("psindex ERROR: NACOV assumes ", length(NACOV),
                      " groups; data contains ", ngroups, " groups")
         }
         NACOV.user <- TRUE
@@ -181,10 +181,10 @@ lav_samplestats_from_data <- function(lavdata           = NULL,
         # check nobs
         if(nobs[[g]] < 2L) {
             if(nobs[[g]] == 0L) {
-                stop("lavaan ERROR: data contains no observations",
+                stop("psindex ERROR: data contains no observations",
                      ifelse(ngroups > 1L, paste(" in group ", g, sep=""), ""))
             } else {
-                stop("lavaan ERROR: data contains only a single observation",
+                stop("psindex ERROR: data contains only a single observation",
                      ifelse(ngroups > 1L, paste(" in group ", g, sep=""), ""))
             }
         }
@@ -224,7 +224,7 @@ lav_samplestats_from_data <- function(lavdata           = NULL,
         if("ordered" %in% ov.types) {
             categorical <- TRUE
             if(nlevels > 1L) {
-                warning("lavaan ERROR: multilevel + categorical not supported yet.")
+                warning("psindex ERROR: multilevel + categorical not supported yet.")
             } 
         }
 
@@ -346,7 +346,7 @@ lav_samplestats_from_data <- function(lavdata           = NULL,
                 # FIXME!
                 # no handling of missing data yet....
                 if(missing %in% c("ml", "two.stage", "robust.two.stage")) {
-                    stop("lavaan ERROR: missing = ", missing, " + conditional.x not supported yet")
+                    stop("psindex ERROR: missing = ", missing, " + conditional.x not supported yet")
                 }
 
                 # residual covariances!
@@ -550,7 +550,7 @@ lav_samplestats_from_data <- function(lavdata           = NULL,
                         } else {
                             txt <- "\n"
                         }
-                        warning("lavaan WARNING: number of observations (",
+                        warning("psindex WARNING: number of observations (",
                                 nrow(X[[g]]), ") too small to compute Gamma",
                                 txt)
                     }
@@ -614,10 +614,10 @@ lav_samplestats_from_data <- function(lavdata           = NULL,
                             ev <- eigen(NACOV[[g]], # symmetric=FALSE, 
                                         only.values=TRUE)$values
                             if(is.complex(ev)) {
-                               stop("lavaan ERROR: Gamma (NACOV) matrix is not positive-definite")
+                               stop("psindex ERROR: Gamma (NACOV) matrix is not positive-definite")
                             }
                             if(any(Re(ev) < 0)) {
-                                stop("lavaan ERROR: Gamma (NACOV) matrix is not positive-definite")
+                                stop("psindex ERROR: Gamma (NACOV) matrix is not positive-definite")
                             }
                             WLS.V[[g]] <- lav_matrix_symmetric_inverse(NACOV[[g]])
                         } else {
@@ -630,7 +630,7 @@ lav_samplestats_from_data <- function(lavdata           = NULL,
                     } else if(estimator == "DWLS") {
                         dacov <- diag(NACOV[[g]])
                         if(!all(is.finite(dacov))) {
-                            stop("lavaan ERROR: diagonal of Gamma (NACOV) contains non finite values")
+                            stop("psindex ERROR: diagonal of Gamma (NACOV) contains non finite values")
                         }
                         if(fixed.x) {
                             # structural zeroes!
@@ -741,7 +741,7 @@ lav_samplestats_from_data <- function(lavdata           = NULL,
     if(categorical && zero.cell.warn && 
        any(sapply(zero.cell.tables, nrow) > 0L)) {
         nempty <- sum(sapply(zero.cell.tables, nrow))
-        warning("lavaan WARNING: ", nempty,
+        warning("psindex WARNING: ", nempty,
                 " bivariate tables have empty cells; to see them, use:\n",
                 "                  lavInspect(fit, \"zero.cell.tables\")")
     }
@@ -756,7 +756,7 @@ lav_samplestats_from_moments <- function(sample.cov    = NULL,
                                          rescale       = FALSE,
                                          ov.names      = NULL,
                                          estimator     = "ML",
-                                         mimic         = "lavaan",
+                                         mimic         = "psindex",
                                          WLS.V         = NULL,
                                          NACOV         = NULL,
                                          ridge         = 1e-5,
@@ -834,12 +834,12 @@ lav_samplestats_from_moments <- function(sample.cov    = NULL,
             if(ngroups == 1L) {
                 WLS.V <- list(WLS.V)
             } else {
-                stop("lavaan ERROR: WLS.V argument should be a list of length ",
+                stop("psindex ERROR: WLS.V argument should be a list of length ",
                      ngroups)
             }
         } else {
             if(length(WLS.V) != ngroups)
-                stop("lavaan ERROR: WLS.V assumes ", length(WLS.V),
+                stop("psindex ERROR: WLS.V assumes ", length(WLS.V),
                      " groups; data contains ", ngroups, " groups")
         }
 
@@ -865,12 +865,12 @@ lav_samplestats_from_moments <- function(sample.cov    = NULL,
             if(ngroups == 1L) {
                 NACOV <- list(NACOV)
             } else {
-                stop("lavaan ERROR: NACOV argument should be a list of length ",
+                stop("psindex ERROR: NACOV argument should be a list of length ",
                      ngroups)
             }
         } else {
             if(length(NACOV) != ngroups)
-                stop("lavaan ERROR: NACOV assumes ", length(NACOV),
+                stop("psindex ERROR: NACOV assumes ", length(NACOV),
                      " groups; data contains ", ngroups, " groups")
         }
         NACOV.user <- TRUE
@@ -903,7 +903,7 @@ lav_samplestats_from_moments <- function(sample.cov    = NULL,
         } else if(!is.null(colnames(tmp.cov))) {
             cov.names <- colnames(tmp.cov)
         } else {
-            stop("lavaan ERROR: please provide row/col names ",
+            stop("psindex ERROR: please provide row/col names ",
                 "for the covariance matrix!\n")
         }
 
@@ -912,7 +912,7 @@ lav_samplestats_from_moments <- function(sample.cov    = NULL,
         if(any(is.na(idx))) {
             cat("found: ", cov.names, "\n")
             cat("expected: ", ov.names[[g]], "\n")
-            stop("lavaan ERROR: rownames of covariance matrix do not match ",
+            stop("psindex ERROR: rownames of covariance matrix do not match ",
                  "the model!\n", 
                  "  found: ", paste(cov.names, collapse=" "), "\n",
                  "  expected: ", paste(ov.names[[g]], collapse=" "), "\n")
@@ -999,7 +999,7 @@ lav_samplestats_from_moments <- function(sample.cov    = NULL,
                 WLS.VD[[g]] <- rep(1, length(WLS.obs[[g]]))
             } else if(estimator == "WLS" || estimator == "DWLS") {
                 if(is.null(WLS.V[[g]]))
-                    stop("lavaan ERROR: the (D)WLS estimator is only available with full data or with a user-provided WLS.V")
+                    stop("psindex ERROR: the (D)WLS estimator is only available with full data or with a user-provided WLS.V")
             }
 
             # group.w.free
@@ -1126,7 +1126,7 @@ lav_samplestats_cluster_patterns <- function(Y = NULL, Lp = NULL) {
     Y1 <- as.matrix(Y); N <- NROW(Y1); P <- NCOL(Y1)
 
     if(is.null(Lp)) {
-        stop("lavaan ERROR: Lp is NULL")
+        stop("psindex ERROR: Lp is NULL")
     }
 
     # how many levels?
@@ -1190,7 +1190,7 @@ lav_samplestats_cluster_patterns <- function(Y = NULL, Lp = NULL) {
         #EV <- eigen(Sigma.j.max, symmetric = TRUE, only.values = TRUE)$values
         #if(any(EV < 0)) {
         #    # 1. spit out warning
-        #    warning("lavaan WARNING: Sigma.j.max is not positive-definite.")
+        #    warning("psindex WARNING: Sigma.j.max is not positive-definite.")
         #}
 
 

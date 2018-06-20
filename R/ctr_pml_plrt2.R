@@ -44,7 +44,7 @@ ctr_pml_plrt2 <- function(lavobject = NULL, lavmodel = NULL, lavdata = NULL,
     Options$verbose <- FALSE
     Options$se <- "none"
     Options$test <- "none"
-    fittedSat <- lavaan(ModelSat, slotOptions = Options,
+    fittedSat <- psindex(ModelSat, slotOptions = Options,
                         slotSampleStats = lavsamplestats,
                         slotData = lavdata, slotCache = lavcache)
     fx <- lav_model_objective(lavmodel = fittedSat@Model,
@@ -70,7 +70,7 @@ ctr_pml_plrt2 <- function(lavobject = NULL, lavmodel = NULL, lavdata = NULL,
     Options2 <- Options
     Options2$optim.method          <- "none"
     Options2$optim.force.converged <- TRUE
-    fittedSat2 <- lavaan(ModelSat2, 
+    fittedSat2 <- psindex(ModelSat2, 
                         slotOptions = Options2,
                         slotSampleStats = lavsamplestats,
                         slotData = lavdata, slotCache = lavcache)

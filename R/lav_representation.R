@@ -11,7 +11,7 @@ lavMatrixRepresentation <- function(partable, representation = "LISREL",
         REP <- representation.LISREL(partable, target = NULL,
                                      extra = add.attributes)
     } else {
-        stop("lavaan ERROR: only representation \"LISREL\" has been implemented.")
+        stop("psindex ERROR: only representation \"LISREL\" has been implemented.")
     }
 
     partable$mat <- REP$mat
@@ -20,7 +20,7 @@ lavMatrixRepresentation <- function(partable, representation = "LISREL",
 
     if(as.data.frame.) {
         partable <- as.data.frame(partable, stringsAsFactors=FALSE)
-        class(partable) <- c("lavaan.data.frame", "data.frame")
+        class(partable) <- c("psindex.data.frame", "data.frame")
     }
 
     if(add.attributes) {

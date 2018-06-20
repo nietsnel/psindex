@@ -8,7 +8,7 @@
 #are imposed on parameters that refer to different groups in a multi-group 
 #analysis. All the code below has been developed for a single-group analysis.
 
-# Let fit_objH0 and fit_objH1 be the outputs of lavaan() function when we fit
+# Let fit_objH0 and fit_objH1 be the outputs of psindex() function when we fit
 # a model under the null hypothesis and under the alternative, respectively.
 # The argument equalConstr is logical (T/F) and it is TRUE if  equality constraints
 # are imposed on subsets of the parameters. 
@@ -224,9 +224,9 @@ ctr_pml_plrt_nested2 <- function (fit_objH0, fit_objH1) {
  # Compute the sum of the eigenvalues and the sum of the squared eigenvalues
  # so that the adjustment to PLRT can be applied.
  # Here a couple of functions (e.g. MYgetHessian) which are modifications of 
- # lavaan functions (e.g. getHessian) are needed. These are defined in the end of the file.  
+ # psindex functions (e.g. getHessian) are needed. These are defined in the end of the file.  
 
- #the quantity below follows the same logic as getHessian of lavaan 0.5-18
+ #the quantity below follows the same logic as getHessian of psindex 0.5-18
  #and it actually gives N*Hessian. That's why the command following the command below. 
  # NHes.theta0 <- MYgetHessian (object = obj@Model,
  #                           samplestats = obj@SampleStats ,
@@ -275,11 +275,11 @@ ctr_pml_plrt_nested2 <- function (fit_objH0, fit_objH1) {
 
 ###################################################################################
 # auxiliary functions used above, they are all copy from the corresponding functions
-# of lavaan where parts no needed were deleted and some parts were modified.
+# of psindex where parts no needed were deleted and some parts were modified.
 # I mark the modifications with comments.
 
 
-# library(lavaan)
+# library(psindex)
 
 # To run an example for the functions below the following input is needed.
 # obj <- fit.objH0[[i]] 
@@ -394,7 +394,7 @@ MYgetModelParameters  <- function (object, GLIST = NULL, N, #N the number of par
 
 #############################  MYcomputeGradient
 #the difference are the input arguments MY.m.el.idx, MY.x.el.idx
-#used  in  lavaan:::computeDelta
+#used  in  psindex:::computeDelta
 MYcomputeGradient <- function (object, GLIST, samplestats = NULL, X = NULL,
                                lavcache = NULL, estimator = "PML", 
                                MY.m.el.idx, MY.x.el.idx, equalConstr  ) {
@@ -414,7 +414,7 @@ MYcomputeGradient <- function (object, GLIST, samplestats = NULL, X = NULL,
                     X = X[[g]], lavcache = lavcache[[g]])
 
  #!?  if(equalConstr) { #delete the following three commented lines, wrong
- #     Delta <- lavaan:::computeDelta (lavmodel= object, GLIST. = GLIST)
+ #     Delta <- psindex:::computeDelta (lavmodel= object, GLIST. = GLIST)
  #  } else {
       Delta <- computeDelta (lavmodel= object, GLIST. = GLIST,
                                       m.el.idx. = MY.m.el.idx , 
@@ -422,7 +422,7 @@ MYcomputeGradient <- function (object, GLIST, samplestats = NULL, X = NULL,
   # }
 
  #!!!!! that was before: as.numeric(t(d1) %*% Delta[[g]])/samplestats@nobs[[g]]
- as.numeric(t(d1) %*% Delta[[g]]) #!!! modified to follow current computeGradient() function of lavaan
+ as.numeric(t(d1) %*% Delta[[g]]) #!!! modified to follow current computeGradient() function of psindex
  #!!! which gives minus the gradient of PL-loglik
 }
 
@@ -445,7 +445,7 @@ MYx2GLIST <- function (object, x = NULL, MY.m.el.idx, MY.x.el.idx) {
 
 
 #####MYgetVariability function
-#difference from corresponding of lavaan: I use MYNvcov.first.order
+#difference from corresponding of psindex: I use MYNvcov.first.order
 MYgetVariability <- function (object, MY.m.el.idx, MY.x.el.idx, equalConstr ) {
     NACOV <- MYNvcov.first.order(lavmodel=object@Model,
                                  lavsamplestats = object@SampleStats,
@@ -463,7 +463,7 @@ MYgetVariability <- function (object, MY.m.el.idx, MY.x.el.idx, equalConstr ) {
     #    B0 <- B0 * object@SampleStats@ntotal
     #}
     #!!!!!!!!!!!!!!!!!!! added the following lines so that the output of
-    #!!!!! MYgetVariability is in line with that of lavaan 0.5-18 getVariability
+    #!!!!! MYgetVariability is in line with that of psindex 0.5-18 getVariability
     #!! what's the purpose of the following lines?
      if (object@Options$estimator == "PML") {
         B0 <- B0 * object@SampleStats@ntotal
@@ -498,7 +498,7 @@ MYNvcov.first.order <- function (lavmodel, lavsamplestats = NULL,
     B0.group <- vector("list", lavsamplestats@ngroups)  #in my case list of length 1
 
  #!?   if (equalConstr) {     ###the following three lines are commented because they are wrong
- #      Delta <- lavaan:::computeDelta(lavmodel, GLIST. = NULL)
+ #      Delta <- psindex:::computeDelta(lavmodel, GLIST. = NULL)
  #   } else {
        Delta <- computeDelta(lavmodel,
                                        GLIST. = NULL,
@@ -518,7 +518,7 @@ MYNvcov.first.order <- function (lavmodel, lavsamplestats = NULL,
     group.SC <- SC %*% Delta[[g]]
     B0.group[[g]] <- lav_matrix_crossprod(group.SC)
     #!!!! B0.group[[g]] <- B0.group[[g]]/lavsamplestats@ntotal  !!! skip so that the result
-    # is in line with the 0.5-18 version of lavaan
+    # is in line with the 0.5-18 version of psindex
 
     B0 <- B0.group[[1]]
 
@@ -526,7 +526,7 @@ MYNvcov.first.order <- function (lavmodel, lavsamplestats = NULL,
 
     eigvals <- eigen(E, symmetric = TRUE, only.values = TRUE)$values
     if (any(eigvals < -1 * .Machine$double.eps^(3/4))) {
-            warning("lavaan WARNING: matrix based on first order outer product of the derivatives is not positive definite; the standard errors may not be thrustworthy")
+            warning("psindex WARNING: matrix based on first order outer product of the derivatives is not positive definite; the standard errors may not be thrustworthy")
     }
     NVarCov <- MASS::ginv(E)
 

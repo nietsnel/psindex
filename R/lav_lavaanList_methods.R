@@ -1,13 +1,13 @@
 # methods
-setMethod("show", "lavaanList",
+setMethod("show", "psindexList",
 function(object) {
     # show only basic information
-    lav_lavaanList_short_summary(object, print = TRUE)
+    lav_psindexList_short_summary(object, print = TRUE)
 })
 
-lav_lavaanList_short_summary <- function(object, print = TRUE) {
-    txt <- sprintf("lavaanList (%s) -- based on %d datasets (%d converged)\n",
-                   packageDescription("lavaan", fields="Version"),
+lav_psindexList_short_summary <- function(object, print = TRUE) {
+    txt <- sprintf("psindexList (%s) -- based on %d datasets (%d converged)\n",
+                   packageDescription("psindex", fields="Version"),
                    object@meta$ndat,
                    sum(object@meta$ok))
 
@@ -18,17 +18,17 @@ lav_lavaanList_short_summary <- function(object, print = TRUE) {
     invisible(txt)
 }
 
-setMethod("summary", "lavaanList",
+setMethod("summary", "psindexList",
 function(object, header       = TRUE,
                  estimates    = TRUE,
                  print        = TRUE,
                  nd           = 3L) {
-    lav_lavaanList_summary(object, 
+    lav_psindexList_summary(object, 
                            header = header, estimates = estimates,
                            print = print, nd = nd)
 })
 
-lav_lavaanList_summary <- function(object,
+lav_psindexList_summary <- function(object,
                                    header    = TRUE,
                                    estimates = TRUE,
                                    est.bias  = TRUE,
@@ -41,11 +41,11 @@ lav_lavaanList_summary <- function(object,
     output <- list()
 
     if(header) {
-        output$header <- lav_lavaanList_short_summary(object, print = print)
+        output$header <- lav_psindexList_short_summary(object, print = print)
  
         #if(print) {
         #    # show only basic information
-        #    lav_lavaanList_short_summary(object)
+        #    lav_psindexList_short_summary(object)
         #}
     }
 
@@ -63,7 +63,7 @@ lav_lavaanList_summary <- function(object,
             nel <- length(pe$est.true)
 
             # EST 
-            EST <- lav_lavaanList_partable(object, what = "est", type = "all")
+            EST <- lav_psindexList_partable(object, what = "est", type = "all")
             AVE <- rowMeans(EST, na.rm = TRUE)
  
             # remove things like equality constraints
@@ -82,7 +82,7 @@ lav_lavaanList_summary <- function(object,
                     SE.OBS <- SE.OBS[seq_len(nel)]
                 }
                 pe$se.obs <- SE.OBS
-                SE <- lav_lavaanList_partable(object, what = "se", type = "all")
+                SE <- lav_psindexList_partable(object, what = "se", type = "all")
                 SE.AVE <- rowMeans(SE, na.rm = TRUE)
                 if(length(SE.AVE) > nel) {
                     SE.AVE <- SE.AVE[seq_len(nel)]
@@ -94,14 +94,14 @@ lav_lavaanList_summary <- function(object,
         # scenario 2: bootstrap
         } else if(!is.null(object@meta$lavBootstrap)) {
             # print the average value for est
-            EST <- lav_lavaanList_partable(object, what = "est", type = "all")
+            EST <- lav_psindexList_partable(object, what = "est", type = "all")
             pe$est.ave <- rowMeans(EST, na.rm = TRUE)
 
         # scenario 3: multiple imputation
         } else if(!is.null(object@meta$lavMultipleImputation)) {
 
             # pool est: take the mean
-            EST <- lav_lavaanList_partable(object, what = "est", type = "all")
+            EST <- lav_psindexList_partable(object, what = "est", type = "all")
             m <- NCOL(EST)
             pe$est <- rowMeans(EST, na.rm = TRUE)
 
@@ -114,7 +114,7 @@ lav_lavaanList_summary <- function(object,
             B.var <- (est2 - est1*est1) * m/(m-1)
 
             # within-imputation variance
-            SE <- lav_lavaanList_partable(object, what = "se", type = "all")
+            SE <- lav_psindexList_partable(object, what = "se", type = "all")
             W.var <- rowMeans(SE^2, na.rm = TRUE)
 
             # total variance: T.var = W.var + B.var + B.var/m
@@ -131,7 +131,7 @@ lav_lavaanList_summary <- function(object,
         # scenario 4: multiple groups/sets
         } else if(!is.null(object@meta$lavMultipleGroups)) {
             # show individual estimates, for each group
-            EST <- lav_lavaanList_partable(object, what = "est", type = "all")
+            EST <- lav_psindexList_partable(object, what = "est", type = "all")
             EST <- as.list(as.data.frame(EST))
             ngroups <- length(EST)
             names(EST) <- object@meta$group.label
@@ -145,7 +145,7 @@ lav_lavaanList_summary <- function(object,
         # scenarior 5: just a bunch of fits, using different datasets
         else {
             # print the average value for est
-            EST <- lav_lavaanList_partable(object, what = "est", type = "all")
+            EST <- lav_psindexList_partable(object, what = "est", type = "all")
             pe$est.ave  <- rowMeans(EST, na.rm = TRUE)
 
             # more?
@@ -165,23 +165,23 @@ lav_lavaanList_summary <- function(object,
     invisible(output)
 }
 
-setMethod("coef", "lavaanList",
+setMethod("coef", "psindexList",
 function(object, type = "free", labels = TRUE) {
-    lav_lavaanList_partable(object = object, what = "est", type = type, 
+    lav_psindexList_partable(object = object, what = "est", type = type, 
                             labels = labels)
 })
 
-lav_lavaanList_partable <- function(object, what = "est", 
+lav_psindexList_partable <- function(object, what = "est", 
                                     type = "free", labels = TRUE) {
 
     if("partable" %in% object@meta$store.slots) {
         if(what %in% names(object@ParTableList[[1]])) {
             OUT <- sapply(object@ParTableList, "[[", what)
         } else {
-            stop("lavaan ERROR: column `", what, "' not found in the first element of the ParTableList slot.")
+            stop("psindex ERROR: column `", what, "' not found in the first element of the ParTableList slot.")
         }
     } else {
-        stop("lavaan ERROR: no ParTable slot stored in lavaanList object")
+        stop("psindex ERROR: no ParTable slot stored in psindexList object")
     }
 
     if(type == "user" || type == "all") {
@@ -190,7 +190,7 @@ lav_lavaanList_partable <- function(object, what = "est",
     } else if(type == "free") {
         idx <- which(object@ParTable$free > 0L & !duplicated(object@ParTable$free))
     } else {
-        stop("lavaan ERROR: argument `type' must be one of free or user")
+        stop("psindex ERROR: argument `type' must be one of free or user")
     }
 
     OUT <- OUT[idx, , drop = FALSE]

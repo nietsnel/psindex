@@ -5,7 +5,7 @@
 ##
 ## perhaps we should add 0.0005 or something to avoid this?
 
-print.lavaan.data.frame <- function(x, ..., nd=3) {
+print.psindex.data.frame <- function(x, ..., nd=3) {
 
     ROW.NAMES <- rownames(x)
     y <- as.data.frame(lapply(x, function(x) {
@@ -20,7 +20,7 @@ print.lavaan.data.frame <- function(x, ..., nd=3) {
     invisible(x)
 }
 
-print.lavaan.list <- function(x, ...) {
+print.psindex.list <- function(x, ...) {
 
     y <- unclass(x)
     attr(y, "header") <- NULL
@@ -40,7 +40,7 @@ print.lavaan.list <- function(x, ...) {
 
 
 # prints only lower triangle of a symmetric matrix
-print.lavaan.matrix.symmetric <- function(x, ..., nd=3) {
+print.psindex.matrix.symmetric <- function(x, ..., nd=3) {
     # print only lower triangle of a symmetric matrix
     # this function was inspired by the `print.correlation' function
     # in package nlme 
@@ -55,7 +55,7 @@ print.lavaan.matrix.symmetric <- function(x, ..., nd=3) {
 }
 
 
-print.lavaan.matrix <- function(x, ..., nd=3) {
+print.psindex.matrix <- function(x, ..., nd=3) {
     y <- unclass(x)
     if (!is.null(colnames(x))) {
       colnames(y) <- abbreviate(colnames(x), minlength = nd + 3)
@@ -64,7 +64,7 @@ print.lavaan.matrix <- function(x, ..., nd=3) {
     invisible(x)
 }
 
-print.lavaan.vector <- function(x, ..., nd=3) {
+print.psindex.vector <- function(x, ..., nd=3) {
     y <- unclass(x)
     #if(!is.null(names(x))) {
     #    names(y) <- abbreviate(names(x), minlength = nd + 3)
@@ -73,12 +73,12 @@ print.lavaan.vector <- function(x, ..., nd=3) {
     invisible(x)
 }
 
-print.lavaan.character <- function(x) {
+print.psindex.character <- function(x) {
     cat(x)
     invisible(x)
 }
 
-print.lavaan.parameterEstimates <- function(x, ..., nd = 3L) {
+print.psindex.parameterEstimates <- function(x, ..., nd = 3L) {
 
     # format for numeric values
     num.format  <- paste("%", max(8, nd + 5), ".", nd, "f", sep = "")
@@ -216,7 +216,7 @@ print.lavaan.parameterEstimates <- function(x, ..., nd = 3L) {
             if(!is.null(x$pvalue)) {
                 m[se.idx, "pvalue"] <- ""
             }
-            ## for lavaan.mi-class objects (semTools)
+            ## for psindex.mi-class objects (semTools)
             if(!is.null(x$t)) {
                 m[se.idx, "t"] <- ""
             }
@@ -234,7 +234,7 @@ print.lavaan.parameterEstimates <- function(x, ..., nd = 3L) {
             if(!is.null(x$pvalue)) {
                 m[se.idx, "pvalue"] <- ""
             }
-            ## for lavaan.mi-class objects (semTools)
+            ## for psindex.mi-class objects (semTools)
             if(!is.null(x$t)) {
                 m[se.idx, "t"] <- ""
             }
@@ -249,7 +249,7 @@ print.lavaan.parameterEstimates <- function(x, ..., nd = 3L) {
         se.idx <- which(x$se == 0)
         if(length(se.idx) > 0L) {
             m[se.idx, "fmi"] <- ""
-            ## for lavaan.mi-class objects (semTools)
+            ## for psindex.mi-class objects (semTools)
             if (!is.null(x$riv)) m[se.idx, "riv"] <- ""
         }
 
@@ -257,13 +257,13 @@ print.lavaan.parameterEstimates <- function(x, ..., nd = 3L) {
         if(length(not.idx) > 0L) {
             if(!is.null(x$fmi)) {
                 m[not.idx, "fmi"] <- ""
-                ## for lavaan.mi-class objects (semTools)
+                ## for psindex.mi-class objects (semTools)
                 if (!is.null(x$riv)) m[not.idx, "riv"] <- ""
             }
         }
     }
 
-    # for blavaan, handle Post.SD and PSRF
+    # for bpsindex, handle Post.SD and PSRF
     if(!is.null(x$Post.SD)) {
         se.idx <- which(x$Post.SD == 0)
         if(length(se.idx) > 0L) {
@@ -301,7 +301,7 @@ print.lavaan.parameterEstimates <- function(x, ..., nd = 3L) {
     colnames(m)[ colnames(m) == "std.nox"] <- "Std.nox"
     colnames(m)[ colnames(m) == "prior"  ] <- "Prior"
     colnames(m)[ colnames(m) == "fmi"    ] <- "FMI"
-    ## for lavaan.mi-class objects (semTools)
+    ## for psindex.mi-class objects (semTools)
     if ("t" %in% colnames(m)) {
       colnames(m)[ colnames(m) == "t"      ] <- "t-value"
       colnames(m)[ colnames(m) == "P(>|z|)"] <- "P(>|t|)"
@@ -311,7 +311,7 @@ print.lavaan.parameterEstimates <- function(x, ..., nd = 3L) {
     # format column names
     colnames(m) <- sprintf(char.format, colnames(m))
 
-    # exceptions for blavaan: Post.Mean (width = 9), Prior (width = 14)
+    # exceptions for bpsindex: Post.Mean (width = 9), Prior (width = 14)
     if(!is.null(x$Post.Mean)) {
         tmp <- gsub("[ \t]+", "", colnames(m), perl=TRUE)
 
@@ -608,7 +608,7 @@ print.lavaan.parameterEstimates <- function(x, ..., nd = 3L) {
     NAMES
 }
 
-summary.lavaan.fsr <- function(object, ...) {
+summary.psindex.fsr <- function(object, ...) {
     
     dotdotdot <- list(...)
     if(!is.null(dotdotdot$nd)) {
@@ -617,10 +617,10 @@ summary.lavaan.fsr <- function(object, ...) {
         nd <- 3L
     }    
 
-    print.lavaan.fsr(x = object, nd = nd, mm = TRUE, struc = TRUE)
+    print.psindex.fsr(x = object, nd = nd, mm = TRUE, struc = TRUE)
 }
 
-print.lavaan.fsr <- function(x, ..., nd = 3L, mm = FALSE, struc = FALSE) {
+print.psindex.fsr <- function(x, ..., nd = 3L, mm = FALSE, struc = FALSE) {
 
     y <- unclass(x)
     
@@ -647,7 +647,7 @@ print.lavaan.fsr <- function(x, ..., nd = 3L, mm = FALSE, struc = FALSE) {
             # parameter estimates
             PE <- parameterEstimates(y$MM.FIT[[b]], add.attributes = TRUE,
                                      ci = FALSE)
-            print.lavaan.parameterEstimates(PE, ..., nd = nd)
+            print.psindex.parameterEstimates(PE, ..., nd = nd)
             cat("\n")
         }
     }
@@ -656,7 +656,7 @@ print.lavaan.fsr <- function(x, ..., nd = 3L, mm = FALSE, struc = FALSE) {
     if(struc) {
         cat("Structural Part\n")
         cat("\n")
-        #print.lavaan.parameterEstimates(y$PE, ..., nd = nd) 
+        #print.psindex.parameterEstimates(y$PE, ..., nd = nd) 
 
         short.summary(y$STRUC.FIT)
         FIT <- fitMeasures(y$STRUC.FIT, fit.measures="default")
@@ -668,7 +668,7 @@ print.lavaan.fsr <- function(x, ..., nd = 3L, mm = FALSE, struc = FALSE) {
                              remove.eq = FALSE, remove.system.eq = TRUE,
                              remove.ineq = FALSE, remove.def = FALSE,
                              add.attributes = TRUE)
-    print.lavaan.parameterEstimates(PE, ..., nd = nd)
+    print.psindex.parameterEstimates(PE, ..., nd = nd)
 
     invisible(y)
 }

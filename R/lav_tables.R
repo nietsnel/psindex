@@ -4,7 +4,7 @@
 # - we do NOT make a distinction here between unordered and ordered categorical
 #   variables
 # - object can be a matrix (most likely with integers), a full data frame, 
-#   a fitted lavaan object, or a lavData object
+#   a fitted psindex object, or a lavData object
 # - 11 May 2013: added collapse=TRUE, min.std.resid options (suggested
 #   by Myrsini Katsikatsou
 # - 11 June 2013: added dimension, to get one-way and two-way (three-way?)
@@ -41,7 +41,7 @@ lavTables <- function(object,
 
     # check input
     if(! (dimension == 0L || dimension == 1L || dimension == 2L) ) {
-        stop("lavaan ERROR: dimension must be 0, 1 or 2 for pattern, one-way or two-way tables")
+        stop("psindex ERROR: dimension must be 0, 1 or 2 for pattern, one-way or two-way tables")
     }
     stopifnot(type %in% c("cells", "table", "pattern"))
     if(type == "pattern") {
@@ -51,9 +51,9 @@ lavTables <- function(object,
     # extract or create lavdata
     lavdata <- lavData(object, ordered = categorical, group = group)
 
-    # is 'object' a lavaan object?
+    # is 'object' a psindex object?
     lavobject <- NULL
-    if(inherits(object, "lavaan")) {
+    if(inherits(object, "psindex")) {
         lavobject <- object
     }
 
@@ -64,9 +64,9 @@ lavTables <- function(object,
                                   patternAsString = patternAsString)
         # output format
         if(output == "data.frame") {
-            class(out) <- c("lavaan.data.frame", "data.frame")
+            class(out) <- c("psindex.data.frame", "data.frame")
         } else {
-            warning("lavaan WARNING: output option `", output, "' is not available; ignored.")
+            warning("psindex WARNING: output option `", output, "' is not available; ignored.")
         }
 
     # case 2: one-way/univariate
@@ -76,9 +76,9 @@ lavTables <- function(object,
 
         # output format
         if(output == "data.frame") {
-            class(out) <- c("lavaan.data.frame", "data.frame")
+            class(out) <- c("psindex.data.frame", "data.frame")
         } else {
-            warning("lavaan WARNING: output option `", output, "' is not available; ignored.")
+            warning("psindex WARNING: output option `", output, "' is not available; ignored.")
         }
 
     # case 3a: two-way/pairwise/bivariate + cells
@@ -88,11 +88,11 @@ lavTables <- function(object,
                                          statistic = statistic)
         # output format
         if(output == "data.frame") {
-            class(out) <- c("lavaan.data.frame", "data.frame")
+            class(out) <- c("psindex.data.frame", "data.frame")
         } else if(output == "table") {
             out <- lav_tables_cells_format(out, lavdata = lavdata)
         } else {
-            warning("lavaan WARNING: output option `", output, "' is not available; ignored.")           
+            warning("psindex WARNING: output option `", output, "' is not available; ignored.")           
         }
 
     #  case 3b: two-way/pairwise/bivariate + collapsed table
@@ -105,12 +105,12 @@ lavTables <- function(object,
                                          p.value   = p.value)
         # output format
         if(output == "data.frame") {
-            class(out) <- c("lavaan.data.frame", "data.frame")
+            class(out) <- c("psindex.data.frame", "data.frame")
         } else if(output == "table") {
             out <- lav_tables_table_format(out, lavdata = lavdata, 
                                            lavobject = lavobject)
         } else {
-            warning("lavaan WARNING: output option `", output, "' is not available; ignored.")
+            warning("psindex WARNING: output option `", output, "' is not available; ignored.")
         }
     }
 
@@ -166,14 +166,14 @@ lav_tables_pattern <- function(lavobject = NULL, lavdata = NULL,
     # this only works if we have 'categorical' variables
     cat.idx <- which(lavdata@ov$type %in% c("ordered","factor"))
     if(length(cat.idx) == 0L) {
-        warning("lavaan WARNING: no categorical variables are found")
+        warning("psindex WARNING: no categorical variables are found")
         return(data.frame(pattern=character(0L), nobs=integer(0L),
                           obs.freq=integer(0L), obs.prop=numeric(0L)))
     }
     # no support yet for mixture of endogenous ordered + numeric variables
     if(!is.null(lavobject) && 
        length(lavNames(lavobject, "ov.nox")) > length(cat.idx)) {
-        warning("lavaan WARNING: some endogenous variables are not categorical")
+        warning("psindex WARNING: some endogenous variables are not categorical")
         return(data.frame(pattern=character(0L), nobs=integer(0L),
                           obs.freq=integer(0L), obs.prop=numeric(0L)))
     }
@@ -225,7 +225,7 @@ lav_tables_pattern <- function(lavobject = NULL, lavdata = NULL,
 
     if(any(c("X2.un", "G2.un") %in% statistic)) {
         # not a good statistic... we only have uni+bivariate information
-        warning("lavaan WARNING: limited information used for thresholds and correlations; but X2/G2 assumes full information")
+        warning("psindex WARNING: limited information used for thresholds and correlations; but X2/G2 assumes full information")
         PI <- lav_tables_resp_pi(lavobject = lavobject, lavdata = lavdata,
                                  est = "h1")
 
@@ -244,10 +244,10 @@ lav_tables_pattern <- function(lavobject = NULL, lavdata = NULL,
             # ok, nothing to say
         } else if(lavobject@Options$estimator %in% 
                       c("WLS","DWLS","PML","ULS")) {
-            warning("lavaan WARNING: estimator ", lavobject@Options$estimator,
+            warning("psindex WARNING: estimator ", lavobject@Options$estimator,
                     " is not using full information while est.prop is using full information")
         } else {
-            stop("lavaan ERROR: estimator ", lavobject@Options$estimator,
+            stop("psindex ERROR: estimator ", lavobject@Options$estimator,
                  " is not supported.")
         }
 
@@ -278,13 +278,13 @@ lav_tables_pairwise_cells <- function(lavobject = NULL, lavdata = NULL,
     # this only works if we have at least two 'categorical' variables
     cat.idx <- which(lavdata@ov$type %in% c("ordered","factor"))
     if(length(cat.idx) == 0L) {
-        warning("lavaan WARNING: no categorical variables are found")
+        warning("psindex WARNING: no categorical variables are found")
         return(data.frame(id=integer(0L), lhs=character(0L), rhs=character(0L),
                           nobs=integer(0L), row=integer(0L), col=integer(0L),
                           obs.freq=integer(0L), obs.prop=numeric(0L)))
     }
     if(length(cat.idx) == 1L) {
-        warning("lavaan WARNING: at least two categorical variables are needed")
+        warning("psindex WARNING: at least two categorical variables are needed")
         return(data.frame(id=integer(0L), lhs=character(0L), rhs=character(0L),
                           nobs=integer(0L), row=integer(0L), col=integer(0L),
                           obs.freq=integer(0L), obs.prop=numeric(0L)))
@@ -584,7 +584,7 @@ lav_tables_oneway <- function(lavobject = NULL, lavdata = NULL,
 
     # do we have any categorical variables?
     if(length(cat.idx) == 0L) {
-        warning("lavaan WARNING: no categorical variables are found")
+        warning("psindex WARNING: no categorical variables are found")
         return(data.frame(id=integer(0L), lhs=character(0L), rhs=character(0L),
                           nobs=integer(0L),
                           obs.freq=integer(0L), obs.prop=numeric(0L),
@@ -733,9 +733,9 @@ lav_tables_pairwise_freq_cell <- function(lavdata = NULL,
 
     # do we have any categorical variables?
     if(length(cat.idx) == 0L) {
-        stop("lavaan ERROR: no categorical variables are found")
+        stop("psindex ERROR: no categorical variables are found")
     } else if(length(cat.idx) == 1L) {
-        stop("lavaan ERROR: at least two categorical variables are needed")
+        stop("psindex ERROR: at least two categorical variables are needed")
     }
 
     # pairwise tables
@@ -820,7 +820,7 @@ lav_tables_pairwise_model_pi <- function(lavobject = NULL) {
         Sigmahat <- Sigma.hat[[g]]
         cors <- Sigmahat[lower.tri(Sigmahat)]
         if(any(abs(cors) > 1)) {
-            warning("lavaan WARNING: some model-implied correlations are larger than 1.0")
+            warning("psindex WARNING: some model-implied correlations are larger than 1.0")
         }
         nvar <- nrow(Sigmahat)
 
@@ -863,7 +863,7 @@ lav_tables_pairwise_model_pi <- function(lavobject = NULL) {
 # low-level function to compute expected proportions per cell
 # using sample-based correlations + thresholds
 #
-# object can be either lavData or lavaan class
+# object can be either lavData or psindex class
 lav_tables_pairwise_sample_pi <- function(lavobject = NULL, lavdata = NULL) {
 
     # get COR, TH and th.idx
@@ -887,7 +887,7 @@ lav_tables_pairwise_sample_pi <- function(lavobject = NULL, lavdata = NULL) {
         }
         TH.IDX <- fit.un@SampleStats@th.idx
     } else {
-        stop("lavaan ERROR: both lavobject and lavdata are NULL")
+        stop("psindex ERROR: both lavobject and lavdata are NULL")
     }
 
     lav_tables_pairwise_sample_pi_cor(COR = COR, TH = TH,
@@ -905,7 +905,7 @@ lav_tables_pairwise_sample_pi_cor <- function(COR = NULL, TH = NULL,
         Sigmahat <- COR[[g]]
         cors <- Sigmahat[lower.tri(Sigmahat)]
         if(any(abs(cors) > 1)) {
-            warning("lavaan WARNING: some model-implied correlations are larger than 1.0")
+            warning("psindex WARNING: some model-implied correlations are larger than 1.0")
         }
         nvar <- nrow(Sigmahat)
         th.idx <- TH.IDX[[g]]
@@ -942,7 +942,7 @@ lav_tables_pairwise_sample_pi_cor <- function(COR = NULL, TH = NULL,
 # low-level function to compute expected proportions per PATTERN
 # using sample-based correlations + thresholds
 #
-# object can be either lavData or lavaan class
+# object can be either lavData or psindex class
 #
 # only valid if estimator = FML, POM or NOR
 #
@@ -982,7 +982,7 @@ lav_tables_resp_pi <- function(lavobject = NULL, lavdata = NULL,
         Sigmahat <- Sigma.hat[[g]]
         cors <- Sigmahat[lower.tri(Sigmahat)]
         if(any(abs(cors) > 1)) {
-            warning("lavaan WARNING: some model-implied correlations are larger than 1.0")
+            warning("psindex WARNING: some model-implied correlations are larger than 1.0")
         }
         nvar <- nrow(Sigmahat)
         th.idx <- TH.IDX[[g]]
@@ -1027,7 +1027,7 @@ lav_tables_resp_pi <- function(lavobject = NULL, lavdata = NULL,
             }
         } else { # case-wise
             PI.group <- rep(as.numeric(NA), lavdata@nobs[[g]])
-            warning("lavaan WARNING: casewise PI not implemented")
+            warning("psindex WARNING: casewise PI not implemented")
         }  
 
         PI[[g]] <- PI.group
@@ -1055,7 +1055,7 @@ lav_tables_table_format <- function(out, lavdata = lavdata,
         }
         UNI <- NULL
     } else if(length(stat.idx) > 1) {
-        stop("lavaan ERROR: more than one statistic for table output: ", 
+        stop("psindex ERROR: more than one statistic for table output: ", 
               paste(NAMES[stat.idx], collapse=" "))
     } else {
         # univariate version of same statistic
@@ -1096,7 +1096,7 @@ lav_tables_table_format <- function(out, lavdata = lavdata,
         } else if(NAMES[stat.idx] %in% c("cor", "cor.un")) {
             diag(OUT[[g]]) <- 1
         }
-        class(OUT[[g]]) <- c("lavaan.matrix.symmetric", "matrix")
+        class(OUT[[g]]) <- c("psindex.matrix.symmetric", "matrix")
     }
     if(lavdata@ngroups > 1L) {
         names(OUT) <- lavdata@group.label
@@ -1127,7 +1127,7 @@ lav_tables_cells_format <- function(out, lavdata = lavdata,
     if(length(stat.idx) == 0) {
         statistic <- "obs.freq"
     } else if(length(stat.idx) > 1) {
-         stop("lavaan ERROR: more than one statistic for table output: ",
+         stop("psindex ERROR: more than one statistic for table output: ",
               paste(NAMES[stat.idx], collapse=" "))
     } else {
         statistic <- NAMES[stat.idx]
@@ -1142,7 +1142,7 @@ lav_tables_cells_format <- function(out, lavdata = lavdata,
                               max(Tx$row), max(Tx$col))
                   rownames(M) <- unique(Tx$row)
                   colnames(M) <- unique(Tx$col)
-                  class(M) <- c("lavaan.matrix", "matrix")
+                  class(M) <- c("psindex.matrix", "matrix")
                   M })
         names(TMP) <- unique(paste(out$lhs[case.idx], out$rhs[case.idx], 
                                    sep="_"))

@@ -179,9 +179,9 @@ setClass("Fit",
     )
 )
 
-setClass("lavaan",
+setClass("psindex",
     representation(
-        version     = "character",       # lavaan version
+        version     = "character",       # psindex version
         call        = "call",            # matched call
         timing      = "list",            # timing information
         Options     = "list",            # lavOptions
@@ -204,7 +204,7 @@ setClass("lavaan",
     ) 
 )
 
-setClass("lavaanList",
+setClass("psindexList",
     representation(
         call            = "call",     # matched call
         Options         = "list",     # lavOptions

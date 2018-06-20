@@ -14,17 +14,17 @@ lavTestScore <- function(object, add = NULL, release = NULL,
                          epc = FALSE, verbose = FALSE, warn = TRUE) {
 
     # check object
-    stopifnot(inherits(object, "lavaan"))
+    stopifnot(inherits(object, "psindex"))
     lavoptions <- object@Options
 
     if(object@optim$npar > 0L && !object@optim$converged) {
-        stop("lavaan ERROR: model did not converge")
+        stop("psindex ERROR: model did not converge")
     }
 
     # check for inequality constraints
     PT <- object@ParTable
     if(any(PT$op == ">" | PT$op == "<")) {
-        stop("lavaan ERROR: lavTestScore() does not handle inequality constraints (yet)")
+        stop("psindex ERROR: lavTestScore() does not handle inequality constraints (yet)")
     }
 
     # check arguments
@@ -37,7 +37,7 @@ lavTestScore <- function(object, add = NULL, release = NULL,
     if(!is.null(add) && nchar(add) > 0L) {
         # check release argument
         if(!is.null(release)) {
-            stop("lavaan ERROR: `add' and `release' arguments cannot be used together.")
+            stop("psindex ERROR: `add' and `release' arguments cannot be used together.")
         }
 
         # extend model with extra set of parameters
@@ -73,13 +73,13 @@ lavTestScore <- function(object, add = NULL, release = NULL,
          op <- rep("==", nadd)
         rhs <- rep("0", nadd)
         Table <- data.frame(lhs = lhs, op = op, rhs = rhs)
-        class(Table) <- c("lavaan.data.frame", "data.frame")
+        class(Table) <- c("psindex.data.frame", "data.frame")
     } else {
     # MODE 2: releasing constraints
 
         R <- object@Model@con.jac[,,drop = FALSE]
         if(nrow(R) == 0L) {
-            stop("lavaan ERROR: no equality constraints found in model.")
+            stop("psindex ERROR: no equality constraints found in model.")
         }
 
         score <- lavTech(object, "gradient")
@@ -94,7 +94,7 @@ lavTestScore <- function(object, add = NULL, release = NULL,
         } else if(is.numeric(release)) {
             r.idx <- release
             if(max(r.idx) > nrow(R)) {
-                stop("lavaan ERROR: maximum constraint number (", max(r.idx),
+                stop("psindex ERROR: maximum constraint number (", max(r.idx),
                      ") is larger than number of constraints (", nrow(R), ")")
             }
 
@@ -116,7 +116,7 @@ lavTestScore <- function(object, add = NULL, release = NULL,
             rhs <- object@ParTable$rhs[eq.idx][r.idx]
         }
         Table <- data.frame(lhs = lhs, op = op, rhs = rhs)
-        class(Table) <- c("lavaan.data.frame", "data.frame")
+        class(Table) <- c("psindex.data.frame", "data.frame")
     }
 
     N <- nobs(object)
@@ -129,7 +129,7 @@ lavTestScore <- function(object, add = NULL, release = NULL,
     } else {
         # generalized score test
         if(warn) {
-            warning("lavaan WARNING: se is not `standard'; not implemented yet; falling back to ordinary score test")
+            warning("psindex WARNING: se is not `standard'; not implemented yet; falling back to ordinary score test")
         }
  
         # NOTE!!!
@@ -149,7 +149,7 @@ lavTestScore <- function(object, add = NULL, release = NULL,
 
     # total score test
     TEST <- data.frame(test = "score", X2 = stat, df = df, p.value = pvalue)
-    class(TEST) <- c("lavaan.data.frame", "data.frame")
+    class(TEST) <- c("psindex.data.frame", "data.frame")
     attr(TEST, "header") <- "total score test:"
 
     OUT <- list(test = TEST) 

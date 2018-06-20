@@ -132,7 +132,7 @@ lav_integration_gauss_hermite_dnorm <- function(n = 21L, mean = 0, sd = 1,
 }
 
 # plot 2-dim
-# out <- lavaan:::lav_integration_gauss_hermite_dnorm(n = 20, ndim = 2)
+# out <- psindex:::lav_integration_gauss_hermite_dnorm(n = 20, ndim = 2)
 # plot(out$x, cex = -10/log(out$w), col = "darkgrey", pch=19)
 
 # integrand g(x) has the form g(x) = f(x) dnorm(x, m, s^2)

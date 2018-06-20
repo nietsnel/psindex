@@ -42,9 +42,9 @@ lav_partable_indep_or_unrestricted <- function(lavobject      = NULL,
                                       sample.mean.x  = NULL,
                                       independent    = FALSE) {
 
-    # grab everything from lavaan lavobject
+    # grab everything from psindex lavobject
     if(!is.null(lavobject)) {
-        stopifnot(inherits(lavobject, "lavaan"))
+        stopifnot(inherits(lavobject, "psindex"))
 
         lavdata <- lavobject@Data
         lavoptions <- lavobject@Options
@@ -123,7 +123,7 @@ lav_partable_indep_or_unrestricted <- function(lavobject      = NULL,
     # - does not really matter; fit will be saturated any way
     # - fixed.x = TRUE may avoid convergence issues with non-numeric 
     #             x-covariates
-    #if(lavoptions$mimic %in% c("lavaan", "Mplus")) {
+    #if(lavoptions$mimic %in% c("psindex", "Mplus")) {
         fixed.x = lavoptions$fixed.x
     #} else if(lavoptions$mimic == "EQS") {
         # always ignore fixed.x

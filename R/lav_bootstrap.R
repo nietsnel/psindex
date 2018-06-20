@@ -35,22 +35,22 @@ bootstrapLavaan <- function(object,
 
     # checks
     type. <- tolower(type) # overwritten if nonparametric
-    stopifnot(inherits(object, "lavaan"),
+    stopifnot(inherits(object, "psindex"),
               type. %in% c("nonparametric", "ordinary",
                           "bollen.stine", "parametric", "yuan"))
     if(type. == "nonparametric") type. <- "ordinary"
 
     # check if options$se is not bootstrap, otherwise, we get an infinite loop
     if(object@Options$se == "bootstrap")
-        stop("lavaan ERROR: se == \"bootstrap\"; please refit model with another option for \"se\"")
+        stop("psindex ERROR: se == \"bootstrap\"; please refit model with another option for \"se\"")
      
     # check if options$test is not bollen.stine
     if(object@Options$test == "bollen.stine")
-        stop("lavaan ERROR: test == \"bollen.stine\"; please refit model with another option for \"test\"")
+        stop("psindex ERROR: test == \"bollen.stine\"; please refit model with another option for \"test\"")
 
     # check for conditional.x = TRUE
     if(object@Model@conditional.x) {
-        stop("lavaan ERROR: this function is not (yet) available if conditional.x = TRUE")
+        stop("psindex ERROR: this function is not (yet) available if conditional.x = TRUE")
     }
 
     lavoptions. <- list(parallel = parallel, ncpus = ncpus, cl = cl, 
@@ -73,7 +73,7 @@ bootstrapLavaan <- function(object,
 }
 
 # we need an internal version to be called from VCOV and lav_model_test
-# when there is no lavaan object yet!
+# when there is no psindex object yet!
 bootstrap.internal <- function(object          = NULL,
                                lavdata.        = NULL,
                                lavmodel.       = NULL,
@@ -154,7 +154,7 @@ bootstrap.internal <- function(object          = NULL,
     if(type == "bollen.stine" || type == "yuan") {
         # check if data is complete
         if(lavoptions$missing != "listwise")
-            stop("lavaan ERROR: bollen.stine/yuan bootstrap not available for missing data")
+            stop("psindex ERROR: bollen.stine/yuan bootstrap not available for missing data")
         dataX <- vector("list", length=lavdata@ngroups)
     } else {
         dataX <- lavdata@X
@@ -206,7 +206,7 @@ bootstrap.internal <- function(object          = NULL,
                 a0 <- min(max(a0 - dif/g2, 0), max.a)
             }
             # if search fails to converge in 50 iterations
-            warning("lavaan WARNING: yuan bootstrap search for `a` did not converge. h0.rmsea may be too large.")
+            warning("psindex WARNING: yuan bootstrap search for `a` did not converge. h0.rmsea may be too large.")
             a0
         }
 
@@ -320,7 +320,7 @@ bootstrap.internal <- function(object          = NULL,
         }
 
         # fit model on bootstrap sample
-        fit.boot <- lavaan(slotOptions     = lavoptions,
+        fit.boot <- psindex(slotOptions     = lavoptions,
                            slotParTable    = lavpartable,
                            slotModel       = model.boot,
                            slotSampleStats = bootSampleStats,
@@ -388,7 +388,7 @@ bootstrap.internal <- function(object          = NULL,
 
     # handle errors
     if(length(error.idx) > 0L) {
-        warning("lavaan WARNING: only ", (R-length(error.idx)), " bootstrap draws were successful")
+        warning("psindex WARNING: only ", (R-length(error.idx)), " bootstrap draws were successful")
         t.star <- t.star[-error.idx,,drop=FALSE]
         attr(t.star, "error.idx") <- error.idx
     } else {

@@ -13,7 +13,7 @@ twostep <- function(model      = NULL,
                     cmd        = "sem",
                     ...,
                     add.class = TRUE,
-                    output    = "lavaan") { # lavaan, PT or list
+                    output    = "psindex") { # psindex, PT or list
 
     # dot dot dot
     dotdotdot <- list(...)
@@ -58,7 +58,7 @@ twostep <- function(model      = NULL,
     # first, check if we have lv's
     lv.names <- unique(unlist(FIT@pta$vnames$lv.regular))
     if(length(lv.names) == 0L) {
-        stop("lavaan ERROR: model does not contain any latent variables")
+        stop("psindex ERROR: model does not contain any latent variables")
     }
     nfac     <- length(lv.names)
 
@@ -68,7 +68,7 @@ twostep <- function(model      = NULL,
     # total number of free parameters
     npar <- lav_partable_npar(PT)
     if(npar < 1L) {
-        stop("lavaan ERROR: model does not contain any free parameters")
+        stop("psindex ERROR: model does not contain any free parameters")
     }
     
 
@@ -115,7 +115,7 @@ twostep <- function(model      = NULL,
                     PTM$ustart == 0 ] <- 1
 
         # fit this measurement block, store the fitted object in the MM list
-        MM[[f]] <- lavaan::lavaan(model = PTM, ...) ## FIXME: reuse slots!
+        MM[[f]] <- psindex::psindex(model = PTM, ...) ## FIXME: reuse slots!
                  
         # fill in point estimates measurement block
         PT$est[ seq_len(length(PT$lhs)) %in% mm.idx &
@@ -163,14 +163,14 @@ twostep <- function(model      = NULL,
     PTS$free[ PTS$free > 0L ] <- seq_len( sum(PTS$free > 0L) )
 
     # estimate structural part
-    STRUC <- lavaan::lavaan(model = PTS, ...)  ### FIXME: reuse slots
+    STRUC <- psindex::psindex(model = PTS, ...)  ### FIXME: reuse slots
 
     # fill in point estimates structural part
     PT$est[ seq_len(length(PT$lhs)) %in% reg.idx &
             PT$free > 0L ] <- STRUC@ParTable$est[ PTS$free > 0L ]
 
     # construct JOINT model
-    JOINT <- lavaan::lavaan(PT, ..., optim.method = "none",
+    JOINT <- psindex::psindex(PT, ..., optim.method = "none",
                             se = "external")
 
     # TOTAL information
@@ -205,14 +205,14 @@ twostep <- function(model      = NULL,
     PT$se[ seq_len(length(PT$lhs)) %in% reg.idx &
                PT$free > 0L ] <- sqrt( diag(V) )
 
-    if(output == "lavaan") {
-        FINAL <- lavaan::lavaan(PT, ..., optim.method = "none",
+    if(output == "psindex") {
+        FINAL <- psindex::psindex(PT, ..., optim.method = "none",
                             se = "external")
         return(FINAL)
     } else if(output == "PT") {
         # for pretty printing only
         if(add.class) {
-            class(PT) <- c("lavaan.data.frame", "data.frame")
+            class(PT) <- c("psindex.data.frame", "data.frame")
         }
         return(PT)
     } else {

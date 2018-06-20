@@ -55,7 +55,7 @@ lav_object_independence <- function(object, se = FALSE, verbose = FALSE,
     # lavpartable, and they should be in the right order (unlike the
     # intercepts)
  
-    FIT <- lavaan(lavpartable,  
+    FIT <- psindex(lavpartable,  
                   slotOptions     = lavoptions,
                   slotSampleStats = object@SampleStats,
                   slotData        = object@Data,
@@ -106,7 +106,7 @@ lav_object_unrestricted <- function(object, se = FALSE, verbose = FALSE,
     # needed?
     if(any(lavpartable$op == "~1")) lavoptions$meanstructure <- TRUE
 
-    FIT <- lavaan(lavpartable,
+    FIT <- psindex(lavpartable,
                   slotOptions     = lavoptions,
                   slotSampleStats = object@SampleStats,
                   slotData        = object@Data,
@@ -160,7 +160,7 @@ lav_object_extended <- function(object, add = NULL,
         ADD <- add
     } else if(is.character(add)) {
         ngroups <- lav_partable_ngroups(partable)
-        ADD <- lavaanify(add, ngroups = ngroups)
+        ADD <- psindexify(add, ngroups = ngroups)
         ADD <- ADD[,c("lhs","op","rhs","block","group","user","label")]
         remove.idx <- which(ADD$user == 0)
         if(length(remove.idx) > 0L) {
@@ -204,7 +204,7 @@ lav_object_extended <- function(object, add = NULL,
     if(any(LIST$op == "~1")) lavoptions$meanstructure <- TRUE
 
     if(.hasSlot(object, "h1")) { # >= 0.6-1
-        FIT <- lavaan(LIST,
+        FIT <- psindex(LIST,
                       slotOptions     = lavoptions,
                       slotSampleStats = object@SampleStats,
                       slotData        = object@Data,
@@ -222,7 +222,7 @@ lav_object_extended <- function(object, add = NULL,
         # add a few slots
         object@Data@weights <- vector("list", object@Data@ngroups)
 
-        FIT <- lavaan(LIST,
+        FIT <- psindex(LIST,
                       slotOptions     = lavoptions,
                       slotSampleStats = object@SampleStats,
                       slotData        = object@Data,

@@ -1,4 +1,4 @@
-# for blavaan
+# for bpsindex
 setGeneric("fitMeasures", 
     function(object, fit.measures = "all", baseline.model = NULL) 
     standardGeneric("fitMeasures"))

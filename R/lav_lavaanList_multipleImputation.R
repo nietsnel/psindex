@@ -19,7 +19,7 @@ lavMultipleImputation <-
     dotdotdot <- list()
 
     # fit multiple times
-    fit <- do.call("lavaanList", args = c(list(model = model, 
+    fit <- do.call("psindexList", args = c(list(model = model, 
                    dataList = dataList, ndat = ndat, cmd = cmd,
                    store.slots = store.slots, FUN = FUN,
                    show.progress = show.progress,

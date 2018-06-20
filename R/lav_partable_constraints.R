@@ -41,11 +41,11 @@ lav_partable_constraints_def <- function(partable, con = NULL, debug = FALSE,
     # get corresponding 'x' indices
     def.x.idx  <- partable$free[match(def.labels, partable$label)]
     if(any(is.na(def.x.idx))) {
-        stop("lavaan ERROR: unknown label(s) in variable definition(s): ",
+        stop("psindex ERROR: unknown label(s) in variable definition(s): ",
          paste(def.labels[which(is.na(def.x.idx))], collapse=" "))
     }
     if(any(def.x.idx == 0)) {
-        stop("lavaan ERROR: non-free parameter(s) in variable definition(s): ",
+        stop("psindex ERROR: non-free parameter(s) in variable definition(s): ",
             paste(def.labels[which(def.x.idx == 0)], collapse=" "))
     }
     def.x.lab  <- paste(".x.[", def.x.idx, "]",sep="")
@@ -157,7 +157,7 @@ lav_partable_constraints_ceq <- function(partable, con = NULL, debug = FALSE,
 
     # check if we have found the label
     if(any(is.na(eq.x.idx))) {
-        stop("lavaan ERROR: unknown label(s) in equality constraint(s): ",
+        stop("psindex ERROR: unknown label(s) in equality constraint(s): ",
          paste(eq.labels[which(is.na(eq.x.idx))], collapse=" "))
     }
     # check if they are all 'free'
@@ -166,7 +166,7 @@ lav_partable_constraints_ceq <- function(partable, con = NULL, debug = FALSE,
         # FIXME: what should we do here? we used to stop with an error
         # from 0.5.18, we give a warning, and replace the non-free label
         # with its fixed value in ustart
-        warning("lavaan WARNING: non-free parameter(s) in equality constraint(s): ",
+        warning("psindex WARNING: non-free parameter(s) in equality constraint(s): ",
             paste(eq.labels[fixed.eq.idx], collapse=" "))
 
         fixed.lab.lhs <- eq.labels[fixed.eq.idx]
@@ -295,7 +295,7 @@ lav_partable_constraints_ciq <- function(partable, con = NULL, debug = FALSE,
 
     # check if we have found the label
     if(any(is.na(ineq.x.idx))) {
-        stop("lavaan ERROR: unknown label(s) in inequality constraint(s): ",
+        stop("psindex ERROR: unknown label(s) in inequality constraint(s): ",
          paste(ineq.labels[which(is.na(ineq.x.idx))], collapse=" "))
     }
     # check if they are all 'free'
@@ -304,7 +304,7 @@ lav_partable_constraints_ciq <- function(partable, con = NULL, debug = FALSE,
         # FIXME: what should we do here? we used to stop with an error
         # from 0.5.18, we give a warning, and replace the non-free label
         # with its fixed value in ustart
-        warning("lavaan WARNING: non-free parameter(s) in inequality constraint(s): ",
+        warning("psindex WARNING: non-free parameter(s) in inequality constraint(s): ",
             paste(ineq.labels[fixed.ineq.idx], collapse=" "))
 
         fixed.lab.lhs <- ineq.labels[fixed.ineq.idx]
@@ -411,7 +411,7 @@ lav_partable_constraints_label_id <- function(partable, con = NULL,
 
     # check if we have found the label
     if(any(is.na(con.x.idx)) && warn) {
-        warning("lavaan WARNING: unknown label(s) in equality constraint(s): ",
+        warning("psindex WARNING: unknown label(s) in equality constraint(s): ",
          paste(con.labels[which(is.na(con.x.idx))], collapse=" "))
     }
 

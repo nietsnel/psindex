@@ -8,7 +8,7 @@
 # public version
 lavNames <- function(object, type = "ov", ...) {
 
-    if(inherits(object, "lavaan") || inherits(object, "lavaanList")) {
+    if(inherits(object, "psindex") || inherits(object, "psindexList")) {
          partable <- object@ParTable
     } else if(class(object) == "list" ||
               inherits(object, "data.frame")) {
@@ -22,7 +22,7 @@ lavNames <- function(object, type = "ov", ...) {
 }
 
 # alias for backwards compatibility
-lavaanNames <- lavNames
+psindexNames <- lavNames
 
 # return variable names in a partable
 # - the 'type' argument determines the status of the variable: observed,
@@ -111,13 +111,13 @@ lav_partable_vnames <- function(partable, type = NULL, ...,
                     block.select <- ( block.select &
                                   partable[[block.var]] %in% block.val )
                 } else {
-                    stop("lavaan ERROR: selection variable `", 
+                    stop("psindex ERROR: selection variable `", 
                          block.var, " not found in the parameter table.")
                 }
 
             } else {
                 if(!all(block.val %in% partable[[block.var]])) {
-                    stop("lavaan ERROR: ", block.var ,
+                    stop("psindex ERROR: ", block.var ,
                         " column does not contain value `", block.val, "'")
                 }
                 block.select <- ( block.select & 
@@ -127,7 +127,7 @@ lav_partable_vnames <- function(partable, type = NULL, ...,
         block.select <- unique(partable$block[block.select])
 
         if(length(block.select) == 0L) {
-            warnings("lavaan WARNING: no blocks selected.")
+            warnings("psindex WARNING: no blocks selected.")
         }
     }
 
@@ -328,7 +328,7 @@ lav_partable_vnames <- function(partable, type = NULL, ...,
                            "th.mean","lv.nonnormal"))) {
             # correction: is any of these ov.names.x mentioned as a variance,
             #             covariance, or intercept?
-            # this should trigger a warning in lavaanify()
+            # this should trigger a warning in psindexify()
             if(is.null(partable$user)) { # FLAT!
                 partable$user <-  rep(1L, length(partable$lhs))
             }
@@ -344,12 +344,12 @@ lav_partable_vnames <- function(partable, type = NULL, ...,
             idx.no.x <- which(ov.x %in% vars)
             if(length(idx.no.x)) {
                 if(ov.x.fatal) {
-                   stop("lavaan ERROR: model syntax contains variance/covariance/intercept formulas\n  involving (an) exogenous variable(s): [",
+                   stop("psindex ERROR: model syntax contains variance/covariance/intercept formulas\n  involving (an) exogenous variable(s): [",
                             paste(ov.x[idx.no.x], collapse=" "),
                             "];\n  Please remove them and try again.")
                 }
                 if(warn) {
-                    warning("lavaan WARNING: model syntax contains variance/covariance/intercept formulas\n  involving (an) exogenous variable(s): [",
+                    warning("psindex WARNING: model syntax contains variance/covariance/intercept formulas\n  involving (an) exogenous variable(s): [",
                             paste(ov.x[idx.no.x], collapse=" "),
                             "];\n  Please use fixed.x=FALSE or leave them alone")
                 }

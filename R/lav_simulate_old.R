@@ -45,18 +45,18 @@ simulateData <- function(
     #    runif(1)               # initialize the RNG if necessary
     #RNGstate <- .Random.seed
 
-    # lavaanify
+    # psindexify
     if(is.list(model)) {
-        # two possibilities: either model is already lavaanified
+        # two possibilities: either model is already psindexified
         # or it is something else...
         if(!is.null(model$lhs) && !is.null(model$op)  &&
            !is.null(model$rhs) && !is.null(model$free)) {
             lav <- model
         } else if(is.character(model[[1]])) {
-            stop("lavaan ERROR: model is a list, but not a parameterTable?")
+            stop("psindex ERROR: model is a list, but not a parameterTable?")
         }
     } else {
-        lav <- lavaanify(model = model, 
+        lav <- psindexify(model = model, 
                          meanstructure=meanstructure,
                          int.ov.free=int.ov.free, 
                          int.lv.free=int.lv.free,
@@ -93,7 +93,7 @@ simulateData <- function(
 
     idx <- which(lav$op == "~" & is.na(lav$ustart)) 
     if(length(idx) > 0L) {
-        warning("lavaan WARNING: some regression coefficients are unspecified and will be set to zero")
+        warning("psindex WARNING: some regression coefficients are unspecified and will be set to zero")
     }
 
     idx <- which(is.na(lav$ustart))
@@ -111,13 +111,13 @@ simulateData <- function(
         # check if factor loadings are smaller than 1.0
         lambda.idx <- which(lav$op == "=~")
         if(any(lav$ustart[lambda.idx] >= 1.0)) {
-            warning("lavaan WARNING: standardized=TRUE but factor loadings are >= 1.0")
+            warning("psindex WARNING: standardized=TRUE but factor loadings are >= 1.0")
         }
 
         # check if regression coefficients are smaller than 1.0
         reg.idx <- which(lav$op == "~")
         if(any(lav$ustart[reg.idx] >= 1.0)) {
-            warning("lavaan WARNING: standardized=TRUE but regression coefficients are >= 1.0")
+            warning("psindex WARNING: standardized=TRUE but regression coefficients are >= 1.0")
         }
 
         # for ordered observed variables, we will get '0.0', but that is ok
@@ -134,10 +134,10 @@ simulateData <- function(
         lv.var.idx <- which(lav$op == "~~" & lav$lhs %in% lv.y &
                             lav$rhs == lav$lhs)
         if(any(lav2$user[c(ov.var.idx, lv.var.idx)] > 0L)) {
-            warning("lavaan WARNING: if residual variances are specified, please use standardized=FALSE")
+            warning("psindex WARNING: if residual variances are specified, please use standardized=FALSE")
         }
         lav2$ustart[c(ov.var.idx,lv.var.idx)] <- 0.0
-        fit <- lavaan(model=lav2, sample.nobs=sample.nobs, ...)
+        fit <- psindex(model=lav2, sample.nobs=sample.nobs, ...)
         Sigma.hat <- computeSigmaHat(lavmodel = fit@Model)
         ETA <- computeVETA(lavmodel = fit@Model)
 
@@ -188,7 +188,7 @@ simulateData <- function(
     }
 
     # fit the model without data
-    fit <- lavaan(model=lav, sample.nobs=sample.nobs,  ...)
+    fit <- psindex(model=lav, sample.nobs=sample.nobs,  ...)
 
     # the model-implied moments for the population
     Sigma.hat <- computeSigmaHat(lavmodel = fit@Model)
@@ -372,7 +372,7 @@ ValeMaurelli1983 <- function(n=100L, COR, skewness, kurtosis, debug = FALSE) {
                       control=list(trace=0),
                       skewness=skewness, kurtosis=kurtosis)
         if(out$convergence != 0 || out$objective > 1e-5) {
-            warning("lavaan WARNING: ValeMaurelli1983 method did not convergence, or it did not find the roots")
+            warning("psindex WARNING: ValeMaurelli1983 method did not convergence, or it did not find the roots")
         }
         b. <- out$par[1L]; c. <- out$par[2L]; d. <- out$par[3L]; a. <- -c.
         c(a.,b.,c.,d.)

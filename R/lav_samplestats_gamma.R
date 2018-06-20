@@ -17,7 +17,7 @@ lavGamma <- function(object, group = NULL, missing = "listwise",
                      meanstructure = FALSE, slopestructure = FALSE,
                      Mplus.WLS = FALSE, add.labels) {
     
-    if(inherits(object, "lavaan")) {
+    if(inherits(object, "psindex")) {
         lavdata <- object@Data
         if(missing(missing)) {
             missing <- object@Options$missing
@@ -42,7 +42,7 @@ lavGamma <- function(object, group = NULL, missing = "listwise",
                            lavoptions = list(warn = FALSE,
                                              missing = missing))
     } else {
-        stop("lavaan ERROR: lavGamma can not handle objects of class ",
+        stop("psindex ERROR: lavGamma can not handle objects of class ",
              paste(class(object), collapse= " "))
     }
 

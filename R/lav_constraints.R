@@ -25,7 +25,7 @@ lav_constraints_parse <- function(partable = NULL, constraints = NULL,
     if(is.null(constraints)) {
         LIST <- NULL
     } else if(!is.character(constraints)) {
-        stop("lavaan ERROR: constraints should be a string")
+        stop("psindex ERROR: constraints should be a string")
     } else {
         FLAT <- lavParseModelString( constraints )
         CON <- attr(FLAT, "constraints")
@@ -38,7 +38,7 @@ lav_constraints_parse <- function(partable = NULL, constraints = NULL,
             LIST$op         <- c(LIST$op,         op)
             LIST$rhs        <- c(LIST$rhs,        rhs)
         } else {
-            stop("lavaan ERROR: no constraints found in constraints argument")
+            stop("psindex ERROR: no constraints found in constraints argument")
         }
     }
 

@@ -14,7 +14,7 @@ lavTestLRT <- function(object, ..., method = "default", A.method = "delta",
                        H1 = TRUE, type = "Chisq", model.names = NULL) {
 
     if(object@optim$npar > 0L && !object@optim$converged)
-        stop("lavaan ERROR: model did not converge")
+        stop("psindex ERROR: model did not converge")
     type <- tolower(type)
     method <- tolower( gsub("[-_\\.]", "", method ) )
 
@@ -25,7 +25,7 @@ lavTestLRT <- function(object, ..., method = "default", A.method = "delta",
     dots <- list(...)
   
     modp <- if(length(dots))
-        sapply(dots, is, "lavaan") else logical(0)
+        sapply(dots, is, "psindex") else logical(0)
 
     # some general properties (taken from the first model)
     estimator <- object@Options$estimator
@@ -37,7 +37,7 @@ lavTestLRT <- function(object, ..., method = "default", A.method = "delta",
     # shortcut for single argument (just plain LRT)
     if(!any(modp)) {
         if(type == "cf") {
-            warning("lavaan WARNING: `type' argument is ignored for a single model")
+            warning("psindex WARNING: `type' argument is ignored for a single model")
         }
         aic <- bic <- c(NA, NA)
         if(estimator == "ML") {
@@ -87,12 +87,12 @@ lavTestLRT <- function(object, ..., method = "default", A.method = "delta",
         ov.names <- lapply(mods, function(x) { sort(lavNames(x)) })
         OV <- ov.names[[1L]] # the observed variable names of the first model
         if(!all(sapply(ov.names, function(x) identical(x, OV)))) {
-            warning("lavaan WARNING: some models are based on a different set of observed variables")
+            warning("psindex WARNING: some models are based on a different set of observed variables")
         }
         ## wow FIXME: we may need to reorder the rows/columns first!!
         #COVS <- lapply(mods, function(x) slot(slot(x, "Sample"), "cov")[[1]])
         #if(!all(sapply(COVS, all.equal, COVS[[1]]))) {
-        #    stop("lavaan ERROR: models must be fit to the same data")
+        #    stop("psindex ERROR: models must be fit to the same data")
         #}
         # 2. nested models? *different* npars?
      
@@ -102,7 +102,7 @@ lavTestLRT <- function(object, ..., method = "default", A.method = "delta",
         mean.structure <- sapply(mods, inspect, "meanstructure")
         if(sum(mean.structure) > 0L && 
            sum(mean.structure) < length(mean.structure)) {
-            warning("lavaan WARNING: not all models have a meanstructure")
+            warning("psindex WARNING: not all models have a meanstructure")
         }
     }
 
@@ -119,7 +119,7 @@ lavTestLRT <- function(object, ..., method = "default", A.method = "delta",
         scaled <- FALSE
         TEST <- "standard"
     } else {
-        stop("lavaan ERROR: some models (but not all) have scaled test statistics")
+        stop("psindex ERROR: some models (but not all) have scaled test statistics")
     }
 
     # which models have used a MEANSTRUCTURE?
@@ -131,7 +131,7 @@ lavTestLRT <- function(object, ..., method = "default", A.method = "delta",
     } else if(sum(mods.meanstructure) == 0) {
         meanstructure <- "ok"
     } else {
-        stop("lavaan ERROR: some models (but not all) have a meanstructure")
+        stop("psindex ERROR: some models (but not all) have a meanstructure")
     }
 
     # collect statistics for each model
@@ -140,7 +140,7 @@ lavTestLRT <- function(object, ..., method = "default", A.method = "delta",
     } else if(type == "cf") {
         Df <- rep(as.numeric(NA), length(mods))
     } else {
-        stop("lavaan ERROR: test type unknown: ", type)
+        stop("psindex ERROR: test type unknown: ", type)
     }
     
 
@@ -151,7 +151,7 @@ lavTestLRT <- function(object, ..., method = "default", A.method = "delta",
         STAT <- unlist(tmp)
         Df  <- unlist(lapply(tmp, attr, "DF"))
     } else {
-        stop("lavaan ERROR: test type unknown: ", type)
+        stop("psindex ERROR: test type unknown: ", type)
     }
 
     # difference statistics
@@ -181,7 +181,7 @@ lavTestLRT <- function(object, ..., method = "default", A.method = "delta",
         } else if(method == "satorrabentler2010") {
             method <- "satorra.bentler.2010"
         } else {
-            stop("lavaan ERROR: unknown method for scaled difference test: ", method)
+            stop("psindex ERROR: unknown method for scaled difference test: ", method)
         }
 
         if(method == "satorra.bentler.2001") {
@@ -268,7 +268,7 @@ lavTestLRT <- function(object, ..., method = "default", A.method = "delta",
     }
     if(length(idx) > 0L) {
         val[idx, "Pr(>Chisq)"] <- as.numeric(NA)
-        warning("lavaan WARNING: some models have the same degrees of freedom")
+        warning("psindex WARNING: some models have the same degrees of freedom")
     }
 
     if(type == "chisq") {

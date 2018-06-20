@@ -182,7 +182,7 @@ short.summary <- function(object) {
     #cat("\n")
 }
 
-setMethod("show", "lavaan",
+setMethod("show", "psindex",
 function(object) {
 
     # show only basic information
@@ -190,7 +190,7 @@ function(object) {
 
 })
 
-setMethod("summary", "lavaan",
+setMethod("summary", "psindex",
 function(object, header       = TRUE,
                  fit.measures = FALSE,
                  estimates    = TRUE,
@@ -217,9 +217,9 @@ function(object, header       = TRUE,
     # only if requested, the fit measures
     if(fit.measures) {
         if(object@Options$test == "none") {
-            warning("lavaan WARNING: fit measures not available if test = \"none\"\n\n")
+            warning("psindex WARNING: fit measures not available if test = \"none\"\n\n")
         } else if(object@optim$npar > 0L && !object@optim$converged) {
-            warning("lavaan WARNING: fit measures not available if model did not converge\n\n")
+            warning("psindex WARNING: fit measures not available if model did not converge\n\n")
         } else {
             print.fit.measures( fitMeasures(object, fit.measures="default") )
         }
@@ -247,7 +247,7 @@ function(object, header       = TRUE,
 })
 
 
-setMethod("coef", "lavaan",
+setMethod("coef", "psindex",
 function(object, type="free", labels=TRUE) {
     lav_object_inspect_coef(object = object, type = type, 
                             add.labels = labels, add.class = TRUE)
@@ -275,8 +275,8 @@ standardizedSolution <- standardizedsolution <- function(object,
         zstat <- pvalue <- FALSE
     }
 
-    # no se if class is not lavaan
-    if(class(object) != "lavaan") {
+    # no se if class is not psindex
+    if(class(object) != "psindex") {
         if(missing(se) || !se) {
             se <- FALSE
             zstat <- FALSE
@@ -389,7 +389,7 @@ standardizedSolution <- standardizedsolution <- function(object,
     }
 
     # always add attributes (for now)
-    class(LIST) <- c("lavaan.data.frame", "data.frame")
+    class(LIST) <- c("psindex.data.frame", "data.frame")
     LIST
 }
 
@@ -411,12 +411,12 @@ parameterEstimates <- parameterestimates <- function(object,
                                                      add.attributes = FALSE,
                                                      header = TRUE) {
 
-    if("lavaan.fsr" %in% class(object)) {
+    if("psindex.fsr" %in% class(object)) {
         return(object$PE)
     }
 
-    # no se if class is not lavaan
-    if(class(object) != "lavaan") {
+    # no se if class is not psindex
+    if(class(object) != "psindex") {
         if(missing(se) || !se) {
             se <- FALSE
             zstat <- FALSE
@@ -426,24 +426,24 @@ parameterEstimates <- parameterestimates <- function(object,
 
     # check fmi
     if(fmi) {
-        if(inherits(object, "lavaanList")) {
-            warning("lavaan WARNING: fmi not available for object of class \"lavaanList\"")
+        if(inherits(object, "psindexList")) {
+            warning("psindex WARNING: fmi not available for object of class \"psindexList\"")
             fmi <- FALSE
         }
         if(object@Options$se != "standard") {
-            warning("lavaan WARNING: fmi only available if se = \"standard\"")
+            warning("psindex WARNING: fmi only available if se = \"standard\"")
             fmi <- FALSE
         }
         if(object@Options$estimator != "ML") {
-            warning("lavaan WARNING: fmi only available if estimator = \"ML\"")
+            warning("psindex WARNING: fmi only available if estimator = \"ML\"")
             fmi <- FALSE
         }
         if(!object@SampleStats@missing.flag) {
-            warning("lavaan WARNING: fmi only available if missing = \"(fi)ml\"")
+            warning("psindex WARNING: fmi only available if missing = \"(fi)ml\"")
             fmi <- FALSE
         }
         if(!object@optim$converged) {
-            warning("lavaan WARNING: fmi not available; model did not converge")
+            warning("psindex WARNING: fmi not available; model did not converge")
             fmi <- FALSE
         }
     }
@@ -483,7 +483,7 @@ parameterEstimates <- parameterestimates <- function(object,
     } else {
         LIST$exo <- rep(0L, length(LIST$lhs))
     }
-    if(inherits(object, "lavaanList")) {
+    if(inherits(object, "psindexList")) {
         # per default: nothing!
         #if("partable" %in% object@meta$store.slots) {
         #    COF <- sapply(object@ParTableList, "[[", "est")
@@ -671,7 +671,7 @@ parameterEstimates <- parameterestimates <- function(object,
         r2 <- lavTech(object, "rsquare", add.labels = TRUE)
         NAMES <- unlist(lapply(r2, names)); nel <- length(NAMES)
         if(nel == 0L) {
-            warning("lavaan WARNING: rsquare = TRUE, but there are no dependent variables")
+            warning("psindex WARNING: rsquare = TRUE, but there are no dependent variables")
         } else {
             if(lav_partable_nlevels(LIST) == 1L) {
             R2 <- data.frame( lhs = NAMES, op = rep("r2", nel), rhs = NAMES,
@@ -710,7 +710,7 @@ parameterEstimates <- parameterestimates <- function(object,
         }
 
         # fit another model, using the model-implied moments as input data
-        step2 <- lavaan(slotOptions  = object@Options,
+        step2 <- psindex(slotOptions  = object@Options,
                         slotParTable = object@ParTable,
                         sample.cov   = COV,
                         sample.mean  = MEAN,
@@ -774,7 +774,7 @@ parameterEstimates <- parameterestimates <- function(object,
     LIST$user <- NULL
 
     if(add.attributes) {
-        class(LIST) <- c("lavaan.parameterEstimates", "lavaan.data.frame",
+        class(LIST) <- c("psindex.parameterEstimates", "psindex.data.frame",
                          "data.frame")
         attr(LIST, "information") <- object@Options$information
         attr(LIST, "se") <- object@Options$se
@@ -790,7 +790,7 @@ parameterEstimates <- parameterestimates <- function(object,
         # FIXME: add more!!
     } else {
         LIST$exo <- NULL
-        class(LIST) <- c("lavaan.data.frame", "data.frame")
+        class(LIST) <- c("psindex.data.frame", "data.frame")
     }
 
     LIST
@@ -802,7 +802,7 @@ parameterTable <- parametertable <- parTable <- partable <-
     # convert to data.frame
     out <- as.data.frame(object@ParTable, stringsAsFactors = FALSE)
 
-    class(out) <- c("lavaan.data.frame", "data.frame")
+    class(out) <- c("psindex.data.frame", "data.frame")
     out
 }
 
@@ -811,7 +811,7 @@ varTable <- vartable <- function(object, ov.names=names(object),
                                  ordered = NULL, factor = NULL,
                                  as.data.frame.=TRUE) {
 
-    if(inherits(object, "lavaan")) {
+    if(inherits(object, "psindex")) {
         VAR <- object@Data@ov
     } else if(inherits(object, "lavData")) {
         VAR <- object@ov
@@ -821,20 +821,20 @@ varTable <- vartable <- function(object, ov.names=names(object),
                                       ordered = ordered, factor = factor,
                                       as.data.frame. = FALSE)
     } else {
-        stop("object must of class lavaan or a data.frame")
+        stop("object must of class psindex or a data.frame")
     }
 
     if(as.data.frame.) {
         VAR <- as.data.frame(VAR, stringsAsFactors=FALSE,
                              row.names=1:length(VAR$name))
-        class(VAR) <- c("lavaan.data.frame", "data.frame")
+        class(VAR) <- c("psindex.data.frame", "data.frame")
     }
 
     VAR
 }
 
 
-setMethod("fitted.values", "lavaan",
+setMethod("fitted.values", "psindex",
 function(object, type = "moments", labels=TRUE) {
 
     # lowercase type
@@ -851,21 +851,21 @@ function(object, type = "moments", labels=TRUE) {
 })
 
 
-setMethod("fitted", "lavaan",
+setMethod("fitted", "psindex",
 function(object, type = "moments", labels=TRUE) {
      fitted.values(object, type = type, labels = labels)
 })
 
 
-setMethod("vcov", "lavaan",
+setMethod("vcov", "psindex",
 function(object, labels = TRUE, remove.duplicated = FALSE) {
 
     # check for convergence first!
     if(object@optim$npar > 0L && !object@optim$converged)
-        stop("lavaan ERROR: model did not converge")
+        stop("psindex ERROR: model did not converge")
 
     if(object@Options$se == "none") {
-        stop("lavaan ERROR: vcov not available if se=\"none\"")
+        stop("psindex ERROR: vcov not available if se=\"none\"")
     }
 
     VarCov <- lav_object_inspect_vcov(object,
@@ -878,13 +878,13 @@ function(object, labels = TRUE, remove.duplicated = FALSE) {
 
 
 # logLik (so that we can use the default AIC/BIC functions from stats4(
-setMethod("logLik", "lavaan",
+setMethod("logLik", "psindex",
 function(object, ...) {
     if(object@Options$estimator != "ML") {
-        warning("lavaan WARNING: logLik only available if estimator is ML")
+        warning("psindex WARNING: logLik only available if estimator is ML")
     }
     if(object@optim$npar > 0L && !object@optim$converged) {
-        warning("lavaan WARNING: model did not converge")
+        warning("psindex WARNING: model did not converge")
     }
    
     # new in 0.6-1: we use the @loglik slot (instead of fitMeasures)
@@ -909,13 +909,13 @@ function(object, ...) {
 if(!exists("nobs", envir=asNamespace("stats4"))) {
     setGeneric("nobs", function(object, ...) standardGeneric("nobs"))
 }
-setMethod("nobs", signature(object = "lavaan"),
+setMethod("nobs", signature(object = "psindex"),
 function(object, ...) {
     object@SampleStats@ntotal
 })
 
 # see: src/library/stats/R/update.R
-setMethod("update", signature(object = "lavaan"),
+setMethod("update", signature(object = "psindex"),
 function(object, model, add, ..., evaluate = TRUE) {
 
     call <- object@call
@@ -975,7 +975,7 @@ function(object, model, add, ..., evaluate = TRUE) {
     ## is a parameter table, so update the parameter table in the call
     if (!(mode(add) %in% c("list","character"))) {
         stop("'add' argument must be model syntax or parameter table. ",
-             "See ?lavaanify help page.")
+             "See ?psindexify help page.")
     }
     PT <- lav_object_extended(newfit, add = add)@ParTable
     PT$user <- NULL # get rid of "10" category used in lavTestScore()
@@ -993,7 +993,7 @@ function(object, model, add, ..., evaluate = TRUE) {
 })
 
 
-setMethod("anova", signature(object = "lavaan"),
+setMethod("anova", signature(object = "psindex"),
 function(object, ...) {
 
     # NOTE: if we add additional arguments, it is not the same generic
@@ -1019,7 +1019,7 @@ function(object, ...) {
     }
 
     modp <- if(length(dots))
-        sapply(dots, is, "lavaan") else logical(0)
+        sapply(dots, is, "psindex") else logical(0)
     mods <- c(list(object), dots[modp])
     NAMES <- sapply(as.list(mcall)[c(FALSE, TRUE, modp)], deparse)
 

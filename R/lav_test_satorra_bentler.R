@@ -10,7 +10,7 @@ lav_test_satorra_bentler <- function(lavobject      = NULL,
                                      WLS.V          = NULL,
                                      Gamma          = NULL,
                                      test           = "satorra.bentler",
-                                     mimic          = "lavaan",
+                                     mimic          = "psindex",
                                      method         = "default",
                                      return.ugamma  = FALSE) {
 
@@ -32,7 +32,7 @@ lav_test_satorra_bentler <- function(lavobject      = NULL,
     if(!all(test %in% c("satorra.bentler",
                         "scaled.shifted",
                         "mean.var.adjusted"))) {
-        warning("lavaan WARNING: test must be one of `satorra.bentler', `scaled.shifted' or `mean.var.adjusted'; will use `satorra.bentler' only")
+        warning("psindex WARNING: test must be one of `satorra.bentler', `scaled.shifted' or `mean.var.adjusted'; will use `satorra.bentler' only")
         test <- "satorra.bentler"
     }
 
@@ -41,7 +41,7 @@ lav_test_satorra_bentler <- function(lavobject      = NULL,
         method <- "ABA"
     } else if(!all(method %in% c("original", "orthogonal.complement", 
                                  "ABA"))) {
-        warning("lavaan WARNING: method must be one of `original', `ABA', `orthogonal.complement'; will use `original'")
+        warning("psindex WARNING: method must be one of `original', `ABA', `orthogonal.complement'; will use `original'")
         method <- "ABA"
     }
 
@@ -64,7 +64,7 @@ lav_test_satorra_bentler <- function(lavobject      = NULL,
                 stat.group = rep(as.numeric(NA), lavsamplestats@ngroups),
                 df = TEST.unscaled$df, refdistr = TEST.unscaled$refdistr,
                 pvalue = as.numeric(NA), scaling.factor = as.numeric(NA))
-            warning("lavaan WARNING: could not invert information matrix\n")
+            warning("psindex WARNING: could not invert information matrix\n")
             return(TEST)
         }
         Delta <- attr(E, "Delta")
@@ -114,7 +114,7 @@ lav_test_satorra_bentler <- function(lavobject      = NULL,
                    return.ugamma = return.ugamma,
                    Satterthwaite = Satterthwaite)
     } else {
-        stop("lavaan ERROR: method `", method, "' not supported")
+        stop("psindex ERROR: method `", method, "' not supported")
     }
     trace.UGamma  <- out$trace.UGamma
     trace.UGamma2 <- out$trace.UGamma2

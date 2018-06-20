@@ -344,7 +344,7 @@ estimator.PML <- function(Sigma.hat  = NULL,    # model-based var/cov/cor
              #bivariate probabilities p(y_i=a,y_j=b). To do the appropriate summations
              #and divisions we need some index vectors to keep track of the index i, j,
              #a, and b, as well as the pair index. These index vectors should be 
-             #computed once and stored in lavcache. About where in the lavaan code
+             #computed once and stored in lavcache. About where in the psindex code
              #we will add the computations and how they will be done please see the 
              #file "new objects in lavcache for DR-PL.r"
 
@@ -485,7 +485,7 @@ estimator.PML <- function(Sigma.hat  = NULL,    # model-based var/cov/cor
 
         na.idx <- which(is.na(logLikPair))
         if(length(na.idx) > 0L) {
-            warning("lavaan WARNING: some pairs produces NA values for logl:",
+            warning("psindex WARNING: some pairs produces NA values for logl:",
                     "\n", paste(round(logLikPair, 3), collapse = " "))
         }
 

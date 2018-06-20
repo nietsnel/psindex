@@ -20,7 +20,7 @@ lav_syntax_independence <- function(ov.names=character(0),
         # FIXME: check rownames and reorder...
     }
 
-    # construct lavaan syntax for an independence model
+    # construct psindex syntax for an independence model
     txt <- "# independence model\n"
 
     # =~ lines (each observed variables has its own latent variable)
@@ -63,7 +63,7 @@ lav_syntax_independence <- function(ov.names=character(0),
                                 "\n", sep="", collapse=""), sep="")
     }
 
-    # Note: no need to pass starting values here, lavaanStart will
+    # Note: no need to pass starting values here, psindexStart will
     # use the sample statistics anyway....
 
     txt

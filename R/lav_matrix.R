@@ -1182,7 +1182,7 @@ lav_matrix_symmetric_inverse_update <- function(S.inv, rm.idx = integer(0L),
     } 
 
     else {
-        stop("lavaan ERROR: column indices exceed number of columns in S.inv")
+        stop("psindex ERROR: column indices exceed number of columns in S.inv")
     }
 
     out

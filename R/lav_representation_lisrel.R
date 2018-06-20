@@ -1271,7 +1271,7 @@ computeYHATetax.LISREL <- function(MLIST=NULL, eXo=NULL, ETA=NULL,
         nexo <- ncol(eXo)
         # check ETA rows
         if(!(nrow(ETA) == 1L || nrow(ETA) == nrow(eXo))) {
-            stop("lavaan ERROR: !(nrow(ETA) == 1L || nrow(ETA) == nrow(eXo))")
+            stop("psindex ERROR: !(nrow(ETA) == 1L || nrow(ETA) == nrow(eXo))")
         }
     }
 
@@ -2282,10 +2282,10 @@ derivative.alpha.LISREL <- function(m="alpha",
 }
 
 # MLIST = NULL; meanstructure=TRUE; th=TRUE; delta=TRUE; pi=TRUE; gw=FALSE
-# lav_matrix_vech_idx <- lavaan:::lav_matrix_vech_idx; lav_matrix_vechru_idx <- lavaan:::lav_matrix_vechru_idx
-# vec <- lavaan:::vec; lav_func_jacobian_complex <- lavaan:::lav_func_jacobian_complex
-# computeSigmaHat.LISREL <- lavaan:::computeSigmaHat.LISREL
-# setDeltaElements.LISREL <- lavaan:::setDeltaElements.LISREL
+# lav_matrix_vech_idx <- psindex:::lav_matrix_vech_idx; lav_matrix_vechru_idx <- psindex:::lav_matrix_vechru_idx
+# vec <- psindex:::vec; lav_func_jacobian_complex <- psindex:::lav_func_jacobian_complex
+# computeSigmaHat.LISREL <- psindex:::computeSigmaHat.LISREL
+# setDeltaElements.LISREL <- psindex:::setDeltaElements.LISREL
 TESTING_derivatives.LISREL <- function(MLIST = NULL,
                                        nvar = NULL, nfac = NULL, nexo = NULL,
                                        th.idx = NULL, num.idx = NULL,

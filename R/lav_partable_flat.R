@@ -48,7 +48,7 @@ lav_partable_flat <- function(FLAT = NULL,
     if(length(ov.names.ord1) > 0L) {
         idx <- which(ov.names.ord1 %in% ov.names.x)
         if(length(idx) > 0L) {
-            warning("lavaan WARNING: thresholds are defined for exogenous variables: ", paste(ov.names.ord1[idx], collapse=" "))
+            warning("psindex WARNING: thresholds are defined for exogenous variables: ", paste(ov.names.ord1[idx], collapse=" "))
         }
     }
  
@@ -77,7 +77,7 @@ lav_partable_flat <- function(FLAT = NULL,
             nth <- varTable$nlev[ varTable$name == o ] - 1L
             nth.in.partable <- sum(FLAT$op == "|" & FLAT$lhs == o)
             if(nth != nth.in.partable) {
-                stop("lavaan ERROR: expected ", max(0,nth), 
+                stop("psindex ERROR: expected ", max(0,nth), 
                      " threshold(s) for variable ",
                      sQuote(o), "; syntax contains ", nth.in.partable, "\n")
             }
@@ -90,7 +90,7 @@ lav_partable_flat <- function(FLAT = NULL,
     # std.lv = TRUE, group.equal includes "loadings": give warning
     if(ngroups > 1L && std.lv && "loadings" %in% group.equal) {
         # suggested by Michael Hallquist
-        warning("lavaan WARNING: std.lv = TRUE forces all variances to be unity in all groups, despite group.equal = \"loadings\"")
+        warning("psindex WARNING: std.lv = TRUE forces all variances to be unity in all groups, despite group.equal = \"loadings\"")
     }
 
     lhs <- rhs <- character(0)
@@ -229,9 +229,9 @@ lav_partable_flat <- function(FLAT = NULL,
                               USER$op    == DEFAULT$op[i]  &
                               USER$rhs   == DEFAULT$rhs[i])
             if(length(flat.idx) != 1L) {
-                cat("[lavaan DEBUG] idx in TMP: i = ", i, "\n"); print(TMP[i,])
-                cat("[lavaan DEBUG] idx in DEFAULT: i = ", i, "\n"); print(DEFAULT[i,])
-               cat("[lavaan DEBUG] flat.idx:"); print(flat.idx)
+                cat("[psindex DEBUG] idx in TMP: i = ", i, "\n"); print(TMP[i,])
+                cat("[psindex DEBUG] idx in DEFAULT: i = ", i, "\n"); print(DEFAULT[i,])
+               cat("[psindex DEBUG] flat.idx:"); print(flat.idx)
             }
         }
         DEFAULT <- DEFAULT[-idx,]

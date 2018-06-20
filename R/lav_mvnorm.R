@@ -79,7 +79,7 @@ lav_mvnorm_dmvnorm <- function(Y             = NULL,
     # x.idx?
     if(!is.null(x.idx) && length(x.idx) > 0L) {
         if(is.null(Sigma) && is.null(x.cov)) {
-            stop("lavaan ERROR: when x.idx is not NULL, we need Sigma or x.cov")
+            stop("psindex ERROR: when x.idx is not NULL, we need Sigma or x.cov")
         }
         if(is.matrix(Y)) {
             X <- Y[, x.idx, drop = FALSE]

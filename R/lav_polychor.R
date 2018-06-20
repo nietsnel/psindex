@@ -294,10 +294,10 @@ pc_cor_TS <- function(Y1, Y2, eXo=NULL, fit.y1=NULL, fit.y2=NULL, freq=NULL,
             empty.cells <- TRUE
             if(zero.cell.warn) {
                 if(!is.null(Y1.name) && !is.null(Y2.name)) {
-                warning("lavaan WARNING: empty cell(s) in bivariate table of ",
+                warning("psindex WARNING: empty cell(s) in bivariate table of ",
                             Y1.name, " x ", Y2.name)
                 } else {
-                    warning("lavaan WARNING: empty cell(s) in bivariate table")
+                    warning("psindex WARNING: empty cell(s) in bivariate table")
                 }
             }
         }
@@ -307,7 +307,7 @@ pc_cor_TS <- function(Y1, Y2, eXo=NULL, fit.y1=NULL, fit.y2=NULL, freq=NULL,
             idx <- which(freq == 0L)
             # catch 2 empty cells: perfect correlation!
             if(length(idx) == 2L) {
-                warning("lavaan WARNING: two empty cells in 2x2 table")
+                warning("psindex WARNING: two empty cells in 2x2 table")
                 if(freq[1,1] > 0L) {
                     rho <- 1.0
                     if(zero.cell.flag) {

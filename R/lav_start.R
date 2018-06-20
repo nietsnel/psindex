@@ -11,7 +11,7 @@ lav_start <- function(start.method    = "default",
                       lavpartable     = NULL, 
                       lavsamplestats  = NULL,
                       model.type      = "sem",
-                      mimic           = "lavaan",
+                      mimic           = "psindex",
                       debug           = FALSE) {
 
     # check arguments
@@ -43,27 +43,27 @@ lav_start <- function(start.method    = "default",
     }
 
     # check start.method
-    if(mimic == "lavaan") {
-        start.initial <- "lavaan"
+    if(mimic == "psindex") {
+        start.initial <- "psindex"
     } else if(mimic == "Mplus") {
         start.initial <- "mplus"
     } else {
         # FIXME: use LISREL/EQS/AMOS/.... schems
-        start.initial <- "lavaan"
+        start.initial <- "psindex"
     }
     start.user    <- NULL
     if(is.character(start.method)) {
         start.method. <- tolower(start.method)
         if(start.method. == "default") {
             # nothing to do
-        } else if(start.method. %in% c("simple", "lavaan", "mplus")) { 
+        } else if(start.method. %in% c("simple", "psindex", "mplus")) { 
             start.initial <- start.method.
         } else {
-            stop("lavaan ERROR: unknown value for start argument")
+            stop("psindex ERROR: unknown value for start argument")
         }
     } else if(is.list(start.method)) {
         start.user <- start.method
-    } else if(inherits(start.method, "lavaan")) {
+    } else if(inherits(start.method, "psindex")) {
         start.user <- parTable(start.method)
     }
     # check model list elements, if provided
@@ -71,7 +71,7 @@ lav_start <- function(start.method    = "default",
         if(is.null(start.user$lhs) ||
            is.null(start.user$op)  ||
            is.null(start.user$rhs)) {
-            stop("lavaan ERROR: problem with start argument: model list does not contain all elements: lhs/op/rhs")
+            stop("psindex ERROR: problem with start argument: model list does not contain all elements: lhs/op/rhs")
         }
         if(!is.null(start.user$est)) {
             # excellent, we got an est column; nothing to do
@@ -82,7 +82,7 @@ lav_start <- function(start.method    = "default",
             # no ideal, but better than nothing
             start.user$est <- start.user$ustart
         } else {
-            stop("lavaan ERROR: problem with start argument: could not find est/start column in model list")
+            stop("psindex ERROR: problem with start argument: could not find est/start column in model list")
         }
     }   
 
@@ -151,7 +151,7 @@ lav_start <- function(start.method    = "default",
         ov.names.x <- unique(unlist(ov.names.x))
 
         # g1) factor loadings
-        if(start.initial %in% c("lavaan", "mplus") &&
+        if(start.initial %in% c("psindex", "mplus") &&
            model.type %in% c("sem", "cfa") &&
            #!categorical &&
            sum( lavpartable$ustart[ lavpartable$op == "=~" & lavpartable$group == group.values[g]],
@@ -440,7 +440,7 @@ lav_start <- function(start.method    = "default",
     # growth models:
     # - compute starting values for mean latent variables
     # - compute starting values for variance latent variables
-    if(start.initial %in% c("lavaan", "mplus") && 
+    if(start.initial %in% c("psindex", "mplus") && 
        model.type == "growth") {
         ### DEBUG ONLY
         #lv.var.idx <- which(lavpartable$op == "~~"                &
@@ -487,7 +487,7 @@ lav_start <- function(start.method    = "default",
     start[user.idx] <- lavpartable$ustart[user.idx]
 
     if(debug) {
-        cat("lavaan DEBUG: lavaanStart\n")
+        cat("psindex DEBUG: psindexStart\n")
         print( start )
     }
 
@@ -549,11 +549,11 @@ lav_start_check_cov <- function(lavpartable = NULL, start = lavpartable$start) {
                     # nothing to do
                 } else if(lavpartable$free[this.cov.idx] > 0L) {
                     warning(
-  "lavaan WARNING: non-zero covariance element set to zero, due to fixed-to-zero variances\n",
+  "psindex WARNING: non-zero covariance element set to zero, due to fixed-to-zero variances\n",
 "                  variables involved are: ", var.lhs, " ", var.rhs, block.txt)
                     start[this.cov.idx] <- 0
                 } else {
-                    stop("lavaan ERROR: please provide better fixed values for (co)variances;\n",
+                    stop("psindex ERROR: please provide better fixed values for (co)variances;\n",
 "                variables involved are: ", var.lhs, " ", var.rhs, block.txt)
                 }
                 next
@@ -574,14 +574,14 @@ lav_start_check_cov <- function(lavpartable = NULL, start = lavpartable$start) {
             if(!is.finite(COR)) {
                 # force simple values
                 warning(
-  "lavaan WARNING: starting values imply NaN for a correlation value;\n",
+  "psindex WARNING: starting values imply NaN for a correlation value;\n",
 "                  variables involved are: ", var.lhs, " ", var.rhs, block.txt)    
                 start[var.lhs.idx] <- 1
                 start[var.rhs.idx] <- 1
                 start[this.cov.idx] <- 0
             } else if(abs(COR) > 1) {
                 warning(
-  "lavaan WARNING: starting values imply a correlation larger than 1;\n", 
+  "psindex WARNING: starting values imply a correlation larger than 1;\n", 
 "                  variables involved are: ", var.lhs, " ", var.rhs, block.txt)
                 
                 # three ways to fix it: rescale cov12, var1 or var2
@@ -607,7 +607,7 @@ lav_start_check_cov <- function(lavpartable = NULL, start = lavpartable$start) {
 
                 # nothing? abort
                 } else {
-                    stop("lavaan ERROR: please provide better fixed values for (co)variances;\n",
+                    stop("psindex ERROR: please provide better fixed values for (co)variances;\n",
 "                variables involved are: ", var.lhs, " ", var.rhs, block.txt)
                 }
             } # COR > 1

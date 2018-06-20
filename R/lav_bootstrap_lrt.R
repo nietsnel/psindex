@@ -12,8 +12,8 @@ bootstrapLRT <- function (h0 = NULL, h1 = NULL, R = 1000L,
 {
     # checks
     type <- tolower(type)
-    stopifnot(inherits(h0, "lavaan"), 
-              inherits(h1, "lavaan"), 
+    stopifnot(inherits(h0, "psindex"), 
+              inherits(h1, "psindex"), 
               type %in% c("bollen.stine", "parametric", "yuan", "nonparametric",
                           "ordinary"),
               double.bootstrap %in% c("no", "FDB", "standard"))
@@ -21,7 +21,7 @@ bootstrapLRT <- function (h0 = NULL, h1 = NULL, R = 1000L,
 
     # check for conditional.x = TRUE
     if(h0@Model@conditional.x) {
-        stop("lavaan ERROR: this function is not (yet) available if conditional.x = TRUE")
+        stop("psindex ERROR: this function is not (yet) available if conditional.x = TRUE")
     }
 
     old_options <- options(); options(warn = warn)
@@ -72,7 +72,7 @@ bootstrapLRT <- function (h0 = NULL, h1 = NULL, R = 1000L,
     if(type == "bollen.stine" || type == "yuan") {
         # check if data is complete
         if(h0@Options$missing != "listwise")
-            stop("lavaan ERROR: bollen.stine/yuan bootstrap not available for missing data")
+            stop("psindex ERROR: bollen.stine/yuan bootstrap not available for missing data")
         dataX <- vector("list", length=data@ngroups)
     } else {
         dataX <- data@X
@@ -206,7 +206,7 @@ bootstrapLRT <- function (h0 = NULL, h1 = NULL, R = 1000L,
         h0@Options$test <- "standard"
 
         #Fit h0 model
-        fit.h0 <- lavaan(slotOptions     = h0@Options,
+        fit.h0 <- psindex(slotOptions     = h0@Options,
                          slotParTable    = h0@ParTable, 
                          slotSampleStats = bootSampleStats, 
                          slotData        = data)
@@ -225,7 +225,7 @@ bootstrapLRT <- function (h0 = NULL, h1 = NULL, R = 1000L,
         h1@Options$test <- "standard"
 
         #Fit h1 model
-        fit.h1 <- lavaan(slotOptions     = h1@Options, 
+        fit.h1 <- psindex(slotOptions     = h1@Options, 
                          slotParTable    = h1@ParTable, 
                          slotSampleStats = bootSampleStats, 
                          slotData        = data)
@@ -325,7 +325,7 @@ bootstrapLRT <- function (h0 = NULL, h1 = NULL, R = 1000L,
 
     #Error handling
     if (length(error.idx) > 0L) {
-        warning("lavaan WARNING: only ", (R - length(error.idx)), 
+        warning("psindex WARNING: only ", (R - length(error.idx)), 
                 " bootstrap draws were successful")
         LRT <- LRT[-error.idx]
         if(length(LRT) == 0) LRT <- as.numeric(NA)

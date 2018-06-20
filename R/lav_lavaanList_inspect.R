@@ -1,6 +1,6 @@
-# inspect a lavaanList object
+# inspect a psindexList object
 
-inspect.lavaanList <- function(object, what = "free", ...) {
+inspect.psindexList <- function(object, what = "free", ...) {
     lavListInspect(object                 = object,
                    what                   = what,
                    add.labels             = TRUE,
@@ -9,7 +9,7 @@ inspect.lavaanList <- function(object, what = "free", ...) {
 }
 
 # the `tech' version: no labels, full matrices, ... for further processing
-lavTech.lavaanList <- function(object, 
+lavTech.psindexList <- function(object, 
                                what                   = "free",
                                add.labels             = FALSE,
                                add.class              = FALSE,
@@ -35,8 +35,8 @@ lavListTech <- function(object,
                    drop.list.single.group =  drop.list.single.group)
 }
 
-# just in case some uses lavInspect on a lavaanList object
-lavInspect.lavaanList <- function(object,
+# just in case some uses lavInspect on a psindexList object
+lavInspect.psindexList <- function(object,
                                   what                   = "free",
                                   add.labels             = TRUE,
                                   add.class              = TRUE,
@@ -56,8 +56,8 @@ lavListInspect <- function(object,
                            list.by.group          = TRUE,
                            drop.list.single.group = TRUE) {
 
-    # object must inherit from class lavaanList
-    stopifnot(inherits(object, "lavaanList"))
+    # object must inherit from class psindexList
+    stopifnot(inherits(object, "psindexList"))
 
     # only a single argument
     if(length(what) > 1) {
@@ -70,17 +70,17 @@ lavListInspect <- function(object,
 
     #### model matrices, with different contents ####
     if(what == "free") {
-        lav_lavaanList_inspect_modelmatrices(object, what = "free", 
+        lav_psindexList_inspect_modelmatrices(object, what = "free", 
             type = "free", add.labels = add.labels, add.class = add.class,
             list.by.group = list.by.group, 
             drop.list.single.group = drop.list.single.group)
     } else if(what == "partable" || what == "user") {
-        lav_lavaanList_inspect_modelmatrices(object, what = "free", 
+        lav_psindexList_inspect_modelmatrices(object, what = "free", 
             type="partable", add.labels = add.labels, add.class = add.class,
             list.by.group = list.by.group, 
             drop.list.single.group = drop.list.single.group)
     } else if(what == "start" || what == "starting.values") {
-        lav_lavaanList_inspect_modelmatrices(object, what = "start",
+        lav_psindexList_inspect_modelmatrices(object, what = "start",
             add.labels = add.labels, add.class = add.class,
             list.by.group = list.by.group, 
             drop.list.single.group = drop.list.single.group)
@@ -135,7 +135,7 @@ lavListInspect <- function(object,
 }
 
 
-lav_lavaanList_inspect_start <- function(object) {
+lav_psindexList_inspect_start <- function(object) {
 
     # from 0.5-19, they are in the partable
     if(!is.null(object@ParTable$start)) {
@@ -148,7 +148,7 @@ lav_lavaanList_inspect_start <- function(object) {
     OUT
 }
 
-lav_lavaanList_inspect_modelmatrices <- function(object, what = "free",
+lav_psindexList_inspect_modelmatrices <- function(object, what = "free",
     type = "free", add.labels = FALSE, add.class = FALSE,
     list.by.group = FALSE,
     drop.list.single.group = FALSE) {
@@ -173,7 +173,7 @@ lav_lavaanList_inspect_modelmatrices <- function(object, what = "free",
                 m.el.idx <- object@Model@m.user.idx[[mm]]
                 x.el.idx <- object@Model@x.user.idx[[mm]]
             } else {
-                stop("lavaan ERROR: unknown type argument:", type, )
+                stop("psindex ERROR: unknown type argument:", type, )
             }
             # erase everything
             GLIST[[mm]][,] <- 0.0
@@ -182,16 +182,16 @@ lav_lavaanList_inspect_modelmatrices <- function(object, what = "free",
             # fill in starting values
             m.user.idx <- object@Model@m.user.idx[[mm]]
             x.user.idx <- object@Model@x.user.idx[[mm]]
-            START <- lav_lavaanList_inspect_start(object)
+            START <- lav_psindexList_inspect_start(object)
             GLIST[[mm]][m.user.idx] <- START[x.user.idx]
         } 
 
         # class
         if(add.class) {
             if(object@Model@isSymmetric[mm]) {
-                class(GLIST[[mm]]) <- c("lavaan.matrix.symmetric", "matrix")
+                class(GLIST[[mm]]) <- c("psindex.matrix.symmetric", "matrix")
             } else {
-                class(GLIST[[mm]]) <- c("lavaan.matrix", "matrix")
+                class(GLIST[[mm]]) <- c("psindex.matrix", "matrix")
             }
         }
     }
@@ -277,9 +277,9 @@ lav_lavaanList_inspect_modelmatrices <- function(object, what = "free",
         attr(OUT, "header") <- CON
     }
 
-    # lavaan.list
+    # psindex.list
     if(add.class) {
-        class(OUT) <- c("lavaan.list", "list")
+        class(OUT) <- c("psindex.list", "list")
     }
 
     OUT

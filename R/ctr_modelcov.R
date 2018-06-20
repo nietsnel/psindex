@@ -1,4 +1,4 @@
-# takes a model in lavaan syntax and the user's data and returns the covariance
+# takes a model in psindex syntax and the user's data and returns the covariance
 # matrix of observed variables.  Useful so that the user can do things like
 # diagnose errors in the cov matrix, use cov2cor to look at the correlation
 # matrix, try and invert the sample covariance matrix, etc.

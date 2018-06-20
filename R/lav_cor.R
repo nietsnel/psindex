@@ -3,7 +3,7 @@
 #
 # YR 17 Sept 2013
 # 
-# - YR 26 Nov 2013: big change - make it a wrapper around lavaan()
+# - YR 26 Nov 2013: big change - make it a wrapper around psindex()
 #                   estimator = "none" means two.step (starting values)
 
 lavCor <- function(object, 
@@ -12,15 +12,15 @@ lavCor <- function(object,
                    group      = NULL, 
                    missing    = "listwise",
                    ov.names.x = NULL, 
-                   # lavaan options
+                   # psindex options
                    se         = "none", 
                    estimator  = "two.step",
-                   # other options (for lavaan)
+                   # other options (for psindex)
                    ...,
                    output = "cor") {
 
-    # shortcut if object = lavaan object
-    if(inherits(object, "lavaan")) {
+    # shortcut if object = psindex object
+    if(inherits(object, "psindex")) {
         out <- lav_cor_output(object, output = output)
         return(out)
     }
@@ -35,7 +35,7 @@ lavCor <- function(object,
     se <- tolower(se); output <- tolower(output)
     if(se != "none") {
         if(output %in% c("cor","cov","sampstat","th","thresholds")) {
-            warning("lavaan WARNING: argument `se' is ignored since standard erros are not needed for the requested `output'")
+            warning("psindex WARNING: argument `se' is ignored since standard erros are not needed for the requested `output'")
             se <- "none"
         }
     }
@@ -53,7 +53,7 @@ lavCor <- function(object,
                             ov.names.x = ov.names.x,
                             lavoptions = list(missing = missing))
     } else {
-        stop("lavaan ERROR: lavCor can not handle objects of class ",
+        stop("psindex ERROR: lavCor can not handle objects of class ",
              paste(class(object), collapse= " "))
     }
 
@@ -71,7 +71,7 @@ lavCor <- function(object,
     dots <- list(...)
     meanstructure <- FALSE 
     fixed.x       <- FALSE
-    mimic         <- "lavaan"
+    mimic         <- "psindex"
     conditional.x <- FALSE
     if(!is.null(dots$meanstructure)) {
         meanstructure <- dots$meanstructure
@@ -102,7 +102,7 @@ lavCor <- function(object,
                                   sample.th     = NULL)
 
     
-    FIT <- lavaan(slotParTable = PT.un, slotData = lav.data,
+    FIT <- psindex(slotParTable = PT.un, slotData = lav.data,
                   model.type = "unrestricted",
                   missing = missing,
                   se = se, estimator = estimator, ...)

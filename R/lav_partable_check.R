@@ -17,19 +17,19 @@ lav_partable_check <- function(partable, categorical = FALSE, warn = TRUE) {
     if(categorical && length(ov.names.ord) == 0L) {
         check <- FALSE
         if(warn) {
-            warning("lavaan WARNING: parameter table does not contain thresholds ")
+            warning("psindex WARNING: parameter table does not contain thresholds ")
         }
     }
     
     # we should have a (residual) variance for *each* ov/lv
-    # note: if lavaanify() has been used, this is always TRUE
+    # note: if psindexify() has been used, this is always TRUE
     var.idx <- which(partable$op == "~~" &
                      partable$lhs == partable$rhs)
     missing.idx <- which(is.na(match(all.names, partable$lhs[var.idx])))
     if(length(missing.idx) > 0L) {
         check <- FALSE
         if(warn) {
-            warning("lavaan WARNING: parameter table does not contain (residual) variances for one or more variables: [", paste(all.names[missing.idx], collapse = " "), "]")
+            warning("psindex WARNING: parameter table does not contain (residual) variances for one or more variables: [", paste(all.names[missing.idx], collapse = " "), "]")
         }
     }
 
@@ -37,7 +37,7 @@ lav_partable_check <- function(partable, categorical = FALSE, warn = TRUE) {
     meanstructure <- any(partable$op == "~1")
 
     # if meanstructure, check for missing intercepts
-    # note if lavaanify() has been used, this is always TRUE
+    # note if psindexify() has been used, this is always TRUE
     if(meanstructure) {
         # we should have a intercept for *each* ov/lv
         int.idx <- which(partable$op == "~1")
@@ -45,7 +45,7 @@ lav_partable_check <- function(partable, categorical = FALSE, warn = TRUE) {
         if(length(missing.idx) > 0L) {
             check <- FALSE
             if(warn) {
-                warning("lavaan WARNING: parameter table does not contain intercepts for one or more variables: [", paste(all.names[missing.idx], collapse = " "), "]")
+                warning("psindex WARNING: parameter table does not contain intercepts for one or more variables: [", paste(all.names[missing.idx], collapse = " "), "]")
             }
         }
     }
@@ -64,7 +64,7 @@ lav_partable_check <- function(partable, categorical = FALSE, warn = TRUE) {
     # if(length(var.fixed) > 0L) {
     #    check <- FALSE
     #     if(warn) {
-    #        warning("lavaan WARNING: missing (residual) variances are set to zero: [", paste(partable$lhs[var.fixed],  collapse = " "), "]")
+    #        warning("psindex WARNING: missing (residual) variances are set to zero: [", paste(partable$lhs[var.fixed],  collapse = " "), "]")
     #    }
     # }
     
@@ -89,7 +89,7 @@ lav_partable_check <- function(partable, categorical = FALSE, warn = TRUE) {
     if(length(int.fixed) > 0L) {
         check <- FALSE
         if(warn) {
-            warning("lavaan WARNING: missing intercepts are set to zero: [", paste(partable$lhs[int.fixed],  collapse = " "), "]")
+            warning("psindex WARNING: missing intercepts are set to zero: [", paste(partable$lhs[int.fixed],  collapse = " "), "]")
         }
     }
 

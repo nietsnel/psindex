@@ -44,7 +44,7 @@ ctr_pml_plrt <- function(lavobject = NULL, lavmodel = NULL, lavdata = NULL,
     Options$verbose <- FALSE
     Options$se <- "none"
     Options$test <- "none"
-    fittedSat <- lavaan(ModelSat, slotOptions = Options,
+    fittedSat <- psindex(ModelSat, slotOptions = Options,
                         slotSampleStats = lavsamplestats,
                         slotData = lavdata, slotCache = lavcache)
     fx <- lav_model_objective(lavmodel = fittedSat@Model,
@@ -70,7 +70,7 @@ ctr_pml_plrt <- function(lavobject = NULL, lavmodel = NULL, lavdata = NULL,
     Options2 <- Options
     Options2$optim.method <- "none"
     Options2$optim.force.converged <- TRUE
-    fittedSat2 <- lavaan(ModelSat2, 
+    fittedSat2 <- psindex(ModelSat2, 
                          slotOptions = Options2,
                          slotSampleStats = lavsamplestats,
                          slotData = lavdata, slotCache = lavcache)
@@ -111,9 +111,9 @@ nsize <- lavsamplestats@ntotal
 # their asymptotic covariance.
 
 ##### Section 1. Compute the asymptotic mean and variance of the first quadratic quantity
-# Below I assume that lavobject is the output of lavaan function. I guess
-# vcov(lavobject) can be substituted by VCOV object insed lavaan function
-# defined at lines 703 -708. But what is the object inside lavaan function
+# Below I assume that lavobject is the output of psindex function. I guess
+# vcov(lavobject) can be substituted by VCOV object insed psindex function
+# defined at lines 703 -708. But what is the object inside psindex function
 # for getHessian(lavobject)?
 if(is.null(VCOV)) {
     lavoptions$se <- "robust.huber.white"
@@ -125,7 +125,7 @@ if(is.null(VCOV)) {
                            lavcache       = lavcache)
 }
 InvG_to_psipsi_attheta0 <- (lavsamplestats@ntotal * VCOV )[index.par, index.par, drop = FALSE]  #G^psipsi(theta0)
-#below the lavaan function getHessian is used
+#below the psindex function getHessian is used
 #Hattheta0 <- (-1) * H0.Hessian
 #Hattheta0 <- H0.Hessian
 #InvHattheta0 <- solve(Hattheta0)
@@ -257,7 +257,7 @@ for(g in 1:lavsamplestats@ngroups) {
 
     par.idx <- match(PARLABEL, NAMES)
     if(any(is.na(par.idx))) {
-        warning("lavaan WARNING: [ctr_pml_plrt] mismatch between DELTA labels and PAR labels!\n", "PARLABEL:\n", paste(PARLABEL, collapse = " "), 
+        warning("psindex WARNING: [ctr_pml_plrt] mismatch between DELTA labels and PAR labels!\n", "PARLABEL:\n", paste(PARLABEL, collapse = " "), 
        "\nDELTA LABELS:\n", paste(NAMES, collapse = " "))
     }
 

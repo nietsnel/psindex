@@ -5,10 +5,10 @@
 lavTestWald <- function(object, constraints = NULL, verbose = FALSE) {
 
     if(object@optim$npar > 0L && !object@optim$converged)
-        stop("lavaan ERROR: model did not converge")
+        stop("psindex ERROR: model did not converge")
 
     if(is.null(constraints) || nchar(constraints) == 0L) {
-        stop("lavaan ERROR: constraints are empty")
+        stop("psindex ERROR: constraints are empty")
     }
 
     # remove == constraints from parTable
@@ -30,7 +30,7 @@ lavTestWald <- function(object, constraints = NULL, verbose = FALSE) {
         LIST$op         <- c(LIST$op,         op)
         LIST$rhs        <- c(LIST$rhs,        rhs)
     } else {
-        stop("lavaan ERROR: no equality constraints found in constraints argument")
+        stop("psindex ERROR: no equality constraints found in constraints argument")
     }
 
     # theta = free parameters only

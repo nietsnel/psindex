@@ -728,7 +728,7 @@ computeYHAT <- function(lavmodel = NULL, GLIST = NULL, lavsamplestats = NULL,
                 # impute back ov.y values that are NOT indicators
             }
         } else {
-            stop("lavaan ERROR: representation ", lavmodel@representation,
+            stop("psindex ERROR: representation ", lavmodel@representation,
                  " not supported yet.")
         }
     }

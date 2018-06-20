@@ -110,7 +110,7 @@ lav_partable_merge <- function(pt1 = NULL, pt2 = NULL,
     
         if(length(idx)) {
             if(warn) {
-                warning("lavaan WARNING: duplicated parameters are ignored:\n",
+                warning("psindex WARNING: duplicated parameters are ignored:\n",
                 paste(apply(TMP[idx, c("lhs","op","rhs")], 1,
                       paste, collapse=" "), collapse="\n"))
             }

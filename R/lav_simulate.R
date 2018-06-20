@@ -1,8 +1,8 @@
 # new version of lavSimulateData (replaced simulateData)
-# from lavaan 0.6-1
+# from psindex 0.6-1
 # YR 23 March 2018
 #
-# - calls lavaan directly to get model-implied statistics
+# - calls psindex directly to get model-implied statistics
 # - allows for groups with different sets of variables
 # - 
 
@@ -33,7 +33,7 @@ lavSimulateData <- function(model  = NULL,
     dotdotdot$data <- NULL
     dotdotdot$sample.cov <- NULL
     
-    # add sample.nobs/group.label to lavaan call
+    # add sample.nobs/group.label to psindex call
     dotdotdot$sample.nobs <- sample.nobs
 
     
@@ -88,7 +88,7 @@ lavSimulateData <- function(model  = NULL,
 
             if(!is.null(sample.nobs) && (length(sample.nobs) > 1L ||
                                          sample.nobs != 1000L) ) {
-                warning("lavaan WARNING: sample.nobs will be ignored if cluster.idx is provided")
+                warning("psindex WARNING: sample.nobs will be ignored if cluster.idx is provided")
             }
             sample.nobs <- numeric( nblocks )
             for(g in seq_len(ngroups)) {
@@ -104,7 +104,7 @@ lavSimulateData <- function(model  = NULL,
         } else if(ngroups > 1L && length(sample.nobs) == 1L) {
             sample.nobs <- rep.int(sample.nobs, ngroups)
         } else {
-            stop("lavaan ERROR: ngroups = ", ngroups, " but sample.nobs has length = ", length(sample.nobs))
+            stop("psindex ERROR: ngroups = ", ngroups, " but sample.nobs has length = ", length(sample.nobs))
         }
     }
 
@@ -115,7 +115,7 @@ lavSimulateData <- function(model  = NULL,
                        function(x) all(x %in% N1)))) {
             if(output == "data.frame") {
                 output <- "matrix"
-                warning("lavaan WARNING:",
+                warning("psindex WARNING:",
                         " groups do not contain the same set of variables;",
                         "\n\t\t  changing output= argument to \"matrix\"")
             }
@@ -136,7 +136,7 @@ lavSimulateData <- function(model  = NULL,
         if(empirical) {
             # check if sample.nobs is large enough
             if(sample.nobs[b] < NCOL(COV)) {
-                stop("lavaan ERROR: empirical = TRUE requires sample.nobs = ",
+                stop("psindex ERROR: empirical = TRUE requires sample.nobs = ",
                      sample.nobs[b], " to be larger than",
                      "\n\t\tthe number of variables = ", NCOL(COV),
                      " in block = ", b)    
@@ -157,13 +157,13 @@ lavSimulateData <- function(model  = NULL,
             # something went wrong; most likely: non-positive COV?
             ev <- eigen(COV, symmetric = TRUE, only.values = TRUE)$values
             if(any(ev < 0)) {
-                stop("lavaan ERROR: ",
+                stop("psindex ERROR: ",
                      "model-implied covariance matrix is not positive-definite",
                      "\n\t\tin block = ", b, "; ",
                      "smallest eigen value = ", round(min(ev), 5), "; ",
                      "\n\t\tchange the model parameters.")
             } else {
-                stop("lavaan ERROR: data generation failed for block = ", b)
+                stop("psindex ERROR: data generation failed for block = ", b)
             }
         } else {
             X[[b]] <- unname(tmp)
@@ -312,7 +312,7 @@ lavSimulateData <- function(model  = NULL,
             out <- lapply(X, cov)
         }
     } else {
-        stop("lavaan ERROR: unknown option for argument output: ", output)
+        stop("psindex ERROR: unknown option for argument output: ", output)
     }
 
     if(return.fit) {

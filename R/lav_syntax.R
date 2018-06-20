@@ -1,4 +1,4 @@
-# parse lavaan syntax
+# parse psindex syntax
 # YR 14 Jan 2014: move to lav_syntax.R
 
 lavParseModelString <- function(model.syntax = '', as.data.frame. = FALSE,
@@ -6,7 +6,7 @@ lavParseModelString <- function(model.syntax = '', as.data.frame. = FALSE,
   
     # check for empty syntax
     if(length(model.syntax) == 0) {
-        stop("lavaan ERROR: empty model syntax")
+        stop("psindex ERROR: empty model syntax")
     }
     
     # remove comments prior to split. 
@@ -35,7 +35,7 @@ lavParseModelString <- function(model.syntax = '', as.data.frame. = FALSE,
 
     # check for empty start.idx: no operator found (new in 0.6-1)
     if(length(start.idx) == 0L) {
-        stop("lavaan ERROR: model does not contain lavaan syntax (no operators found)")
+        stop("psindex ERROR: model does not contain psindex syntax (no operators found)")
     }
 
     # check for non-empty string, without an operator in the first lines
@@ -47,7 +47,7 @@ lavParseModelString <- function(model.syntax = '', as.data.frame. = FALSE,
         for(el in 1:(start.idx[1] - 1L)) {
             # not empty?
             if(nchar(model.simple[el]) > 0L) {
-                warning("lavaan WARNING: no operator found in this syntax line: ", model.simple[el], "\n", "                  This syntax line will be ignored!")
+                warning("psindex WARNING: no operator found in this syntax line: ", model.simple[el], "\n", "                  This syntax line will be ignored!")
             }
         }
     }
@@ -64,17 +64,17 @@ lavParseModelString <- function(model.syntax = '', as.data.frame. = FALSE,
     model.simple <- gsub("\\\".[^\\\"]*\\\"", "LABEL", model)
     idx.wrong <- which(!grepl("[~=<>:|%]", model.simple))
     if(length(idx.wrong) > 0) {
-        cat("lavaan: missing operator in formula(s):\n")
+        cat("psindex: missing operator in formula(s):\n")
         print(model[idx.wrong])
-        stop("lavaan ERROR: syntax error in lavaan model syntax")
+        stop("psindex ERROR: syntax error in psindex model syntax")
     }
 
     # but perhaps we have a '+' as the first character?
     idx.wrong <- which(grepl("^\\+", model))
     if(length(idx.wrong) > 0) {
-        cat("lavaan: some formula(s) start with a plus (+) sign:\n")
+        cat("psindex: some formula(s) start with a plus (+) sign:\n")
         print(model[idx.wrong])
-        stop("lavaan ERROR: syntax error in lavaan model syntax")
+        stop("psindex ERROR: syntax error in psindex model syntax")
     }
   
   
@@ -206,7 +206,7 @@ lavParseModelString <- function(model.syntax = '', as.data.frame. = FALSE,
         lhs.names <- names(out)
         # check if we have modifiers
         if(sum(sapply(out, length)) > 0L) {
-            warning("lavaan WARNING: left-hand side of formula below contains modifier:\n", x,"\n")
+            warning("psindex WARNING: left-hand side of formula below contains modifier:\n", x,"\n")
         }
     
         # 4. lav_syntax_parse_rhs (as rhs of a single-sided formula)
@@ -230,7 +230,7 @@ lavParseModelString <- function(model.syntax = '', as.data.frame. = FALSE,
                     if(op == "~") {
                         rhs.name <- ""
                     } else {
-                        stop("lavaan ERROR: right-hand side of formula contains an intercept, but operator is \"", op, "\" in: ", x)
+                        stop("psindex ERROR: right-hand side of formula contains an intercept, but operator is \"", op, "\" in: ", x)
                     }
                 } else if(names(out)[j] == "..zero.." && op == "~") {
                     rhs.name <- ""
@@ -244,7 +244,7 @@ lavParseModelString <- function(model.syntax = '', as.data.frame. = FALSE,
                 #if(op == "|") {
                 #    th.name <- paste("t", j, sep="")
                 #    if(names(out)[j] != th.name) {
-                #        stop("lavaan ERROR: threshold ", j, " of variable ", 
+                #        stop("psindex ERROR: threshold ", j, " of variable ", 
                 #             sQuote(lhs.names[1]), " should be named ",
                 #             sQuote(th.name), "; found ", 
                 #             sQuote(names(out)[j]), "\n")
@@ -253,7 +253,7 @@ lavParseModelString <- function(model.syntax = '', as.data.frame. = FALSE,
 
                 # catch lhs = rhs and op = "=~"
                 if(op == "=~" && lhs.names[l] == names(out)[j]) {
-                    stop("lavaan ERROR: latent variable `", lhs.names[l], "' can not be measured by itself")
+                    stop("psindex ERROR: latent variable `", lhs.names[l], "' can not be measured by itself")
                 }
         
                 # check if we not already have this combination (in this group)
@@ -264,7 +264,7 @@ lavParseModelString <- function(model.syntax = '', as.data.frame. = FALSE,
                                  FLAT.block == BLOCK &
                                  FLAT.rhs == rhs.name)
                     if(length(idx) > 0L) {
-                        stop("lavaan ERROR: duplicate model element in: ", model[i])
+                        stop("psindex ERROR: duplicate model element in: ", model[i])
                     }
                 } else {
                     # 2. symmetric (~~)
@@ -273,7 +273,7 @@ lavParseModelString <- function(model.syntax = '', as.data.frame. = FALSE,
                                  FLAT.block == BLOCK &
                                  FLAT.rhs == lhs.names[l])
                     if(length(idx) > 0L) {
-                        stop("lavaan ERROR: duplicate model element in: ", model[i])
+                        stop("psindex ERROR: duplicate model element in: ", model[i])
                     }
                 }
                 FLAT.idx <- FLAT.idx + 1L
@@ -445,7 +445,7 @@ lav_syntax_parse_rhs <- function(rhs, op="") {
             # next element
             rhs <- rhs[[2L]]
         } else {
-            stop("lavaan ERROR: I'm confused parsing this line: ", rhs, "\n")
+            stop("psindex ERROR: I'm confused parsing this line: ", rhs, "\n")
         }
     }
 
@@ -513,7 +513,7 @@ lav_syntax_get_modifier <- function(mod) {
              cof[is.na(cof)] <- "" # catch 'NA' elements in a label
              return( list(label=cof) )
         } else {
-            stop("lavaan ERROR: can not parse modifier:", mod, "\n")
+            stop("psindex ERROR: can not parse modifier:", mod, "\n")
         }
     } else {
         # unknown expression
@@ -525,7 +525,7 @@ lav_syntax_get_modifier <- function(mod) {
         else if(is.character(cof))
              return( list(label=cof) )
         else {
-            stop("lavaan ERROR: can not parse modifier:", mod, "\n")
+            stop("psindex ERROR: can not parse modifier:", mod, "\n")
         }
     }
 }

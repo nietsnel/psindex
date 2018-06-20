@@ -302,7 +302,7 @@ lav_model_objective <- function(lavmodel       = NULL,
         obs.freq <- unlist(lavsamplestats@group.w) * lavsamplestats@ntotal
         est.freq <- exp(unlist(GW))
         fx.w <- -1 * sum( obs.freq * log(est.freq) - est.freq )
-        # divide by N (to be consistent with the rest of lavaan)
+        # divide by N (to be consistent with the rest of psindex)
         fx.w <- fx.w / lavsamplestats@ntotal
 
         fx.sat <- sum( obs.freq * log(obs.freq) - obs.freq )

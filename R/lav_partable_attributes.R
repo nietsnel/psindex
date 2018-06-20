@@ -1,4 +1,4 @@
-# return 'attributes' of a lavaan partable -- generate a new set if necessary
+# return 'attributes' of a psindex partable -- generate a new set if necessary
 lav_partable_attributes <- function(partable, pta = NULL) {
 
     if(is.null(pta)) {

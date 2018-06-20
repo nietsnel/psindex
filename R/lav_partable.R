@@ -9,11 +9,11 @@
 #                                 - since 0.4-5
 #                                 - the end result is a full description of
 #                                   a model (but no matrix representation)
-# - 14 Jan 2014: merge 02lavaanUser.R with lav_partable.R
+# - 14 Jan 2014: merge 02psindexUser.R with lav_partable.R
 #                move syntax-based code to lav_syntax.R
 # - 26 April 2016: handle multiple 'blocks' (levels, classes, groups, ...)
 
-lavaanify <- lavParTable <- function(
+psindexify <- lavParTable <- function(
 
                       model            = NULL,
                       meanstructure    = FALSE,
@@ -50,7 +50,7 @@ lavaanify <- lavParTable <- function(
     # check if model is already FLAT or a full parameter table
     if(is.list(model) && !is.null(model$lhs)) {
         if(is.null(model$mod.idx)) {
-            warning("lavaan WARNING: input already looks like a parameter table; returning as is")
+            warning("psindex WARNING: input already looks like a parameter table; returning as is")
             return(model)
         } else {
             FLAT <- model
@@ -73,11 +73,11 @@ lavaanify <- lavParTable <- function(
     }
    
     if(debug) {
-        cat("[lavaan DEBUG]: FLAT (flattened user model):\n")
+        cat("[psindex DEBUG]: FLAT (flattened user model):\n")
         print(FLAT)
-        cat("[lavaan DEBUG]: MOD (modifiers):\n")
+        cat("[psindex DEBUG]: MOD (modifiers):\n")
         print( str(MOD) )
-        cat("[lavaan DEBUG]: CON (constraints):\n")
+        cat("[psindex DEBUG]: CON (constraints):\n")
         print( str(CON) )
     }
 
@@ -141,7 +141,7 @@ lavaanify <- lavParTable <- function(
 
         # check for wrong spelled 'group' lhs
         if(length(grep("group", BLOCK.lhs)) > 1L) {
-            warning("lavaan WARNING: ambiguous block identifiers for group:",
+            warning("psindex WARNING: ambiguous block identifiers for group:",
                     "\n\t\t  ", paste(BLOCK.lhs[grep("group", BLOCK.lhs)], 
                                       collapse = ", "))
         }
@@ -150,7 +150,7 @@ lavaanify <- lavParTable <- function(
         if( any( nchar(FLAT$rhs[BLOCK.op.idx]) == 0L ) ) {
             empty.idx <- nchar(FLAT$rhs[BLOCK.op.idx]) == 0L
             txt <- paste(FLAT$lhs[BLOCK.op.idx][empty.idx], ":")
-            stop("lavaan ERROR: syntax contains block identifiers with ",
+            stop("psindex ERROR: syntax contains block identifiers with ",
                  "missing numbers/labels:\n\t\t", txt)
         }
 
@@ -161,7 +161,7 @@ lavaanify <- lavParTable <- function(
             n.group.flat <- length( unique(FLAT$rhs[group.block.idx]) )
 
             if(n.group.flat > 0L && n.group.flat != ngroups) {
-                stop("lavaan ERROR: syntax defines ", n.group.flat, " groups; ",
+                stop("psindex ERROR: syntax defines ", n.group.flat, " groups; ",
                      "data (or argument ngroups) suggests ", ngroups, " groups")
             }
         }
@@ -249,7 +249,7 @@ lavaanify <- lavParTable <- function(
             ngroups = ngroups)
     }        
     if(debug) {
-        cat("[lavaan DEBUG]: parameter LIST without MODIFIERS:\n")
+        cat("[psindex DEBUG]: parameter LIST without MODIFIERS:\n")
         print( as.data.frame(LIST, stringsAsFactors=FALSE) )
     }
 
@@ -335,7 +335,7 @@ lavaanify <- lavParTable <- function(
                 (!is.null(MOD.prior) && nidx != length(MOD.prior)) ||
                 (!is.null(MOD.label) && nidx != length(MOD.label)) ) {
                 el.idx <- which(LIST$mod.idx == el)[1L]
-                stop("lavaan ERROR: wrong number of arguments in modifier (",
+                stop("psindex ERROR: wrong number of arguments in modifier (",
                     paste(MOD.label, collapse=","), ") of element ", 
                     LIST$lhs[el.idx], LIST$op[el.idx], LIST$rhs[el.idx])
             }
@@ -373,7 +373,7 @@ lavaanify <- lavParTable <- function(
     LIST$mod.idx <- NULL
 
     if(debug) {
-        cat("[lavaan DEBUG]: parameter LIST with MODIFIERS:\n")
+        cat("[psindex DEBUG]: parameter LIST with MODIFIERS:\n")
         print( as.data.frame(LIST, stringsAsFactors=FALSE) )
     }
 
@@ -389,13 +389,13 @@ lavaanify <- lavParTable <- function(
                                  group.partial = group.partial)
 
     if(debug) {
-        cat("[lavaan DEBUG]: parameter LIST with LABELS:\n")
+        cat("[psindex DEBUG]: parameter LIST with LABELS:\n")
         tmp <- LIST; tmp$LABEL <- LABEL
         print( as.data.frame(tmp, stringsAsFactors=FALSE) )
     }
 
     # handle user-specified equality constraints
-    # lavaan 0.5-18
+    # psindex 0.5-18
     # - rewrite 'LABEL-based' equality constraints as == constraints
     # - create plabel: internal labels, based on id
     # - create CON entries, using these internal labels
@@ -425,7 +425,7 @@ lavaanify <- lavParTable <- function(
                 # sanity check: are all ustart values equal?
                 ustart1 <- LIST$ustart[ fixed.idx ]
                 if(! all(ustart1 == LIST$ustart[fixed.all]) ) {
-                    warning("lavaan WARNING: equality constraints involve fixed parameters with different values; only the first one will be used")
+                    warning("psindex WARNING: equality constraints involve fixed parameters with different values; only the first one will be used")
                 }
 
 
@@ -532,7 +532,7 @@ lavaanify <- lavParTable <- function(
 
 
     if(debug) { 
-        cat("[lavaan DEBUG] lavParTable\n")
+        cat("[psindex DEBUG] lavParTable\n")
         print( as.data.frame(LIST) )
     }
 

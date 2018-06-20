@@ -125,7 +125,7 @@ lav_dataframe_vartable <- function(frame = NULL, ov.names = NULL,
     if(as.data.frame.) {
         VAR <- as.data.frame(VAR, stringsAsFactors=FALSE,
                              row.names=1:length(VAR$name))
-        class(VAR) <- c("lavaan.data.frame", "data.frame")
+        class(VAR) <- c("psindex.data.frame", "data.frame")
     }
 
     VAR

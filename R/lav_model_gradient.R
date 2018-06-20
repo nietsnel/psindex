@@ -416,7 +416,7 @@ lav_model_gradient <- function(lavmodel       = NULL,
             if(estimator == "PML") {
 
                 if(lavdata@nlevels  > 1L) {
-                    stop("lavaan ERROR: PL gradient + multilevel not implemented; try optim.gradient = \"numerical\"")
+                    stop("psindex ERROR: PL gradient + multilevel not implemented; try optim.gradient = \"numerical\"")
                 } else if(conditional.x) {
                     d1 <- pml_deriv1(Sigma.hat  = Sigma.hat[[g]],
                                      Mu.hat     = Mu.hat[[g]],
@@ -481,7 +481,7 @@ lav_model_gradient <- function(lavmodel       = NULL,
             }
         } # g
     } else {
-        stop("lavaan ERROR: no analytical gradient available for estimator ",
+        stop("psindex ERROR: no analytical gradient available for estimator ",
              estimator)
     }
 
@@ -498,7 +498,7 @@ lav_model_gradient <- function(lavmodel       = NULL,
         est.freq <- exp(unlist(computeGW(lavmodel = lavmodel, GLIST = GLIST)))
         obs.freq <- unlist(lavsamplestats@group.w) * lavsamplestats@ntotal
         dx.GW <- - (obs.freq - est.freq)
-        # divide by N (to be consistent with the rest of lavaan)
+        # divide by N (to be consistent with the rest of psindex)
         dx.GW <- dx.GW / lavsamplestats@ntotal
 
         # remove last element (fixed LAST group to zero)
@@ -895,7 +895,7 @@ computeDeltaDx <- function(lavmodel = NULL, GLIST = NULL, target = "lambda") {
                                idx=m.el.idx[[mm]], MLIST=GLIST[ mm.in.group ],
                                delta=TRUE)
                 } else {
-                    stop("lavaan ERROR: target ", target, " not implemented yet")
+                    stop("psindex ERROR: target ", target, " not implemented yet")
                 }
 
                 # initialize?

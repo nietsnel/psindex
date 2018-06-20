@@ -21,12 +21,12 @@ modindices <- function(object,
 
     # check if model has converged
     if(object@optim$npar > 0L && !object@optim$converged) {
-        warning("lavaan WARNING: model did not converge")
+        warning("psindex WARNING: model did not converge")
     }
 
     # not ready for estimator = "PML"
     if(object@Options$estimator == "PML") {
-        stop("lavaan WARNING: modification indices for estimator PML are not implemented yet.")
+        stop("psindex WARNING: modification indices for estimator PML are not implemented yet.")
     }
  
     # sanity check
@@ -64,9 +64,9 @@ modindices <- function(object,
     if(length(extra.idx) == 0L) {
         # 2 possibilities: either model is saturated, or we have constraints
         if(object@test[[1]]$df == 0) {
-            warning("lavaan WARNING: list with extra parameters is empty; model is saturated")
+            warning("psindex WARNING: list with extra parameters is empty; model is saturated")
         } else {
-            warning("lavaan WARNING: list with extra parameters is empty; to release equality\n                  constraints, use lavTestScore()")
+            warning("psindex WARNING: list with extra parameters is empty; to release equality\n                  constraints, use lavTestScore()")
         }
         LIST <- data.frame(lhs = character(0), op = character(0),  
                            rhs = character(0), group = integer(0), 
@@ -86,7 +86,7 @@ modindices <- function(object,
     I22.inv <- try(lavTech(object, "inverted.information.expected"), silent = TRUE)
     # just in case...
     if(inherits(I22.inv, "try-error")) {
-        stop("lavaan ERROR: could not compute modification indices; information matrix is singular")
+        stop("psindex ERROR: could not compute modification indices; information matrix is singular")
     }
 
     V <- I11 - I12 %*% I22.inv %*% I21
@@ -227,7 +227,7 @@ modindices <- function(object,
 
     # create data.frame
     LIST <- as.data.frame(LIST, stringsAsFactors = FALSE)
-    class(LIST) <- c("lavaan.data.frame", "data.frame")
+    class(LIST) <- c("psindex.data.frame", "data.frame")
 
     # remove rows corresponding to 'old' free parameters
     if(free.remove) {

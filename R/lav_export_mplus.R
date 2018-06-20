@@ -141,7 +141,7 @@ lav2mplus <- function(lav, group.label=NULL) {
     }
   
     out <- paste(header, body, constraints, footer, sep="")
-    class(out) <- c("lavaan.character", "character")
+    class(out) <- c("psindex.character", "character")
     out
 }
 
@@ -186,7 +186,7 @@ lav_mplus_header <- function(data.file=NULL, group.label="", ov.names="",
     ov.ord.names <- gsub("\\.", "_", ov.ord.names)
 
     ### FIXME!!
-    ### this is old code from lavaan 0.3-1
+    ### this is old code from psindex 0.3-1
     ### surely, this can be done better...
 
     # TITLE command
@@ -213,7 +213,7 @@ lav_mplus_header <- function(data.file=NULL, group.label="", ov.names="",
         c.DATA <- paste(c.DATA, "  type is fullcov;\n", sep="")
         c.DATA <- paste(c.DATA, "  nobservations are ", nobs, ";\n", sep="")
     } else {
-        stop("lavaan ERROR: data.type must be full or moment")
+        stop("psindex ERROR: data.type must be full or moment")
     }
     
     # VARIABLE command

@@ -17,7 +17,7 @@
 # ncols= no of covariates
 # PI.y1 is a vector, includes the regression coefficients of the covariates
 # for the first variable, Y1, the length of the vector is the no of covariates;
-# to obtain this vector apply the function lavaan:::computePI()[row_correspondin_to_Y1, ]
+# to obtain this vector apply the function psindex:::computePI()[row_correspondin_to_Y1, ]
 # PI.y2 is similar to PI.y2
 # missing.ind is of "character" value, taking the values listwise, pairwise, available_cases; 
 # to obtain a value use lavdata@missing
@@ -104,7 +104,7 @@ uni_lik <- function(Y1, th.y1, eXo=NULL, PI.y1=NULL)  {
 
 
 # The function lav_tables_univariate_freq_cell computes the univariate (one-way) frequency tables.
-# The function closely folows the "logic" of the lavaan function 
+# The function closely folows the "logic" of the psindex function 
 # lav_tables_pairwise_freq_cell.
 # The output is either a list or a data.frame depending on the value the logical 
 # input argument as.data.frame. Either way, the same information is contained which is:
@@ -137,7 +137,7 @@ lav_tables_univariate_freq_cell <- function(lavdata = NULL,
 
     # do we have any categorical variables?
     if(length(cat.idx) == 0L) {
-        stop("lavaan ERROR: no categorical variables are found")
+        stop("psindex ERROR: no categorical variables are found")
     } 
 
     # univariate tables
@@ -206,7 +206,7 @@ lav_tables_univariate_freq_cell <- function(lavdata = NULL,
 # Input arguments:
 # TH is a vector giving the thresholds for all variables, tau_ia, with a running 
 #    faster than i (the first and the last thresholds which are -Inf and Inf are
-#    not included). TH can be given by the lavaan function computeTH .
+#    not included). TH can be given by the psindex function computeTH .
 # th.idx is a vector of same length as TH which gives the value of the i index, 
 #        namely which variable each thresholds refers to. This can be obtained by
 #        lavmodel@th.idx .
@@ -230,7 +230,7 @@ univariateExpProbVec <- function(TH=TH, th.idx=th.idx){
 # The function pc_cor_scores_PL_with_cov computes the derivatives of a bivariate
 # log-likelihood of two ordinal variables casewise with respect to thresholds,
 # slopes (reduced-form regression coefficients for the covariates), and polychoric correlation. 
-# The function dbinorm of lavaan is used.
+# The function dbinorm of psindex is used.
 # The function gives the right result for both listwise and pairwise deletion, 
 # and the case of complete data.
 # Input arguments are explained before the function pc_lik_PL_with_cov defined above.
