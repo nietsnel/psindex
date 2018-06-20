@@ -1,24 +1,28 @@
-#' Calculate FPEs 
+#' Parameter Stability Index 
 #' @description A function used to calculate fungible parameter estimates.
 #' @keywords FPE, fungible parameter estimates
-#' @author Jordan L. Prendez, \email{jordanprendez@@gmail.com}
-#' @examples
-#' psindex()
-
+#' @author Jordan L. Prendez, \email{joradanprendez@@gmail.com}
+#' @param model = User-specified SEM that using \pkg{lavaan} syntax.
+#' @param data_set = data frame of measured variables.
+#' @param RMSEA_pert = Numeric. Defines the maximum size of the perturbation in data-model fit (in the scale of RMSEA). For example, a RMSEA_pert = .01 indicates that all estimates will be stored that have a RMSEA value within .01 RMSEA of the MLE RMSEA value. 
+#' @param genanneal_max_iters = Integer. The maximum number of iterations of the simulated annealing algorithm. 
+#' @param plot_fpe = A logical value indicating whether FPEs should be graphed alongside the maximum likelihood estimates. Defaults to \code{FALSE}.
+#' @param frac_plot = the fraction of FPEs that are graphed. Defaults to 1. 
+#' @param iterations_bin = numeric. Represents the maximum number of fungible estimates that can be stored. Defaults to 40,000
+#' @examples 
 
 
 #' @export
 ps_index <- function(model              =  NULL,
                      data_set           =  NULL,
-                     iterations_bin     =  40000,
-                     sd_of_perturbation =  0,
                      # control_args       =  NULL,
                      group              =  NULL,
                      RMSEA_pert         =  0,
                      meanstructure      =  NULL,
-                     GENANNEAL_steps    =  100,
+                     genanneal_max_iters    =  100,
+                     plot_fpe           =  FALSE,
                      frac_plot          =  1, 
-                     plot_fpe           =  FALSE){
+                     iterations_bin     =  40000){
   first_iteration_indicator <- as.integer(1)
   secondary_optimization_iterations <- 1
   
@@ -78,7 +82,7 @@ ps_index <- function(model              =  NULL,
   vars <- (variables+1)
   # answer.array <- matrix(NA, nrow = iters, ncol = vars+1) #bin size #used to be an array
   # fit_mat <- as.data.frame(matrix(NA, nrow=iters, ncol=2)) --deprecated
-  secondary_optimization_iterations <- GENANNEAL_steps  ###GENANNEAL steps.
+  secondary_optimization_iterations <- genanneal_max_iters  ###GENANNEAL steps.
   # for(ii in 1:reps){ test
   for(ii in 1:1){
 
