@@ -1,5 +1,5 @@
 Package: psindex
-Title: Latent Variable Analysis
+Title: Parameter Stability Index 
 Version: 0.6-1.1236
 Authors@R: c(person(given = "Yves", family = "Rosseel",
                     role  = c("aut", "cre"),
@@ -41,7 +41,7 @@ Description: Fit a variety of latent variable models, including confirmatory
    factor analysis, structural equation modeling and latent growth curve models.
 Depends: R(>= 3.1.0)
 Imports: methods, stats4, stats, utils, graphics, MASS, 
-         mnormt, pbivnorm, numDeriv, GenSA, ggplot2, data.table, dplyr, tidyr,
+         mnormt, pbivnorm, numDeriv, GenSA, ggplot2, data.table, dplyr, tidyr, 
 Suggests: testthat
 License: GPL (>= 2)
 LazyData: yes

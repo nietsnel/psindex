@@ -2,34 +2,29 @@
 % Please edit documentation in R/ps_index.R
 \name{ps_index}
 \alias{ps_index}
-\title{Calculate FPEs}
+\title{Parameter Stability Index}
 \usage{
 ps_index(model = NULL, data_set = NULL, group = NULL, RMSEA_pert = 0,
   meanstructure = NULL, genanneal_max_iters = 100, plot_fpe = FALSE,
   frac_plot = 1, iterations_bin = 40000)
 }
 \arguments{
-\item{model}{= User-specified SEM that using lavaan syntax.}
+\item{model}{user-specified SEM that using \pkg{lavaan} syntax.}
 
-\item{data_set}{= data frame of measured variables.}
+\item{data_set}{data frame of measured variables.}
 
-\item{RMSEA_pert}{= Numeric. Defines the maximum size of the perturbation in data-model fit (in the scale of RMSEA). For example, a RMSEA_pert = .01 indicates that all estimates will be stored that have a RMSEA value within .01 RMSEA of the MLE RMSEA value.}
+\item{RMSEA_pert}{numeric. Defines the maximum size of the perturbation in data-model fit (in the scale of RMSEA). For example, a RMSEA_pert = .01 indicates that all estimates will be stored that have a RMSEA value within .01 RMSEA of the MLE RMSEA value.}
 
-\item{genanneal_max_iters}{= Integer. The maximum number of iterations of the simulated annealing algorithm.}
+\item{genanneal_max_iters}{integer. The maximum number of iterations of the simulated annealing algorithm.}
 
-\item{plot_fpe}{= A logical value indicating whether FPEs should be graphed alongside the maximum likelihood estimates. Defaults to FALSE.}
+\item{plot_fpe}{a logical value indicating whether FPEs should be graphed alongside the maximum likelihood estimates. Defaults to \code{FALSE}.}
 
-\item{frac_plot}{= the fraction of FPEs that are graphed. Defaults to 1.}
+\item{frac_plot}{the fraction of FPEs that are graphed. Defaults to 1.}
 
-\item{iterations_bin}{= numeric. Represents the maximum number of fungible estimates that can be stored. Defaults to 40,000}
-
-\item{labels_output}{= FALSE (default). TRUE outputs the labels used in the function.}
+\item{iterations_bin}{numeric. Represents the maximum number of fungible estimates that can be stored. Defaults to 40,000}
 }
 \description{
 A function used to calculate fungible parameter estimates.
-}
-\examples{
-psindex()
 }
 \author{
 Jordan L. Prendez, \email{joradanprendez@gmail.com}

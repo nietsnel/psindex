@@ -2,13 +2,13 @@
 #' @description A function used to calculate fungible parameter estimates.
 #' @keywords FPE, fungible parameter estimates
 #' @author Jordan L. Prendez, \email{joradanprendez@@gmail.com}
-#' @param model = User-specified SEM that using \pkg{lavaan} syntax.
-#' @param data_set = data frame of measured variables.
-#' @param RMSEA_pert = Numeric. Defines the maximum size of the perturbation in data-model fit (in the scale of RMSEA). For example, a RMSEA_pert = .01 indicates that all estimates will be stored that have a RMSEA value within .01 RMSEA of the MLE RMSEA value. 
-#' @param genanneal_max_iters = Integer. The maximum number of iterations of the simulated annealing algorithm. 
-#' @param plot_fpe = A logical value indicating whether FPEs should be graphed alongside the maximum likelihood estimates. Defaults to \code{FALSE}.
-#' @param frac_plot = the fraction of FPEs that are graphed. Defaults to 1. 
-#' @param iterations_bin = numeric. Represents the maximum number of fungible estimates that can be stored. Defaults to 40,000
+#' @param model user-specified SEM that using \pkg{lavaan} syntax.
+#' @param data_set data frame of measured variables.
+#' @param RMSEA_pert numeric. Defines the maximum size of the perturbation in data-model fit (in the scale of RMSEA). For example, a RMSEA_pert = .01 indicates that all estimates will be stored that have a RMSEA value within .01 RMSEA of the MLE RMSEA value. 
+#' @param genanneal_max_iters integer. The maximum number of iterations of the simulated annealing algorithm. 
+#' @param plot_fpe a logical value indicating whether FPEs should be graphed alongside the maximum likelihood estimates. Defaults to \code{FALSE}.
+#' @param frac_plot the fraction of FPEs that are graphed. Defaults to 1. 
+#' @param iterations_bin numeric. Represents the maximum number of fungible estimates that can be stored. Defaults to 40,000
 #' @examples 
 
 
@@ -62,11 +62,12 @@ ps_index <- function(model              =  NULL,
   # assign('sd_of_perturbation', value=0, envir=globalenv())##vistigial--used pre GenAnneal -- deprecated
   # assign('rep_fx_mat', value=1, envir=as.environment(iters.env), inherits=TRUE)
   # assign('bandwidth', value=bandwidth, envir=globalenv()) --deprecated
-  # browser()
+
+  # fit.mle <<- lavaan:::sem(model=model, data=data_set, verbose = FALSE, debug = FALSE, estimator="ML", group=group)
+  fit.mle <<- psindex::sem(model=model, data=data_set, verbose = FALSE, debug = FALSE,  estimator="ML", control=list(optim.method = "NLMINB0"), group=group)
   
-  fit.mle <<- lavaan:::sem(model=model, data=data_set, verbose = FALSE, debug = FALSE, estimator="ML", group=group)
+  
   variables  <- length(fit.mle@ParTable$est)
-  
   M = matrix(0, nrow = length(fit.mle@optim$x) + 1, ncol = iterations_bin)
   iters_assign <- 1
   dt_speed = as.data.table(M) ###data.table for speed. 
@@ -87,7 +88,7 @@ ps_index <- function(model              =  NULL,
   for(ii in 1:1){
 
     
-    
+    # browser()
     # >> fit1 <- psindex(model = mod1, data = dat, meanstructure = TRUE, control = 
     #                     > +                list(optim.method = "BGFS", eval.max = 40000, iter.max = 200000)) 
     

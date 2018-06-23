@@ -181,10 +181,11 @@ lav_model_estimate <- function(lavmodel       = NULL,
         fx
         # print(iters_assign)
     }
+    if(lavoptions$optim.method=="GENSA"){
     assign('fpe_wide', fpe_wide, envir = globalenv())
     # fpe_wide <- t(fpe_wide) ##store values.
     #       assign('cool.output2', fpe_wide, envir=globalenv()) ##JYP
-
+    }
 
     first.derivative.param <- function(x, verbose=FALSE, infToMax=FALSE) {
 
