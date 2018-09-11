@@ -391,17 +391,23 @@ lav_model_estimate <- function(lavmodel       = NULL,
       
       library(GenSA)
       par.length<- length(start.x)
-      tol <- .05
-      global.min <- 0
+      # tol <- .05
+      # global.min <- 0
       lower <- rep(-10, par.length)
       upper <- rep(10, par.length)
       # browser()
         # optim.out <- GenSA(par=fit.mle@optim$x,
-       optim.out <- GenSA(par=start.x,
+      # control_genSA=list(threshold.stop=global.min+tol, verbose=TRUE, temperature=6, trace.mat = FALSE, maxit=secondary_optimization_iterations)  ##temp disabled.
+      # control_genSA=control_genSA  ##temp disabled.
+      control_genSA<- get('control_genSA', envir=1)
+      
+      
+      optim.out <- GenSA(par=start.x,
                           lower=lower,
                           upper=upper,
                           fn=minimize.this.function,
-                          control=list(threshold.stop=global.min+tol, verbose=TRUE, temperature=6, trace.mat = FALSE, maxit=secondary_optimization_iterations))  ##temp disabled.
+                          control=control_genSA)
+                          # control=list(threshold.stop=global.min+tol, verbose=TRUE, temperature=6, trace.mat = FALSE, maxit=secondary_optimization_iterations))  ##temp disabled.
 
         
        # optim.out <- GenSA(par=fit.mle@optim$x,

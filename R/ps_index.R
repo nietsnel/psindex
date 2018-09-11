@@ -22,9 +22,15 @@ ps_index <- function(model              =  NULL,
                      genanneal_max_iters    =  100,
                      plot_fpe           =  FALSE,
                      frac_plot          =  1, 
-                     iterations_bin     =  40000){
+                     iterations_bin     =  40000,
+                     control_genSA      =  list(threshold.stop=global.min+tol, verbose=TRUE, temperature=6, 
+                          trace.mat = FALSE) 
+                                          ){
   first_iteration_indicator <- as.integer(1)
   secondary_optimization_iterations <- 1
+  control_genSA <- control_genSA
+  
+  
   
   library(data.table)
   library(tidyr)
