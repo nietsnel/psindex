@@ -6,7 +6,9 @@
 \usage{
 ps_index(model = NULL, data_set = NULL, group = NULL, RMSEA_pert = 0,
   meanstructure = NULL, genanneal_max_iters = 100, plot_fpe = FALSE,
-  frac_plot = 1, iterations_bin = 40000)
+  output_long = FALSE, frac_plot = 1, iterations_bin = 40000,
+  control_genSA = list(threshold.stop = global.min + tol, verbose = TRUE,
+  temperature = 6, trace.mat = FALSE))
 }
 \arguments{
 \item{model}{user-specified SEM that using \pkg{lavaan} syntax.}
@@ -19,15 +21,22 @@ ps_index(model = NULL, data_set = NULL, group = NULL, RMSEA_pert = 0,
 
 \item{plot_fpe}{a logical value indicating whether FPEs should be graphed alongside the maximum likelihood estimates. Defaults to \code{FALSE}.}
 
+\item{output_long}{a logical value that indicates whether the FPEs and the MLE should be output in long data format. Defaults to \code{FALSE}}
+
 \item{frac_plot}{the fraction of FPEs that are graphed. Defaults to 1.}
 
 \item{iterations_bin}{numeric. Represents the maximum number of fungible estimates that can be stored. Defaults to 40,000}
+
+\item{control_genSA}{list. used to control the simulated annealing algorithm (see \link[GenSA]{GenSA} documentation)}
 }
 \description{
 A function used to calculate fungible parameter estimates.
 }
+\examples{
+Coming soon...
+}
 \author{
-Jordan L. Prendez, \email{joradanprendez@gmail.com}
+Jordan Yee Prendez, \email{jordanyeeprendez@gmail.com}
 }
 \keyword{FPE,}
 \keyword{estimates}

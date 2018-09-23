@@ -1,15 +1,18 @@
 #' Parameter Stability Index 
 #' @description A function used to calculate fungible parameter estimates.
 #' @keywords FPE, fungible parameter estimates
-#' @author Jordan L. Prendez, \email{joradanprendez@@gmail.com}
+#' @author Jordan Yee Prendez, \email{jordanyeeprendez@@gmail.com}
 #' @param model user-specified SEM that using \pkg{lavaan} syntax.
 #' @param data_set data frame of measured variables.
 #' @param RMSEA_pert numeric. Defines the maximum size of the perturbation in data-model fit (in the scale of RMSEA). For example, a RMSEA_pert = .01 indicates that all estimates will be stored that have a RMSEA value within .01 RMSEA of the MLE RMSEA value. 
 #' @param genanneal_max_iters integer. The maximum number of iterations of the simulated annealing algorithm. 
 #' @param plot_fpe a logical value indicating whether FPEs should be graphed alongside the maximum likelihood estimates. Defaults to \code{FALSE}.
+#' @param output_long a logical value that indicates whether the FPEs and the MLE should be output in long data format. Defaults to \code{FALSE} 
 #' @param frac_plot the fraction of FPEs that are graphed. Defaults to 1. 
 #' @param iterations_bin numeric. Represents the maximum number of fungible estimates that can be stored. Defaults to 40,000
-#' @examples 
+#' @param control_genSA list. used to control the simulated annealing algorithm (see \link[GenSA]{GenSA} documentation)
+#' @examples Coming soon...
+
 
 
 #' @export
@@ -21,6 +24,7 @@ ps_index <- function(model              =  NULL,
                      meanstructure      =  NULL,
                      genanneal_max_iters    =  100,
                      plot_fpe           =  FALSE,
+                     output_long        =  FALSE,
                      frac_plot          =  1, 
                      iterations_bin     =  40000,
                      control_genSA      =  list(threshold.stop=global.min+tol, verbose=TRUE, temperature=6, 
@@ -160,7 +164,6 @@ ps_index <- function(model              =  NULL,
     unite(new, V1, V2, sep = "_", remove = TRUE)
   # assign("names", value=names2, envir=globalenv())
   
-  # browser()
   ##Prepare for graphing::
 
   results_array_subset <- answer.array
@@ -171,33 +174,44 @@ ps_index <- function(model              =  NULL,
   names2 <- rbind(names2, "discrepancy fx", "count")
 
   names(data_iterations) <- names2$new
-  data_iterations <- subset(data_iterations, `discrepancy fx`!=0) ##removes unused rows.
-  data_iterations <- sample_frac(data_iterations, size = frac_plot, replace = FALSE)
+  data_iterations_temp <- subset(data_iterations, `discrepancy fx`!=0) ##removes unused rows.
+  data_iterations_temp <- data_iterations_temp %>% ###removes any estimate that is equal to another
+    distinct(.keep_all = TRUE)
+  assign("fpe_wide", value=data_iterations_temp, envir=globalenv()) ###Need to address this. -- should not use global variables.
+  
+  data_iterations <- sample_frac(data_iterations_temp, size = frac_plot, replace = FALSE)
 
 
   results_main_long <- data_iterations %>%
-    # arrange(`discrepancy fx`)
-    # mutate(mle = ifelse(`discrepancy fx`))
     gather(key=variable, value=estimate, -count, -`discrepancy fx`, (1:(dim(data_iterations)[2]-2))) %>%
     arrange(variable)
-
-  mle_dat <- results_main_long %>%
-    filter(count == 1)
   names(results_main_mle)<- names2$new[1:(dim(results_main_mle)[2])]
-
+  
   results_array_mle_long <- results_main_mle %>%
     # arrange(`discrepancy fx`)
     # mutate(mle = ifelse(`discrepancy fx`))
     gather(key=variable, value=estimate) %>%
     arrange(variable)
 
+  if (output_long==TRUE) {
+  results_main_long1 <- data_iterations_temp %>%
+    gather(key=variable, value=estimate, -count, -`discrepancy fx`, (1:(dim(data_iterations)[2]-2))) %>%
+    arrange(variable)
+  names(results_main_long1)<- names2$new[1:(dim(results_main_long1)[2])]  
+    
+    
+  assign("fpe_long", value=results_main_long1, envir=globalenv()) 
+  assign("mle_long", value=results_array_mle_long, envir=globalenv()) 
+  
+  rm(data_iterations_temp, results_main_long1)
+  }
+  
+  
   # fit_meas <- round(as.data.frame(fitMeasures(fit.mle, c("cfi","rmsea","srmr"))),3)
 
   # assign("fpe_long", value=results_main_long, envir=globalenv()) ##assigns to current environment
   # assign("mle_est_long", value=results_array_mle_long, envir=globalenv()) ##assigns to current environment
-  assign("fpe_wide", value=data_iterations, envir=globalenv()) ###Need to address this. -- should not use global variables.
   
-
   fpe_long <- results_main_long
   mle_est_long <- results_array_mle_long
    
