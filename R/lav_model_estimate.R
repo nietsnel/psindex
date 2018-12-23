@@ -4,7 +4,9 @@ lav_model_estimate <- function(lavmodel       = NULL,
                                lavdata        = NULL,
                                lavoptions     = NULL,
                                lavcache       = list(),
-                               do.fit         = TRUE) {
+                               do.fit         = TRUE,
+                               control_genSA1  = control_genSA)
+{
 
     estimator     <- lavoptions$estimator
     verbose       <- lavoptions$verbose
@@ -384,7 +386,7 @@ lav_model_estimate <- function(lavmodel       = NULL,
       
       # browser()
       # secondary_optimization_iterations<- get('secondary_optimization_iterations', envir=globalenv())
-      secondary_optimization_iterations<- get('secondary_optimization_iterations', envir=1)
+      # secondary_optimization_iterations<- get('secondary_optimization_iterations', envir=1)  #removed dec 22, 2018 Not necessary. 
       
       # first_iteration_indicator <- get("first_iteration_indicator", globalenv())
       
@@ -399,14 +401,14 @@ lav_model_estimate <- function(lavmodel       = NULL,
         # optim.out <- GenSA(par=fit.mle@optim$x,
       # control_genSA=list(threshold.stop=global.min+tol, verbose=TRUE, temperature=6, trace.mat = FALSE, maxit=secondary_optimization_iterations)  ##temp disabled.
       # control_genSA=control_genSA  ##temp disabled.
-      control_genSA<- get('control_genSA', envir=1)
+      # control_genSA<- get('control_genSA', envir=1) ###HERE DEC
       
       
       optim.out <- GenSA(par=start.x,
                           lower=lower,
                           upper=upper,
                           fn=minimize.this.function,
-                          control=control_genSA)
+                          control=control_genSA1)
                           # control=list(threshold.stop=global.min+tol, verbose=TRUE, temperature=6, trace.mat = FALSE, maxit=secondary_optimization_iterations))  ##temp disabled.
 
         
