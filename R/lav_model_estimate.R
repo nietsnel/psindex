@@ -5,14 +5,19 @@ lav_model_estimate <- function(lavmodel       = NULL,
                                lavoptions     = NULL,
                                lavcache       = list(),
                                do.fit         = TRUE,
-                               control_genSA1  = control_genSA)
+                               control_genSA  = NULL)
 {
-
+    # browser()
     estimator     <- lavoptions$estimator
     verbose       <- lavoptions$verbose
     debug         <- lavoptions$debug
     ngroups       <- lavsamplestats@ngroups
-    
+
+
+    control_genSA <- get("control_genSA", envir = 1)
+
+
+
     new_counter <- function() {
       i <- 0
       function() {
@@ -20,12 +25,12 @@ lav_model_estimate <- function(lavmodel       = NULL,
         i
       }
     }
-    
+
     counter_one <- new_counter()
-    
-    
-    
-    
+
+
+
+
     if(lavsamplestats@missing.flag || estimator == "PML") {
         group.weight <- FALSE
     } else {
@@ -35,14 +40,14 @@ lav_model_estimate <- function(lavmodel       = NULL,
     # temp test
     if(lavoptions$partrace) {
         # fx + parameter values
-      
+
         PENV <- new.env()
         PENV$PARTRACE <- matrix(NA, nrow=0, ncol=lavmodel@nx.free + 1L)
     }
-    
+
     # function to be minimized
     minimize.this.function <- function(x, verbose=FALSE, infToMax=FALSE) {
-      
+
       # browser()
         #cat("DEBUG: x = ", x, "\n")
 
@@ -59,14 +64,14 @@ lav_model_estimate <- function(lavmodel       = NULL,
 
         # update GLIST (change `state') and make a COPY!
         if(lavmodel@eq.constraints) {
-            x <- as.numeric(lavmodel@eq.constraints.K %*% x) + 
+            x <- as.numeric(lavmodel@eq.constraints.K %*% x) +
                             lavmodel@eq.constraints.k0
         }
         GLIST <- lav_model_x2GLIST(lavmodel, x=x)
 
-        fx <- lav_model_objective(lavmodel       = lavmodel, 
-                                  GLIST          = GLIST, 
-                                  lavsamplestats = lavsamplestats, 
+        fx <- lav_model_objective(lavmodel       = lavmodel,
+                                  GLIST          = GLIST,
+                                  lavsamplestats = lavsamplestats,
                                   lavdata        = lavdata,
                                   lavcache       = lavcache,
                                   verbose        = verbose,
@@ -79,8 +84,8 @@ lav_model_estimate <- function(lavmodel       = NULL,
 
 
 
-        if(debug || verbose) { 
-            cat("Objective function  = ", sprintf("%18.16f", fx), "\n", sep="") 
+        if(debug || verbose) {
+            cat("Objective function  = ", sprintf("%18.16f", fx), "\n", sep="")
         }
         if(debug) {
             #cat("Current unconstrained parameter values =\n")
@@ -92,7 +97,7 @@ lav_model_estimate <- function(lavmodel       = NULL,
         if(OPTIMIZER == "GENSA"){
         ##added information:
           first_iteration_indicator <- get("first_iteration_indicator", envir = 1)
-          
+
           # browser()
           if(first_iteration_indicator == 1){
             fit.mle <- get("fit.mle", globalenv())
@@ -106,20 +111,20 @@ lav_model_estimate <- function(lavmodel       = NULL,
             # perturb <- get("RMSEA_pert") ##this works but is for percent. GOOD?
             # perturb <- get("RMSEA_pert", envir = iters.env) ##this works but is for percent. GOOD?
             perturb <- get("RMSEA_pert", envir = 1) ##this works but is for percent. GOOD?
-            
-            
-            
+
+
+
             rmsea_comp <- sqrt(X2_fit.mle-d)/(sqrt(abs(d*(N-1))))
             rmsea_fpe <- rmsea_comp + perturb
             x2_fpe<- (rmsea_fpe^2)*d*(N-1)+d
             upper_function_thresh <- x2_fpe/(2*N)
-          
+
             f <- as.numeric(fx)
-            
+
             if(f < upper_function_thresh){ ## Main
               # browser()
 
-              
+
               print("save fungible estimate")
               fpe_wide <- get("fpe_wide", globalenv())
               # iters_assign <- get('iters_assign', globalenv())
@@ -129,33 +134,33 @@ lav_model_estimate <- function(lavmodel       = NULL,
               # if(exists("iters_assign")==TRUE){
               #   iters_assign <- get('iters_assign', envir = parent.frame())
               # } else {
-                
+
               # iters_assign <- get('iters_assign', envir = 1)
 
               # }
-              
+
               # for(iters_assign in 1:1000){
-              # set(fpe_wide,i=NULL,j=paste0(iters_assign, "L"), value=c(fx,x)) 
+              # set(fpe_wide,i=NULL,j=paste0(iters_assign, "L"), value=c(fx,x))
               fx_and_estimates <- as.vector(c(fx,x))
               set(fpe_wide, i=NULL, j=paste0("V",counter_one()), value=fx_and_estimates)
-              
-              
-             
-              
-              
-              
-              
+
+
+
+
+
+
+
               # }#i = row, j=column, value....=value
               # browser()
               # counter_one
               # iters_assign <- iters_assign + 1
               # assign('iters_assign', value = iters_assign, envir = globalenv())
-              
-              # assign('iters_assign', value = iters_assign, envir = parent.frame())
-              
 
-              
-                            
+              # assign('iters_assign', value = iters_assign, envir = parent.frame())
+
+
+
+
               # section below works.
               # print("save fungible estimate")
               # PENV$PARTRACE <- rbind(PENV$PARTRACE, c(fx, x))
@@ -164,14 +169,14 @@ lav_model_estimate <- function(lavmodel       = NULL,
 
               # print("save fungible estimate")
               # PENV
-              # 
-              
-                            
+              #
+
+
             }
           }
-          
-          
-          
+
+
+
             # PENV$PARTRACE <- rbind(PENV$PARTRACE, c(fx, x))
         }
 
@@ -201,12 +206,12 @@ lav_model_estimate <- function(lavmodel       = NULL,
         }
         GLIST <- lav_model_x2GLIST(lavmodel, x=x)
 
-        dx <- lav_model_gradient(lavmodel       = lavmodel, 
-                                 GLIST          = GLIST, 
+        dx <- lav_model_gradient(lavmodel       = lavmodel,
+                                 GLIST          = GLIST,
                                  lavsamplestats = lavsamplestats,
                                  lavdata        = lavdata,
                                  lavcache       = lavcache,
-                                 type           = "free", 
+                                 type           = "free",
                                  group.weight   = group.weight, ### check me!!
                                  verbose        = verbose,
                                  forcePD        = TRUE)
@@ -233,7 +238,7 @@ lav_model_estimate <- function(lavmodel       = NULL,
         }
 
         dx
-    } 
+    }
 
     first.derivative.param.numerical <- function(x, verbose=FALSE) {
 
@@ -244,7 +249,7 @@ lav_model_estimate <- function(lavmodel       = NULL,
         npar <- length(x)
         h <- 10e-6
         dx <- numeric( npar )
- 
+
         ## FIXME: call lav_model_objective directly!!
         for(i in 1:npar) {
             x.left <- x.left2 <- x.right <- x.right2 <- x
@@ -262,15 +267,15 @@ lav_model_estimate <- function(lavmodel       = NULL,
 
         if(debug) {
             cat("Gradient function (numerical) =\n"); print(dx); cat("\n")
-        }        
+        }
 
         dx
     }
- 
+
     # starting values
     start.x <- lav_model_get_parameters(lavmodel)
     if(lavmodel@eq.constraints) {
-        start.x <- as.numeric( (start.x - lavmodel@eq.constraints.k0) %*% 
+        start.x <- as.numeric( (start.x - lavmodel@eq.constraints.k0) %*%
                                 lavmodel@eq.constraints.K )
     }
 
@@ -286,7 +291,7 @@ lav_model_estimate <- function(lavmodel       = NULL,
         Sigma.hat <- computeSigmaHat(lavmodel, extra=TRUE, debug=lavoptions$debug)
         for(g in 1:ngroups) {
             if(!attr(Sigma.hat[[g]], "po")) {
-                group.txt <- ifelse(ngroups > 1, 
+                group.txt <- ifelse(ngroups > 1,
                                     paste(" in group ",g,".",sep=""), ".")
                 if(debug) print(Sigma.hat[[g]])
                 stop("psindex ERROR: initial model-implied matrix (Sigma) is not positive definite;\n  check your model and/or starting parameters", group.txt)
@@ -357,7 +362,7 @@ lav_model_estimate <- function(lavmodel       = NULL,
             #OPTIMIZER <- "L-BFGS-B"  # trouble with Inf values for fx!
         } else {
             OPTIMIZER <- toupper(lavoptions$optim.method)
-            stopifnot(OPTIMIZER %in% c("GENSA", "NLMINB0", "NLMINB1", "NLMINB2", 
+            stopifnot(OPTIMIZER %in% c("GENSA", "NLMINB0", "NLMINB1", "NLMINB2",
                       "NLMINB", "BFGS", "L-BFGS-B", "NONE"))
             if(OPTIMIZER == "NLMINB1") {
                 OPTIMIZER <- "NLMINB"
@@ -373,7 +378,7 @@ lav_model_estimate <- function(lavmodel       = NULL,
         optim.out <- optim(par=start.x,
                            fn=minimize.this.function,
                            method="Nelder-Mead",
-                           #control=list(maxit=10L, 
+                           #control=list(maxit=10L,
                            #             parscale=SCALE,
                            #             trace=trace),
                            hessian=FALSE,
@@ -383,44 +388,33 @@ lav_model_estimate <- function(lavmodel       = NULL,
     }
     if(OPTIMIZER == "GENSA") {
       if(verbose) cat("Quasi-Newton steps using NLMINB:\n")
-      
-      # browser()
-      # secondary_optimization_iterations<- get('secondary_optimization_iterations', envir=globalenv())
-      # secondary_optimization_iterations<- get('secondary_optimization_iterations', envir=1)  #removed dec 22, 2018 Not necessary. 
-      
-      # first_iteration_indicator <- get("first_iteration_indicator", globalenv())
-      
-      
+
+
       library(GenSA)
       par.length<- length(start.x)
       # tol <- .05
       # global.min <- 0
       lower <- rep(-10, par.length)
       upper <- rep(10, par.length)
-      # browser()
-        # optim.out <- GenSA(par=fit.mle@optim$x,
-      # control_genSA=list(threshold.stop=global.min+tol, verbose=TRUE, temperature=6, trace.mat = FALSE, maxit=secondary_optimization_iterations)  ##temp disabled.
-      # control_genSA=control_genSA  ##temp disabled.
-      # control_genSA<- get('control_genSA', envir=1) ###HERE DEC
-      
-      
+
+
       optim.out <- GenSA(par=start.x,
                           lower=lower,
                           upper=upper,
                           fn=minimize.this.function,
-                          control=control_genSA1)
+                          control=control_genSA)
                           # control=list(threshold.stop=global.min+tol, verbose=TRUE, temperature=6, trace.mat = FALSE, maxit=secondary_optimization_iterations))  ##temp disabled.
 
-        
+
        # optim.out <- GenSA(par=fit.mle@optim$x,
        #                    lower=lower,
        #                    upper=upper,
        #                    fn=minimize.this.function)
        #                    control=list(threshold.stop=global.min+tol, verbose=TRUE, temperature=3, trace.mat = TRUE, maxit=secondary_optimization_iterations))  ##temp disabled.
-       # 
-       
-       
-       
+       #
+
+
+
     # } else if(OPTIMIZER == "NONE") {
       x <- start.x
       iterations <- 0L
@@ -428,7 +422,7 @@ lav_model_estimate <- function(lavmodel       = NULL,
       control <- list()
       # optim.out <- list()
     # }
-      
+
 
     } else if(OPTIMIZER == "NLMINB0") {
         if(verbose) cat("Quasi-Newton steps using NLMINB0 (no analytic gradient):\n")
@@ -445,7 +439,7 @@ lav_model_estimate <- function(lavmodel       = NULL,
                                x.tol=1.5e-8,
                                xf.tol=2.2e-14)
         control.nlminb <- modifyList(control.nlminb, lavoptions$control)
-        control <- control.nlminb[c("eval.max", "iter.max", "trace", 
+        control <- control.nlminb[c("eval.max", "iter.max", "trace",
                                     "step.min", "step.max",
                                     "abs.tol", "rel.tol", "x.tol", "xf.tol")]
         #cat("DEBUG: control = "); print(str(control.nlminb)); cat("\n")
@@ -454,7 +448,7 @@ lav_model_estimate <- function(lavmodel       = NULL,
                             gradient=NULL,
                             control=control,
                             scale=SCALE,
-                            verbose=verbose) 
+                            verbose=verbose)
         if(verbose) {
             cat("convergence status (0=ok): ", optim.out$convergence, "\n")
             cat("nlminb message says: ", optim.out$message, "\n")
@@ -486,7 +480,7 @@ lav_model_estimate <- function(lavmodel       = NULL,
                                x.tol=1.5e-8,
                                xf.tol=2.2e-14)
         control.nlminb <- modifyList(control.nlminb, lavoptions$control)
-        control <- control.nlminb[c("eval.max", "iter.max", "trace", 
+        control <- control.nlminb[c("eval.max", "iter.max", "trace",
                                     "step.min", "step.max",
                                     "abs.tol", "rel.tol", "x.tol", "xf.tol")]
         #cat("DEBUG: control = "); print(str(control.nlminb)); cat("\n")
@@ -495,7 +489,7 @@ lav_model_estimate <- function(lavmodel       = NULL,
                             gradient=GRADIENT,
                             control=control,
                             scale=SCALE,
-                            verbose=verbose) 
+                            verbose=verbose)
         if(verbose) {
             cat("convergence status (0=ok): ", optim.out$convergence, "\n")
             cat("nlminb message says: ", optim.out$message, "\n")
@@ -517,7 +511,7 @@ lav_model_estimate <- function(lavmodel       = NULL,
         # (but WLS works!)
         # - BB.ML works too
 
-        control.bfgs <- list(trace=0L, fnscale=1, 
+        control.bfgs <- list(trace=0L, fnscale=1,
                              parscale=SCALE, ## or not?
                              ndeps=1e-3,
                              maxit=10000,
@@ -564,8 +558,8 @@ lav_model_estimate <- function(lavmodel       = NULL,
                                factr=1e7,
                                pgtol=0)
         control.lbfgsb <- modifyList(control.lbfgsb, lavoptions$control)
-        control <- control.lbfgsb[c("trace", "fnscale", "parscale", 
-                                    "ndeps", "maxit", "REPORT", "lmm", 
+        control <- control.lbfgsb[c("trace", "fnscale", "parscale",
+                                    "ndeps", "maxit", "REPORT", "lmm",
                                     "factr", "pgtol")]
         optim.out <- optim(par=start.x,
                            fn=minimize.this.function,
