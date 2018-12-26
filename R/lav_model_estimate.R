@@ -112,9 +112,13 @@ lav_model_estimate <- function(lavmodel       = NULL,
             # perturb <- get("RMSEA_pert", envir = iters.env) ##this works but is for percent. GOOD?
             perturb <- get("RMSEA_pert", envir = 1) ##this works but is for percent. GOOD?
 
+            # browser()
+            # rmsea_comp <- sqrt(X2_fit.mle-d)/(sqrt(abs(d*(N-1))))
 
 
-            rmsea_comp <- sqrt(X2_fit.mle-d)/(sqrt(abs(d*(N-1))))
+            rmsea_comp <- sqrt(max(((X2_fit.mle-d) / (d*(N-1))), 0))
+
+
             rmsea_fpe <- rmsea_comp + perturb
             x2_fpe<- (rmsea_fpe^2)*d*(N-1)+d
             upper_function_thresh <- x2_fpe/(2*N)
