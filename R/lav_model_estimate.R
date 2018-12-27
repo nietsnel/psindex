@@ -15,6 +15,7 @@ lav_model_estimate <- function(lavmodel       = NULL,
 
 
     control_genSA <- get("control_genSA", envir = 1)
+    suppress_message <- get("suppress_message", envir = 1)
 
 
 
@@ -129,7 +130,14 @@ lav_model_estimate <- function(lavmodel       = NULL,
               # browser()
 
 
-              print("save fungible estimate")
+            if(suppress_message != TRUE){
+                print("save fungible estimate")
+
+
+            }
+
+
+
               fpe_wide <- get("fpe_wide", globalenv())
               # iters_assign <- get('iters_assign', globalenv())
               # iters_assign <- get('iters_assign', envir = 1)

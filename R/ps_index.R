@@ -27,6 +27,7 @@ ps_index <- function(model              =  NULL,
                      output_long        =  FALSE,
                      frac_plot          =  1,
                      iterations_bin     =  40000,
+                     suppress_message   = FALSE,
                      control_genSA      =  list(threshold.stop=global.min+tol, verbose=TRUE, temperature=6,
                           trace.mat = FALSE)
                                           ){
@@ -34,7 +35,7 @@ ps_index <- function(model              =  NULL,
   secondary_optimization_iterations <- 1
   control_genSA <<- control_genSA
 
-
+  suppress_message <<-suppress_message
 
   library(data.table)
   library(tidyr)
