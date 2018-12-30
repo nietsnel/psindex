@@ -121,6 +121,27 @@ lav_model_estimate <- function(lavmodel       = NULL,
                                   verbose        = verbose,
                                   forcePD        = forcePD)
         # print(fx)
+         if(sum(fpe_wide[1,]==0) == 0){
+           
+           # browser()
+           
+
+           # browser()
+           # control_genSA$threshold.stop <- 100
+           # exit()
+           # return(fx)
+           # fx <- 0
+           # fpe_sample_satisfied <<- 1
+           # fpe_sample_satisfied <- Gen_SA_controller()  ##temp comment out
+           # fpe_sample_satisfied <<-fpe_sample_satisfied  ##temp comment out
+  
+           # control_genSA <- list(maxit = 1, threshold.stop = 1)
+           # return(fx)
+           return(fx)
+         }
+        
+        
+
         # only for PML: divide by N (to speed up convergence)
         if(estimator == "PML") {
             fx <- fx / lavsamplestats@ntotal
