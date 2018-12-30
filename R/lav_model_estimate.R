@@ -8,6 +8,7 @@ lav_model_estimate <- function(lavmodel       = NULL,
                                control_genSA  = NULL)
 {
     # browser()
+    fpe_sample_satisfied <-  FALSE
     estimator     <- lavoptions$estimator
     verbose       <- lavoptions$verbose
     debug         <- lavoptions$debug
@@ -18,9 +19,11 @@ lav_model_estimate <- function(lavmodel       = NULL,
     suppress_message <- get("suppress_message", envir = 1)
 
 
-
     new_counter <- function() {
       i <- 0
+
+
+
       function() {
         i <<- i + 1
         i
@@ -29,6 +32,47 @@ lav_model_estimate <- function(lavmodel       = NULL,
 
     counter_one <- new_counter()
 
+
+    fpe_wide <- matrix(data = 0, nrow = 1, ncol = 10) ##Place holder for counter 2 function
+
+    new_counter2 <- function(){  ###to control GENSA.
+        i <- 5000000
+        # print(i)
+# browser()
+            function(){
+                # if(sum(fpe_wide[1,]==0) == 0){
+
+                    # print(paste0("OK GOOD ", i))
+                    i <- i - 1
+                    if(i<(5000000-2)){
+                        i<-1
+                    }
+                    i <<- i
+                    i
+                # }
+            }
+        # } else {
+        #   print("Not Done")
+        # }
+    }
+
+
+    # a_list <- list()
+
+
+    Gen_SA_controller <- new_counter2()
+    # fpe_sample_satisfied <- Gen_SA_controller()
+
+
+    control_genSA = control_genSA
+    # control_genSA <- c(control_genSA, max.call = (fpe_sample_satisfied = Gen_SA_controller()))
+    # control_genSA <- c(control_genSA, max.call = (Gen_SA_controller()))
+    # control_genSA[["max.call"]] = (Gen_SA_controller())  ##this works.
+
+
+
+
+    # control_genSA <<- control_genSA
 
 
 
@@ -49,7 +93,6 @@ lav_model_estimate <- function(lavmodel       = NULL,
     # function to be minimized
     minimize.this.function <- function(x, verbose=FALSE, infToMax=FALSE) {
 
-      # browser()
         #cat("DEBUG: x = ", x, "\n")
 
         # current strategy: forcePD is by default FALSE, except
@@ -77,7 +120,7 @@ lav_model_estimate <- function(lavmodel       = NULL,
                                   lavcache       = lavcache,
                                   verbose        = verbose,
                                   forcePD        = forcePD)
-
+        # print(fx)
         # only for PML: divide by N (to speed up convergence)
         if(estimator == "PML") {
             fx <- fx / lavsamplestats@ntotal
@@ -99,7 +142,6 @@ lav_model_estimate <- function(lavmodel       = NULL,
         ##added information:
           first_iteration_indicator <- get("first_iteration_indicator", envir = 1)
 
-          # browser()
           if(first_iteration_indicator == 1){
             fit.mle <- get("fit.mle", globalenv())
             # X2 <- fit.mle@Fit@test[[1]]$stat ##Chi Sq
@@ -137,8 +179,7 @@ lav_model_estimate <- function(lavmodel       = NULL,
             }
 
 
-
-              fpe_wide <- get("fpe_wide", globalenv())
+              fpe_wide <<- get("fpe_wide", globalenv())
               # iters_assign <- get('iters_assign', globalenv())
               # iters_assign <- get('iters_assign', envir = 1)
               # browser()
@@ -161,9 +202,27 @@ lav_model_estimate <- function(lavmodel       = NULL,
 
 
 
+              # if(sum(fpe_wide[1,]==0) == 0){
+
+                                # browser()
+              # control_genSA$threshold.stop <- 100
+              # exit()
+                  # return(fx)
+              # fx <- 0
+              # fpe_sample_satisfied <<- 1
+              # fpe_sample_satisfied <- Gen_SA_controller()  ##temp comment out
+              # fpe_sample_satisfied <<-fpe_sample_satisfied  ##temp comment out
+
+
+
+              # control_genSA <- list(maxit = 1, threshold.stop = 1)
+
+              # } else {
+              #     print("collected over threshold")
+              # }
+
 
               # }#i = row, j=column, value....=value
-              # browser()
               # counter_one
               # iters_assign <- iters_assign + 1
               # assign('iters_assign', value = iters_assign, envir = globalenv())
@@ -197,7 +256,12 @@ lav_model_estimate <- function(lavmodel       = NULL,
         if(!is.finite(fx)) {
             fx <- 1e20
         }
-        fx
+
+
+
+            fx
+        # }
+
         # print(iters_assign)
     }
     if(lavoptions$optim.method=="GENSA"){
@@ -401,7 +465,7 @@ lav_model_estimate <- function(lavmodel       = NULL,
     if(OPTIMIZER == "GENSA") {
       if(verbose) cat("Quasi-Newton steps using NLMINB:\n")
 
-
+# browser()
       library(GenSA)
       par.length<- length(start.x)
       # tol <- .05
@@ -409,15 +473,29 @@ lav_model_estimate <- function(lavmodel       = NULL,
       lower <- rep(-10, par.length)
       upper <- rep(10, par.length)
 
+# browser()
+      # fpe_sample_satisfied <- get("fpe_sample_satisfied")
+      # fpe_sample_satisfied <- 5000000 ##is this needed here?
 
       optim.out <- GenSA(par=start.x,
                           lower=lower,
                           upper=upper,
                           fn=minimize.this.function,
-                          control=control_genSA)
-                          # control=list(threshold.stop=global.min+tol, verbose=TRUE, temperature=6, trace.mat = FALSE, maxit=secondary_optimization_iterations))  ##temp disabled.
+                          # control = c(control_genSA, max.time = list(fpe_sample_satisfied)))
+                          control = c(control_genSA, max.call = list(Gen_SA_controller())))
 
 
+
+
+# control_genSA <- list(maxit = 1000)
+
+
+# control = c(control_genSA, max.time = list(fpe_sample_satisfied))
+
+
+
+
+                         # control = control_genSA)
        # optim.out <- GenSA(par=fit.mle@optim$x,
        #                    lower=lower,
        #                    upper=upper,
@@ -637,6 +715,7 @@ lav_model_estimate <- function(lavmodel       = NULL,
                 optim.out$evaluations, "\n")
         }
 
+
         iterations <- optim.out$iterations
         x          <- optim.out$par
         if(optim.out$convergence == 0) {
@@ -651,6 +730,8 @@ lav_model_estimate <- function(lavmodel       = NULL,
         control <- list()
         optim.out <- list()
     }
+    # print("END OF FUNCTION PRINT")
+
 
     # fx <- minimize.this.function(x) # to get "fx.group" attribute
     fx <- minimize.this.function(optim.out$par) # to get "fx.group" attribute
@@ -672,6 +753,7 @@ lav_model_estimate <- function(lavmodel       = NULL,
     if(lavoptions$partrace) {
         attr(x, "partrace") <- PENV$PARTRACE
     }
+    # print("test message")
 
     x
 }

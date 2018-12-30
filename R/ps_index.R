@@ -28,12 +28,43 @@ ps_index <- function(model              =  NULL,
                      frac_plot          =  1,
                      iterations_bin     =  40000,
                      suppress_message   = FALSE,
-                     control_genSA      =  list(threshold.stop=global.min+tol, verbose=TRUE, temperature=6,
-                          trace.mat = FALSE)
+                     control_genSA      = NULL
+                     # control_genSA      =  list(threshold.stop=global.min+tol, verbose=TRUE, temperature=6,
+                     #      trace.mat = FALSE)
                                           ){
+    # new_counter2 <- function(){
+    #     i <- 5000000
+    #     print(i)
+    #     function(){
+    #         i <- i - 1
+    #         if(i<(5000000-1)){
+    #             i<-1
+    #         }
+    #         i <<- i
+    #         i
+    #
+    #     }
+    # }
+    # Gen_SA_controller <- new_counter2()
+    # fpe_sample_satisfied <- Gen_SA_controller()
+
+
   first_iteration_indicator <<- as.integer(1)
   secondary_optimization_iterations <- 1
+
+
+  control_genSA = control_genSA
+  # control_genSA <- c(control_genSA, max.call = fpe_sample_satisfied)
+  # control_genSA = list(max.call=fpe_sample_satisfied, max.time = 400, maxit=300)
   control_genSA <<- control_genSA
+
+  # control_genSA <<- control_genSA
+  # control=list(max.call=fpe_sample_satisfied))  ##temp disabled.
+
+
+
+
+
 
   suppress_message <<-suppress_message
 
