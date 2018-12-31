@@ -15,9 +15,9 @@ lav_model_estimate <- function(lavmodel       = NULL,
     ngroups       <- lavsamplestats@ngroups
 
 
-    control_genSA <- get("control_genSA", envir = 1)
+    control_genSA    <- get("control_genSA", envir = 1)
     suppress_message <- get("suppress_message", envir = 1)
-
+    index_method     <- get("index_method", envir = 1)
 
     new_counter <- function() {
       i <- 0
@@ -38,7 +38,6 @@ lav_model_estimate <- function(lavmodel       = NULL,
     new_counter2 <- function(){  ###to control GENSA.
         i <- 5000000
         # print(i)
-# browser()
             function(){
                 # if(sum(fpe_wide[1,]==0) == 0){
 
@@ -120,13 +119,12 @@ lav_model_estimate <- function(lavmodel       = NULL,
                                   lavcache       = lavcache,
                                   verbose        = verbose,
                                   forcePD        = forcePD)
-        # print(fx)
+        print(fx)
+
          if(sum(fpe_wide[1,]==0) == 0){
            
-           # browser()
-           
 
-           # browser()
+
            # control_genSA$threshold.stop <- 100
            # exit()
            # return(fx)
@@ -137,6 +135,7 @@ lav_model_estimate <- function(lavmodel       = NULL,
   
            # control_genSA <- list(maxit = 1, threshold.stop = 1)
            # return(fx)
+           # print(fx)
            return(fx)
          }
         
@@ -164,30 +163,57 @@ lav_model_estimate <- function(lavmodel       = NULL,
           first_iteration_indicator <- get("first_iteration_indicator", envir = 1)
 
           if(first_iteration_indicator == 1){
-            fit.mle <- get("fit.mle", globalenv())
-            # X2 <- fit.mle@Fit@test[[1]]$stat ##Chi Sq
-            fx_i <- fit.mle@optim$fx
-            d <- fit.mle@Fit@test[[1]]$df   ##df
-            N  <- fit.mle@Data@nobs[[1]]
-            X2_fit.mle <- fit.mle@Fit@test[[1]]$stat ##Chi Sq
-            # browser()
+            
 
-            # perturb <- get("RMSEA_pert") ##this works but is for percent. GOOD?
-            # perturb <- get("RMSEA_pert", envir = iters.env) ##this works but is for percent. GOOD?
-            perturb <- get("RMSEA_pert", envir = 1) ##this works but is for percent. GOOD?
+            
+            if(index_method == "rmsea"){
+              
+              # browser()
+              fit.mle <- get("fit.mle", globalenv())
+              # X2 <- fit.mle@Fit@test[[1]]$stat ##Chi Sq
+              fx_i <- fit.mle@optim$fx
+              d <- fit.mle@Fit@test[[1]]$df   ##df
+              N  <- fit.mle@Data@nobs[[1]]
+              X2_fit.mle <- fit.mle@Fit@test[[1]]$stat ##Chi Sq
+              
+              # perturb <- get("RMSEA_pert") ##this works but is for percent. GOOD?
+              # perturb <- get("RMSEA_pert", envir = iters.env) ##this works but is for percent. GOOD?
+              perturb <- get("RMSEA_pert", envir = 1) ##this works but is for percent. GOOD?
+              # rmsea_comp <- sqrt(X2_fit.mle-d)/(sqrt(abs(d*(N-1))))
+              
+              
+              rmsea_comp <- sqrt(max(((X2_fit.mle-d) / (d*(N-1))), 0))
+              rmsea_fpe <- rmsea_comp + perturb
+              x2_fpe<- (rmsea_fpe^2)*d*(N-1)+d
+              upper_function_thresh <- x2_fpe/(2*N)
+              
+              f <- as.numeric(fx)
+              
+            } else if (index_method == "aic"){
+              # browser()
+              
+              # print("OK")
 
-            # browser()
-            # rmsea_comp <- sqrt(X2_fit.mle-d)/(sqrt(abs(d*(N-1))))
+              aic_at_mle        <- as.numeric(fitmeasures(fit.mle, "AIC"))
+              npar              <- fit.mle@loglik$npar
+              unrestricted.logl <- as.numeric(fitMeasures(fit.mle, "unrestricted.logl"))
+              ntotal            <- as.numeric(fitMeasures(fit.mle, "ntotal"))
+              perturb <- get("RMSEA_pert", envir = 1) ##should be renamed to something more general
+              
+              
+              aic_decremented   <- aic_at_mle + perturb
+              logl_calc         <- npar-(aic_decremented/2)
+              
+              upper_function_thresh  <- -(logl_calc - unrestricted.logl) / ntotal
+              f <- as.numeric(fx)
+              
+              
+              
+            }
+              
 
+            
 
-            rmsea_comp <- sqrt(max(((X2_fit.mle-d) / (d*(N-1))), 0))
-
-
-            rmsea_fpe <- rmsea_comp + perturb
-            x2_fpe<- (rmsea_fpe^2)*d*(N-1)+d
-            upper_function_thresh <- x2_fpe/(2*N)
-
-            f <- as.numeric(fx)
 
             if(f < upper_function_thresh){ ## Main
               # browser()
@@ -486,7 +512,6 @@ lav_model_estimate <- function(lavmodel       = NULL,
     if(OPTIMIZER == "GENSA") {
       if(verbose) cat("Quasi-Newton steps using NLMINB:\n")
 
-# browser()
       library(GenSA)
       par.length<- length(start.x)
       # tol <- .05
@@ -494,7 +519,6 @@ lav_model_estimate <- function(lavmodel       = NULL,
       lower <- rep(-10, par.length)
       upper <- rep(10, par.length)
 
-# browser()
       # fpe_sample_satisfied <- get("fpe_sample_satisfied")
       # fpe_sample_satisfied <- 5000000 ##is this needed here?
 

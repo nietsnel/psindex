@@ -11,24 +11,26 @@
 #' @param frac_plot the fraction of FPEs that are graphed. Defaults to 1.
 #' @param iterations_bin numeric. Represents the maximum number of fungible estimates that can be stored. Defaults to 40,000
 #' @param control_genSA list. used to control the simulated annealing algorithm (see \link[GenSA]{GenSA} documentation)
+#' @param index_method Character. Specify the index used to calculate FPEs. Either RMSEA or AIC. Defaults to RMSEA
 #' @examples Coming soon...
 
 
 
 #' @export
-ps_index <- function(model              =  NULL,
-                     data_set           =  NULL,
-                     # control_args       =  NULL,
-                     group              =  NULL,
-                     RMSEA_pert         =  0,
-                     meanstructure      =  NULL,
-                     genanneal_max_iters    =  100,
-                     plot_fpe           =  FALSE,
-                     output_long        =  FALSE,
-                     frac_plot          =  1,
-                     iterations_bin     =  40000,
-                     suppress_message   = FALSE,
-                     control_genSA      = NULL
+ps_index <- function(model               =  NULL,
+                     data_set            =  NULL,
+                     # control_args      =  NULL,
+                     group               =  NULL,
+                     RMSEA_pert          =  0,
+                     meanstructure       =  NULL,
+                     genanneal_max_iters =  100,
+                     plot_fpe            =  FALSE,
+                     output_long         =  FALSE,
+                     frac_plot           =  1,
+                     iterations_bin      =  40000,
+                     suppress_message    = FALSE,
+                     control_genSA       = NULL,
+                     index_method        = rmsea
                      # control_genSA      =  list(threshold.stop=global.min+tol, verbose=TRUE, temperature=6,
                      #      trace.mat = FALSE)
                                           ){
@@ -52,11 +54,13 @@ ps_index <- function(model              =  NULL,
   first_iteration_indicator <<- as.integer(1)
   secondary_optimization_iterations <- 1
 
-
   control_genSA = control_genSA
   # control_genSA <- c(control_genSA, max.call = fpe_sample_satisfied)
   # control_genSA = list(max.call=fpe_sample_satisfied, max.time = 400, maxit=300)
   control_genSA <<- control_genSA
+  index_method <<- index_method
+
+    
 
   # control_genSA <<- control_genSA
   # control=list(max.call=fpe_sample_satisfied))  ##temp disabled.
