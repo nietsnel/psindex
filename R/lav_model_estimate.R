@@ -119,7 +119,7 @@ lav_model_estimate <- function(lavmodel       = NULL,
                                   lavcache       = lavcache,
                                   verbose        = verbose,
                                   forcePD        = forcePD)
-        print(fx)
+        # print(fx)
 
          if(sum(fpe_wide[1,]==0) == 0){
            
