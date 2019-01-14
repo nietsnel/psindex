@@ -30,7 +30,7 @@ ps_index <- function(model               =  NULL,
                      iterations_bin      =  40000,
                      suppress_message    = FALSE,
                      control_genSA       = NULL,
-                     index_method        = rmsea
+                     index_method        = "rmsea"
                      # control_genSA      =  list(threshold.stop=global.min+tol, verbose=TRUE, temperature=6,
                      #      trace.mat = FALSE)
                                           ){
