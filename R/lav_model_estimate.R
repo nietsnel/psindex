@@ -164,7 +164,33 @@ lav_model_estimate <- function(lavmodel       = NULL,
 
           if(first_iteration_indicator == 1){
             
+            
+            if(index_method == "abs_fx"){
+              # browser()
+              perturb <- get("RMSEA_pert", envir = 1)
 
+              upper_function_thresh <- perturb
+              f <- as.numeric(fx)
+              
+              
+            }
+            
+            
+            
+            
+            
+            if(index_method == "fx_perc"){
+            # browser()
+            perturb <- get("RMSEA_pert", envir = 1)
+            fx_i <- fit.mle@optim$fx
+            
+            upper_function_thresh <- fx_i+(fx_i*perturb)
+            f <- as.numeric(fx)
+            
+              
+            }
+            
+            
             
             if(index_method == "rmsea"){
               
@@ -183,6 +209,8 @@ lav_model_estimate <- function(lavmodel       = NULL,
               
               
               rmsea_comp <- sqrt(max(((X2_fit.mle-d) / (d*(N-1))), 0))
+              
+              
               rmsea_fpe <- rmsea_comp + perturb
               x2_fpe<- (rmsea_fpe^2)*d*(N-1)+d
               upper_function_thresh <- x2_fpe/(2*N)
@@ -243,9 +271,6 @@ lav_model_estimate <- function(lavmodel       = NULL,
               # set(fpe_wide,i=NULL,j=paste0(iters_assign, "L"), value=c(fx,x))
               fx_and_estimates <- as.vector(c(fx,x))
               set(fpe_wide, i=NULL, j=paste0("V",counter_one()), value=fx_and_estimates)
-
-
-
 
 
 
@@ -516,8 +541,10 @@ lav_model_estimate <- function(lavmodel       = NULL,
       par.length<- length(start.x)
       # tol <- .05
       # global.min <- 0
-      lower <- rep(-10, par.length)
-      upper <- rep(10, par.length)
+      # lower <- rep(-10, par.length)
+      # upper <- rep(10, par.length)
+      lower <- rep(-40, par.length)
+      upper <- rep(40, par.length)
 
       # fpe_sample_satisfied <- get("fpe_sample_satisfied")
       # fpe_sample_satisfied <- 5000000 ##is this needed here?
@@ -526,8 +553,10 @@ lav_model_estimate <- function(lavmodel       = NULL,
                           lower=lower,
                           upper=upper,
                           fn=minimize.this.function,
+                          control = control_genSA)
+      
                           # control = c(control_genSA, max.time = list(fpe_sample_satisfied)))
-                          control = c(control_genSA, max.call = list(Gen_SA_controller())))
+                          # control = c(control_genSA, max.call = list(Gen_SA_controller())))
 
 
 

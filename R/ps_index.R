@@ -257,8 +257,9 @@ ps_index <- function(model               =  NULL,
     ggplot() +
       geom_point(data=fpe_long, aes(x=variable, y=estimate), stat="identity") +
       geom_point(data = mle_est_long, aes(x=variable, y=estimate, fill="#FF3300", colour = "#FF3300")) +
-      theme(axis.text.x = element_text(angle = 45, hjust = 1), legend.position="none") +
-      coord_cartesian(ylim = c(-1, 7.5))
+      theme(axis.text.x = element_text(angle = 45, hjust = 1), legend.position="none")
+    # +
+      # coord_cartesian(ylim = c(-1, 7.5))
       # theme_bw()
 
   }
