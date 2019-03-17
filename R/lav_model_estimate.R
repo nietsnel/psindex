@@ -121,23 +121,23 @@ lav_model_estimate <- function(lavmodel       = NULL,
                                   forcePD        = forcePD)
         # print(fx)
 
-         if(sum(fpe_wide[1,]==0) == 0){
-           
-
-
-           # control_genSA$threshold.stop <- 100
-           # exit()
-           # return(fx)
-           # fx <- 0
-           # fpe_sample_satisfied <<- 1
-           # fpe_sample_satisfied <- Gen_SA_controller()  ##temp comment out
-           # fpe_sample_satisfied <<-fpe_sample_satisfied  ##temp comment out
-  
-           # control_genSA <- list(maxit = 1, threshold.stop = 1)
-           # return(fx)
-           # print(fx)
-           return(fx)
-         }
+         # if(sum(fpe_wide[1,]==0) == 0){
+         #   
+         # 
+         # 
+         #   # control_genSA$threshold.stop <- 100
+         #   # exit()
+         #   # return(fx)
+         #   # fx <- 0
+         #   # fpe_sample_satisfied <<- 1
+         #   # fpe_sample_satisfied <- Gen_SA_controller()  ##temp comment out
+         #   # fpe_sample_satisfied <<-fpe_sample_satisfied  ##temp comment out
+         # 
+         #   # control_genSA <- list(maxit = 1, threshold.stop = 1)
+         #   # return(fx)
+         #   # print(fx)
+         #   return(fx)
+         # }
         
         
 
@@ -541,10 +541,10 @@ lav_model_estimate <- function(lavmodel       = NULL,
       par.length<- length(start.x)
       # tol <- .05
       # global.min <- 0
-      # lower <- rep(-10, par.length)
-      # upper <- rep(10, par.length)
-      lower <- rep(-40, par.length)
-      upper <- rep(40, par.length)
+      lower <- rep(-10, par.length)
+      upper <- rep(10, par.length)
+      # lower <- rep(-40, par.length)
+      # upper <- rep(40, par.length)
 
       # fpe_sample_satisfied <- get("fpe_sample_satisfied")
       # fpe_sample_satisfied <- 5000000 ##is this needed here?
