@@ -1,44 +1,11 @@
 Package: psindex
 Title: Parameter Stability Index 
-Version: 0.6-1.1236
-Authors@R: c(person(given = "Yves", family = "Rosseel",
+Version: 0.0.0.9000
+Authors@R: c(person(given = "Jordan Yee", family = "Prendez",
                     role  = c("aut", "cre"),
-                    email = "Yves.Rosseel@UGent.be"),
-             person(given = "Daniel", family = "Oberski",
-                    role = "ctb",
-                    email = "daniel.oberski@gmail.com"),
-             person(given = "Jarrett", family = "Byrnes", 
-                    role = "ctb",
-                    email = "byrnes@nceas.ucsb.edu"),
-             person(given = "Leonard", family = "Vanbrabant",
-                    role = "ctb",
-                    email = "Leonard.Vanbrabant@ugent.be"),
-             person(given = "Victoria", family = "Savalei",
-                    role = "ctb",
-                    email = "vsavalei@ubc.ca"),
-             person(given = "Ed", family = "Merkle",
-                    role = "ctb",
-                    email = "merklee@missouri.edu"),
-             person(given = "Michael", family = "Hallquist",
-                    role = "ctb",
-                    email = "michael.hallquist at gmail.com"),
-             person(given = "Mijke", family = "Rhemtulla",
-                    role = "ctb",
-                    email = "mijke@ku.edu"),
-             person(given = "Myrsini", family = "Katsikatsou",
-                    role = "ctb",
-                    email = "mirtok2@gmail.com"),
-             person(given = "Mariska", family = "Barendse",
-                    role = "ctb",
-                    email = "m.t.barendse@rug.nl"),
-             person(given = "Michael", family = "Chow",
-                    role = "ctb",
-                    email = "machow@princeton.edu"),
-             person(given = c("Terrence","D."), family = "Jorgensen",
-                    role = "ctb")
-            )
-Description: Fit a variety of latent variable models, including confirmatory
-   factor analysis, structural equation modeling and latent growth curve models.
+                    email = "jordanyeeprendez@gmail.com"))
+Description: Psindex is a wrapper package for lavaan that estimates uncertainty 
+    in parameter estimates for a variety of latent variable models
 Depends: R(>= 3.1.0)
 Imports: methods, stats4, stats, utils, graphics, MASS, 
          mnormt, pbivnorm, numDeriv, GenSA, ggplot2, data.table, dplyr, tidyr, 
@@ -46,5 +13,5 @@ Suggests: testthat
 License: GPL (>= 2)
 LazyData: yes
 ByteCompile: true
-URL: http://lavaan.org
+URL: http://github.com/nietsnel/psindex
 RoxygenNote: 6.1.1
