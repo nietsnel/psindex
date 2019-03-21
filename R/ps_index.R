@@ -12,7 +12,32 @@
 #' @param iterations_bin numeric. Represents the maximum number of fungible estimates that can be stored. Defaults to 40,000
 #' @param control_genSA list. used to control the simulated annealing algorithm (see \link[GenSA]{GenSA} documentation)
 #' @param index_method Character. Specify the index used to calculate FPEs. Either RMSEA or AIC. Defaults to RMSEA
-#' @examples Coming soon...
+#' @examples 
+#' \dontrun{
+#' model <- '
+#' measurement model
+#' ind60 =~ x1 + x2 + x3
+#' dem60 =~ y1 + y2 + y3 + y4
+#' dem65 =~ y5 + y6 + y7 + y8
+#' # regressions
+#' dem60 ~ ind60
+#' dem65 ~ ind60 + dem60
+#' # residual correlations
+#' y1 ~~ y5
+#' y2 ~~ y4 + y6
+#' y3 ~~ y7
+#' y4 ~~ y8
+#' y6 ~~ y8
+#' '
+#
+#'ps_index(model = model, data_set = PoliticalDemocracy,
+#'         RMSEA_pert = .01,
+#'         plot_fpe   = TRUE,
+#'         index_method = "rmsea",
+#'        frac_plot = .3, iterations_bin = 100000,
+#'         control_genSA = list(maxit = 500))
+#'}
+
 
 
 
