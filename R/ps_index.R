@@ -55,7 +55,9 @@ ps_index <- function(model               =  NULL,
                      iterations_bin      =  40000,
                      suppress_message    = FALSE,
                      control_genSA       = NULL,
-                     index_method        = "rmsea"
+                     index_method        = "rmsea",
+                     lower               = -10,
+                     upper               = 10
                      # control_genSA      =  list(threshold.stop=global.min+tol, verbose=TRUE, temperature=6,
                      #      trace.mat = FALSE)
                                           ){
@@ -84,7 +86,8 @@ ps_index <- function(model               =  NULL,
   # control_genSA = list(max.call=fpe_sample_satisfied, max.time = 400, maxit=300)
   control_genSA <<- control_genSA
   index_method <<- index_method
-
+  lower <<- lower
+  upper <<- upper
     
 
   # control_genSA <<- control_genSA

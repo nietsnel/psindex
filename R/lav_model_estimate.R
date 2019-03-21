@@ -18,7 +18,11 @@ lav_model_estimate <- function(lavmodel       = NULL,
     control_genSA    <- get("control_genSA", envir = 1)
     suppress_message <- get("suppress_message", envir = 1)
     index_method     <- get("index_method", envir = 1)
-
+    lower            <- get("lower", envir = 1)
+    upper            <- get("upper", envir = 1)
+    
+    
+    
     new_counter <- function() {
       i <- 0
 
@@ -541,8 +545,8 @@ lav_model_estimate <- function(lavmodel       = NULL,
       par.length<- length(start.x)
       # tol <- .05
       # global.min <- 0
-      lower <- rep(-10, par.length)
-      upper <- rep(10, par.length)
+      lower_bound <- rep(lower, par.length)
+      upper_bound <- rep(upper, par.length)
       # lower <- rep(-40, par.length)
       # upper <- rep(40, par.length)
 
@@ -550,8 +554,8 @@ lav_model_estimate <- function(lavmodel       = NULL,
       # fpe_sample_satisfied <- 5000000 ##is this needed here?
 
       optim.out <- GenSA(par=start.x,
-                          lower=lower,
-                          upper=upper,
+                          lower=lower_bound,
+                          upper=upper_bound,
                           fn=minimize.this.function,
                           control = control_genSA)
       
