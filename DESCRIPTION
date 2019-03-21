@@ -5,10 +5,10 @@ Authors@R: c(person(given = "Jordan Yee", family = "Prendez",
                     role  = c("aut", "cre"),
                     email = "jordanyeeprendez@gmail.com"))
 Description: Psindex is a wrapper package for lavaan that estimates uncertainty 
-    in parameter estimates for a variety of latent variable models
+    in parameter estimates for a variety of latent variable models.
 Depends: R(>= 3.1.0)
 Imports: methods, stats4, stats, utils, graphics, MASS, 
-         mnormt, pbivnorm, numDeriv, GenSA, ggplot2, data.table, dplyr, tidyr, 
+         mnormt, pbivnorm, numDeriv, GenSA, ggplot2, data.table, dplyr, tidyr
 Suggests: testthat
 License: GPL (>= 2)
 LazyData: yes
