@@ -20,7 +20,7 @@ lav_model_estimate <- function(lavmodel       = NULL,
     index_method     <- get("index_method", envir = 1)
     lower            <- get("lower", envir = 1)
     upper            <- get("upper", envir = 1)
-    
+    starting_val_MLE <- get("starting_val_MLE", envir = 1)
     
     
     new_counter <- function() {
@@ -540,9 +540,19 @@ lav_model_estimate <- function(lavmodel       = NULL,
     }
     if(OPTIMIZER == "GENSA") {
       if(verbose) cat("Quasi-Newton steps using NLMINB:\n")
-
+      
       library(GenSA)
       par.length<- length(start.x)
+      
+      
+      if(starting_val_MLE==TRUE){
+        start.x <- fit.mle@optim$x
+        
+      }
+      
+      
+      
+      
       # tol <- .05
       # global.min <- 0
       lower_bound <- rep(lower, par.length)

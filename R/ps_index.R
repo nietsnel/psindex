@@ -12,6 +12,9 @@
 #' @param iterations_bin numeric. Represents the maximum number of fungible estimates that can be stored. Defaults to 40,000
 #' @param control_genSA list. used to control the simulated annealing algorithm (see \link[GenSA]{GenSA} documentation)
 #' @param index_method Character. Specify the index used to calculate FPEs. Either RMSEA or AIC. Defaults to RMSEA
+#' @param lower Numeric. Lower bound of the parameter search space to be optimized over. Defaults to \code{-10}
+#' @param upper Numeric. Upper bound of the parameter search space to be optimized over. Defaults to \code{10}
+#' @param starting_val_MLE a logical value indicating whether the MLEs should be used as starting values for the SA algorithm. Defaults to \code{FALSE}
 #' @examples 
 #' \dontrun{
 #' model <- '
@@ -57,7 +60,8 @@ ps_index <- function(model               =  NULL,
                      control_genSA       = NULL,
                      index_method        = "rmsea",
                      lower               = -10,
-                     upper               = 10
+                     upper               = 10,
+                     starting_val_MLE    = FALSE
                      # control_genSA      =  list(threshold.stop=global.min+tol, verbose=TRUE, temperature=6,
                      #      trace.mat = FALSE)
                                           ){
@@ -88,7 +92,7 @@ ps_index <- function(model               =  NULL,
   index_method <<- index_method
   lower <<- lower
   upper <<- upper
-    
+  starting_val_MLE <<- starting_val_MLE  
 
   # control_genSA <<- control_genSA
   # control=list(max.call=fpe_sample_satisfied))  ##temp disabled.
