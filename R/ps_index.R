@@ -75,6 +75,7 @@ ps_index <- function(model               =  NULL,
   assign(x = "suppress_message", value = suppress_message, envir = cacheEnv)
   assign(x = "RMSEA_pert", value = RMSEA_pert, envir = cacheEnv)
   
+
   library(data.table)
   library(tidyr)
   library(ggplot2)
@@ -89,6 +90,7 @@ ps_index <- function(model               =  NULL,
   reps <- replications
  
   fit.mle <- psindex::sem(model=model, data=data_set, verbose = FALSE, debug = FALSE,  estimator="ML", control=list(optim.method = "NLMINB0"), group=group)
+  
   assign(x = "fit.mle", value = fit.mle, envir = cacheEnv)
   
 

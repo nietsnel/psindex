@@ -21,7 +21,7 @@ lav_model_estimate <- function(lavmodel       = NULL,
     lower            <- get("lower", envir = cacheEnv)
     upper            <- get("upper", envir = cacheEnv)
     starting_val_MLE <- get("starting_val_MLE", envir = cacheEnv)
-  
+    # fit.mle          <- get("fit.mle", envir = cacheEnv)
     
     
     
@@ -133,7 +133,6 @@ lav_model_estimate <- function(lavmodel       = NULL,
             
             
             if(index_method == "abs_fx"){
-              # browser()
               perturb <- get("RMSEA_pert", envir = 1)
 
               upper_function_thresh <- perturb
@@ -147,7 +146,6 @@ lav_model_estimate <- function(lavmodel       = NULL,
             
             
             if(index_method == "fx_perc"){
-            # browser()
             perturb <- get("RMSEA_pert", envir = cacheEnv)
             fx_i <- fit.mle@optim$fx
             
@@ -167,10 +165,9 @@ lav_model_estimate <- function(lavmodel       = NULL,
               N  <- fit.mle@Data@nobs[[1]]
               X2_fit.mle <- fit.mle@Fit@test[[1]]$stat ##Chi Sq
               
-              perturb <- get("RMSEA_pert", envir = cacheEnv) ##this works but is for percent. GOOD?
-              # rmsea_comp <- sqrt(X2_fit.mle-d)/(sqrt(abs(d*(N-1))))
-              
-              
+              perturb <- get("RMSEA_pert", envir = cacheEnv) 
+
+
               rmsea_comp <- sqrt(max(((X2_fit.mle-d) / (d*(N-1))), 0))
               
               
@@ -182,7 +179,8 @@ lav_model_estimate <- function(lavmodel       = NULL,
               
             } else if (index_method == "aic"){
 
-
+              fit.mle <- get("fit.mle", cacheEnv)
+              
               aic_at_mle        <- as.numeric(fitmeasures(fit.mle, "AIC"))
               npar              <- fit.mle@loglik$npar
               unrestricted.logl <- as.numeric(fitMeasures(fit.mle, "unrestricted.logl"))
@@ -451,9 +449,10 @@ lav_model_estimate <- function(lavmodel       = NULL,
       
       library(GenSA)
       par.length<- length(start.x)
-      
-      
+
       if(starting_val_MLE==TRUE){
+        fit.mle <- get("fit.mle", cacheEnv)
+        
         start.x <- fit.mle@optim$x
         
       }
