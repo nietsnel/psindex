@@ -82,27 +82,41 @@ ps_index <- function(model               =  NULL,
     # fpe_sample_satisfied <- Gen_SA_controller()
 
 
-  first_iteration_indicator <<- as.integer(1)
-  secondary_optimization_iterations <- 1
+  # first_iteration_indicator <<- as.integer(1)
+  # secondary_optimization_iterations <- 1
 
-  control_genSA = control_genSA
+  # control_genSA = control_genSA
   # control_genSA <- c(control_genSA, max.call = fpe_sample_satisfied)
   # control_genSA = list(max.call=fpe_sample_satisfied, max.time = 400, maxit=300)
-  control_genSA <<- control_genSA
-  index_method <<- index_method
-  lower <<- lower
-  upper <<- upper
-  starting_val_MLE <<- starting_val_MLE  
+  # control_genSA <<- control_genSA
+  # index_method <<- index_method
+  # lower <<- lower
+  # upper <<- upper
+  # starting_val_MLE <<- starting_val_MLE  
 
   # control_genSA <<- control_genSA
   # control=list(max.call=fpe_sample_satisfied))  ##temp disabled.
 
 
 
+  
+  
+  assign(x = "first_iteration_indicator", value = as.integer(1), envir = cacheEnv)
+  assign(x = "secondary_optimization_iterations", value = 1, envir = cacheEnv)
+  assign(x = "control_genSA", value = control_genSA, envir = cacheEnv)
+  assign(x = "index_method", value = index_method, envir = cacheEnv)
+  assign(x = "lower", value = lower, envir = cacheEnv)
+  assign(x = "upper", value = upper, envir = cacheEnv)
+  assign(x = "starting_val_MLE", value = starting_val_MLE, envir = cacheEnv)
+  assign(x = "suppress_message", value = suppress_message, envir = cacheEnv)
+  assign(x = "RMSEA_pert", value = RMSEA_pert, envir = cacheEnv)
+  
+  
+  
+  
 
 
-
-  suppress_message <<-suppress_message
+  # suppress_message <<-suppress_message
 
   library(data.table)
   library(tidyr)
@@ -126,7 +140,7 @@ ps_index <- function(model               =  NULL,
   iters.env <- new.env()
 
   iters.env$RMSEA_pert2 <- RMSEA_pert
-  RMSEA_pert <<- RMSEA_pert
+  # RMSEA_pert <<- RMSEA_pert
 
   # assign(x = "iters.env", value = iters.env, envir = parent.frame())
   # assign(x = "iters.env", value = iters.env, envir = parent.frame())
@@ -142,14 +156,16 @@ ps_index <- function(model               =  NULL,
   # assign('bandwidth', value=bandwidth, envir=globalenv()) --deprecated
 
   # fit.mle <<- lavaan:::sem(model=model, data=data_set, verbose = FALSE, debug = FALSE, estimator="ML", group=group)
-  fit.mle <<- psindex::sem(model=model, data=data_set, verbose = FALSE, debug = FALSE,  estimator="ML", control=list(optim.method = "NLMINB0"), group=group)
-
+  fit.mle <- psindex::sem(model=model, data=data_set, verbose = FALSE, debug = FALSE,  estimator="ML", control=list(optim.method = "NLMINB0"), group=group)
+  assign(x = "fit.mle", value = fit.mle, envir = cacheEnv)
+  
 
   variables  <- length(fit.mle@ParTable$est)
   M = matrix(0, nrow = length(fit.mle@optim$x) + 1, ncol = iterations_bin)
   iters_assign <- 1
   dt_speed = as.data.table(M) ###data.table for speed.
-  assign('fpe_wide', value=dt_speed, envir = globalenv())
+  
+  assign('fpe_wide', value=dt_speed, envir = cacheEnv)
   # iters_assign <- 1
   # assign('iters_assign', value=1, envir = globalenv()) ## -- depcrecated
   # browser()
@@ -174,7 +190,7 @@ ps_index <- function(model               =  NULL,
     fit <- psindex::sem(model=model, data=data_set, verbose = FALSE, debug = FALSE,  estimator="ML", control=list(optim.method = "GENSA"), group=group)
 
     # results<- get('cool.output2', envir=globalenv()) ##skipping this -- now using dt_speed
-    results <- get('fpe_wide', envir = globalenv())
+    results <- get('fpe_wide', envir = cacheEnv)
     # results[1] <- NULL ##remove first column of dataframe
     results <- as.data.frame(t(results))
 
@@ -297,3 +313,8 @@ ps_index <- function(model               =  NULL,
   }
 
 }
+
+
+
+cacheEnv <- new.env()
+

@@ -15,13 +15,19 @@ lav_model_estimate <- function(lavmodel       = NULL,
     ngroups       <- lavsamplestats@ngroups
 
 
-    control_genSA    <- get("control_genSA", envir = 1)
-    suppress_message <- get("suppress_message", envir = 1)
-    index_method     <- get("index_method", envir = 1)
-    lower            <- get("lower", envir = 1)
-    upper            <- get("upper", envir = 1)
-    starting_val_MLE <- get("starting_val_MLE", envir = 1)
+    control_genSA    <- get("control_genSA", envir = cacheEnv)
+    suppress_message <- get("suppress_message", envir = cacheEnv)
+    index_method     <- get("index_method", envir = cacheEnv)
+    lower            <- get("lower", envir = cacheEnv)
+    upper            <- get("upper", envir = cacheEnv)
+    starting_val_MLE <- get("starting_val_MLE", envir = cacheEnv)
+  
     
+    
+    
+    
+    
+      
     
     new_counter <- function() {
       i <- 0
@@ -164,7 +170,7 @@ lav_model_estimate <- function(lavmodel       = NULL,
         # if(lavoptions$partrace) {
         if(OPTIMIZER == "GENSA"){
         ##added information:
-          first_iteration_indicator <- get("first_iteration_indicator", envir = 1)
+          first_iteration_indicator <- get("first_iteration_indicator", envir = cacheEnv)
 
           if(first_iteration_indicator == 1){
             
@@ -185,7 +191,7 @@ lav_model_estimate <- function(lavmodel       = NULL,
             
             if(index_method == "fx_perc"){
             # browser()
-            perturb <- get("RMSEA_pert", envir = 1)
+            perturb <- get("RMSEA_pert", envir = cacheEnv)
             fx_i <- fit.mle@optim$fx
             
             upper_function_thresh <- fx_i+(fx_i*perturb)
@@ -199,7 +205,7 @@ lav_model_estimate <- function(lavmodel       = NULL,
             if(index_method == "rmsea"){
               
               # browser()
-              fit.mle <- get("fit.mle", globalenv())
+              fit.mle <- get("fit.mle", cacheEnv)
               # X2 <- fit.mle@Fit@test[[1]]$stat ##Chi Sq
               fx_i <- fit.mle@optim$fx
               d <- fit.mle@Fit@test[[1]]$df   ##df
@@ -208,7 +214,7 @@ lav_model_estimate <- function(lavmodel       = NULL,
               
               # perturb <- get("RMSEA_pert") ##this works but is for percent. GOOD?
               # perturb <- get("RMSEA_pert", envir = iters.env) ##this works but is for percent. GOOD?
-              perturb <- get("RMSEA_pert", envir = 1) ##this works but is for percent. GOOD?
+              perturb <- get("RMSEA_pert", envir = cacheEnv) ##this works but is for percent. GOOD?
               # rmsea_comp <- sqrt(X2_fit.mle-d)/(sqrt(abs(d*(N-1))))
               
               
@@ -230,7 +236,7 @@ lav_model_estimate <- function(lavmodel       = NULL,
               npar              <- fit.mle@loglik$npar
               unrestricted.logl <- as.numeric(fitMeasures(fit.mle, "unrestricted.logl"))
               ntotal            <- as.numeric(fitMeasures(fit.mle, "ntotal"))
-              perturb <- get("RMSEA_pert", envir = 1) ##should be renamed to something more general
+              perturb <- get("RMSEA_pert", envir = cacheEnv) ##should be renamed to something more general
               
               
               aic_decremented   <- aic_at_mle + perturb
@@ -258,7 +264,10 @@ lav_model_estimate <- function(lavmodel       = NULL,
             }
 
 
-              fpe_wide <<- get("fpe_wide", globalenv())
+              fpe_wide <- get("fpe_wide", cacheEnv) ##TEMP OUT
+              assign('fpe_wide', value = fpe_wide, envir = cacheEnv)
+              
+              
               # iters_assign <- get('iters_assign', globalenv())
               # iters_assign <- get('iters_assign', envir = 1)
               # browser()
@@ -341,7 +350,7 @@ lav_model_estimate <- function(lavmodel       = NULL,
         # print(iters_assign)
     }
     if(lavoptions$optim.method=="GENSA"){
-    assign('fpe_wide', fpe_wide, envir = globalenv())
+    assign('fpe_wide', fpe_wide, envir = cacheEnv)
     # fpe_wide <- t(fpe_wide) ##store values.
     #       assign('cool.output2', fpe_wide, envir=globalenv()) ##JYP
     }
