@@ -66,22 +66,13 @@ lav_model_estimate <- function(lavmodel       = NULL,
     }
 
 
-    # a_list <- list()
 
 
     Gen_SA_controller <- new_counter2()
-    # fpe_sample_satisfied <- Gen_SA_controller()
 
 
     control_genSA = control_genSA
-    # control_genSA <- c(control_genSA, max.call = (fpe_sample_satisfied = Gen_SA_controller()))
-    # control_genSA <- c(control_genSA, max.call = (Gen_SA_controller()))
-    # control_genSA[["max.call"]] = (Gen_SA_controller())  ##this works.
-
-
-
-
-    # control_genSA <<- control_genSA
+   
 
 
 
@@ -102,20 +93,8 @@ lav_model_estimate <- function(lavmodel       = NULL,
     # function to be minimized
     minimize.this.function <- function(x, verbose=FALSE, infToMax=FALSE) {
 
-        #cat("DEBUG: x = ", x, "\n")
-
-        # current strategy: forcePD is by default FALSE, except
-        # if missing patterns are used
-        #if(any(lavsamplestats@missing.flag)) {
-        #    forcePD <- TRUE
-        #} else {
+   
             forcePD <- FALSE
-        #}
-
-        # transform variances back
-        #x[lavmodel@x.free.var.idx] <- tan(x[lavmodel@x.free.var.idx])
-
-        # update GLIST (change `state') and make a COPY!
         if(lavmodel@eq.constraints) {
             x <- as.numeric(lavmodel@eq.constraints.K %*% x) +
                             lavmodel@eq.constraints.k0
@@ -129,29 +108,7 @@ lav_model_estimate <- function(lavmodel       = NULL,
                                   lavcache       = lavcache,
                                   verbose        = verbose,
                                   forcePD        = forcePD)
-        # print(fx)
-
-         # if(sum(fpe_wide[1,]==0) == 0){
-         #   
-         # 
-         # 
-         #   # control_genSA$threshold.stop <- 100
-         #   # exit()
-         #   # return(fx)
-         #   # fx <- 0
-         #   # fpe_sample_satisfied <<- 1
-         #   # fpe_sample_satisfied <- Gen_SA_controller()  ##temp comment out
-         #   # fpe_sample_satisfied <<-fpe_sample_satisfied  ##temp comment out
-         # 
-         #   # control_genSA <- list(maxit = 1, threshold.stop = 1)
-         #   # return(fx)
-         #   # print(fx)
-         #   return(fx)
-         # }
-        
-        
-
-        # only for PML: divide by N (to speed up convergence)
+      
         if(estimator == "PML") {
             fx <- fx / lavsamplestats@ntotal
         }
@@ -204,16 +161,12 @@ lav_model_estimate <- function(lavmodel       = NULL,
             
             if(index_method == "rmsea"){
               
-              # browser()
               fit.mle <- get("fit.mle", cacheEnv)
-              # X2 <- fit.mle@Fit@test[[1]]$stat ##Chi Sq
               fx_i <- fit.mle@optim$fx
               d <- fit.mle@Fit@test[[1]]$df   ##df
               N  <- fit.mle@Data@nobs[[1]]
               X2_fit.mle <- fit.mle@Fit@test[[1]]$stat ##Chi Sq
               
-              # perturb <- get("RMSEA_pert") ##this works but is for percent. GOOD?
-              # perturb <- get("RMSEA_pert", envir = iters.env) ##this works but is for percent. GOOD?
               perturb <- get("RMSEA_pert", envir = cacheEnv) ##this works but is for percent. GOOD?
               # rmsea_comp <- sqrt(X2_fit.mle-d)/(sqrt(abs(d*(N-1))))
               
@@ -228,9 +181,7 @@ lav_model_estimate <- function(lavmodel       = NULL,
               f <- as.numeric(fx)
               
             } else if (index_method == "aic"){
-              # browser()
-              
-              # print("OK")
+
 
               aic_at_mle        <- as.numeric(fitmeasures(fit.mle, "AIC"))
               npar              <- fit.mle@loglik$npar
@@ -254,7 +205,6 @@ lav_model_estimate <- function(lavmodel       = NULL,
 
 
             if(f < upper_function_thresh){ ## Main
-              # browser()
 
 
             if(suppress_message != TRUE){
@@ -268,64 +218,14 @@ lav_model_estimate <- function(lavmodel       = NULL,
               assign('fpe_wide', value = fpe_wide, envir = cacheEnv)
               
               
-              # iters_assign <- get('iters_assign', globalenv())
-              # iters_assign <- get('iters_assign', envir = 1)
-              # browser()
-              # exists("iters_assign")
-              # if(exists("iters_assign")==TRUE){
-              #   iters_assign <- get('iters_assign', envir = parent.frame())
-              # } else {
-
-              # iters_assign <- get('iters_assign', envir = 1)
-
-              # }
-
-              # for(iters_assign in 1:1000){
-              # set(fpe_wide,i=NULL,j=paste0(iters_assign, "L"), value=c(fx,x))
+          
               fx_and_estimates <- as.vector(c(fx,x))
               set(fpe_wide, i=NULL, j=paste0("V",counter_one()), value=fx_and_estimates)
 
 
 
-              # if(sum(fpe_wide[1,]==0) == 0){
-
-                                # browser()
-              # control_genSA$threshold.stop <- 100
-              # exit()
-                  # return(fx)
-              # fx <- 0
-              # fpe_sample_satisfied <<- 1
-              # fpe_sample_satisfied <- Gen_SA_controller()  ##temp comment out
-              # fpe_sample_satisfied <<-fpe_sample_satisfied  ##temp comment out
 
 
-
-              # control_genSA <- list(maxit = 1, threshold.stop = 1)
-
-              # } else {
-              #     print("collected over threshold")
-              # }
-
-
-              # }#i = row, j=column, value....=value
-              # counter_one
-              # iters_assign <- iters_assign + 1
-              # assign('iters_assign', value = iters_assign, envir = globalenv())
-
-              # assign('iters_assign', value = iters_assign, envir = parent.frame())
-
-
-
-
-              # section below works.
-              # print("save fungible estimate")
-              # PENV$PARTRACE <- rbind(PENV$PARTRACE, c(fx, x))
-              # cool.output2<-PENV$PARTRACE ##Jordan added this.
-              # assign('cool.output2', cool.output2, envir=globalenv())
-
-              # print("save fungible estimate")
-              # PENV
-              #
 
 
             }
@@ -347,7 +247,6 @@ lav_model_estimate <- function(lavmodel       = NULL,
             fx
         # }
 
-        # print(iters_assign)
     }
     if(lavoptions$optim.method=="GENSA"){
     assign('fpe_wide', fpe_wide, envir = cacheEnv)
@@ -562,15 +461,9 @@ lav_model_estimate <- function(lavmodel       = NULL,
       
       
       
-      # tol <- .05
-      # global.min <- 0
-      lower_bound <- rep(lower, par.length)
+          lower_bound <- rep(lower, par.length)
       upper_bound <- rep(upper, par.length)
-      # lower <- rep(-40, par.length)
-      # upper <- rep(40, par.length)
-
-      # fpe_sample_satisfied <- get("fpe_sample_satisfied")
-      # fpe_sample_satisfied <- 5000000 ##is this needed here?
+      
 
       optim.out <- GenSA(par=start.x,
                           lower=lower_bound,
@@ -578,27 +471,8 @@ lav_model_estimate <- function(lavmodel       = NULL,
                           fn=minimize.this.function,
                           control = control_genSA)
       
-                          # control = c(control_genSA, max.time = list(fpe_sample_satisfied)))
-                          # control = c(control_genSA, max.call = list(Gen_SA_controller())))
 
 
-
-
-# control_genSA <- list(maxit = 1000)
-
-
-# control = c(control_genSA, max.time = list(fpe_sample_satisfied))
-
-
-
-
-                         # control = control_genSA)
-       # optim.out <- GenSA(par=fit.mle@optim$x,
-       #                    lower=lower,
-       #                    upper=upper,
-       #                    fn=minimize.this.function)
-       #                    control=list(threshold.stop=global.min+tol, verbose=TRUE, temperature=3, trace.mat = TRUE, maxit=secondary_optimization_iterations))  ##temp disabled.
-       #
 
 
 
@@ -654,7 +528,6 @@ lav_model_estimate <- function(lavmodel       = NULL,
 
     } else if(OPTIMIZER == "NLMINB") {
         if(verbose) cat("Quasi-Newton steps using NLMINB:\n")
-        #if(debug) control$trace <- 1L;
         control.nlminb <- list(eval.max=20000L,
                                iter.max=10000L,
                                trace=0L,
