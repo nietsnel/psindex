@@ -89,7 +89,7 @@ ps_index <- function(model               =  NULL,
   iters <- iterations_bin
   reps <- replications
  
-  fit.mle <- psindex::sem(model=model, data=data_set, verbose = FALSE, debug = FALSE,  estimator="ML", control=list(optim.method = "NLMINB0"), group=group)
+  fit.mle <- psindex::sem(model=model, data=data_set, verbose = FALSE, debug = FALSE,  estimator="ML", control=list(optim.method = "nlminb"), group=group)
   
   assign(x = "fit.mle", value = fit.mle, envir = cacheEnv)
   
