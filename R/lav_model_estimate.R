@@ -15,7 +15,7 @@ lav_model_estimate <- function(lavmodel       = NULL,
     ngroups       <- lavsamplestats@ngroups
 
 
-    control_genSA    <- get("control_genSA", envir = cacheEnv)
+    # control_genSA    <- get("control_genSA", envir = cacheEnv)
     suppress_message <- get("suppress_message", envir = cacheEnv)
     index_method     <- get("index_method", envir = cacheEnv)
     lower            <- get("lower", envir = cacheEnv)
@@ -71,7 +71,7 @@ lav_model_estimate <- function(lavmodel       = NULL,
     Gen_SA_controller <- new_counter2()
 
 
-    control_genSA = control_genSA
+    # control_genSA = control_genSA
    
 
 
@@ -458,6 +458,7 @@ lav_model_estimate <- function(lavmodel       = NULL,
       }
       
       
+      control_genSA    <- get("control_genSA", envir = cacheEnv)
       
       
           lower_bound <- rep(lower, par.length)
