@@ -15,6 +15,7 @@
 #' @param lower Numeric. Lower bound of the parameter search space to be optimized over. Defaults to \code{-10}
 #' @param upper Numeric. Upper bound of the parameter search space to be optimized over. Defaults to \code{10}
 #' @param starting_val_MLE a logical value indicating whether the MLEs should be used as starting values for the SA algorithm. Defaults to \code{FALSE}
+#' @param dev_options list. used to control special functions. not for regular usage.
 #' @examples 
 #' \dontrun{
 #' model <- '
@@ -61,7 +62,8 @@ ps_index <- function(model               =  NULL,
                      index_method        = "rmsea",
                      lower               = -10,
                      upper               = 10,
-                     starting_val_MLE    = FALSE
+                     starting_val_MLE    = FALSE,
+                     dev_options         = NULL
                                           ){
 
   
@@ -74,6 +76,8 @@ ps_index <- function(model               =  NULL,
   assign(x = "starting_val_MLE", value = starting_val_MLE, envir = cacheEnv)
   assign(x = "suppress_message", value = suppress_message, envir = cacheEnv)
   assign(x = "RMSEA_pert", value = RMSEA_pert, envir = cacheEnv)
+  assign(x = "dev_options", value = dev_options, envir = cacheEnv)
+  
   
 
   library(data.table)
@@ -93,7 +97,25 @@ ps_index <- function(model               =  NULL,
   
   assign(x = "fit.mle", value = fit.mle, envir = cacheEnv)
   
+  
+  conv_ind <- ifelse(fit.mle@optim$converged == 1, 1, 0)
+  
+  
+  dev_options    <- get("dev_options", envir = cacheEnv)
+  mle_convergence_ind_output <- dev_options[["mle_convergence_ind_output"]]
+  
+  
+ if (mle_convergence_ind_output == TRUE){
+   if (conv_ind==0) {
+     print("ML convergence fail")
+     assign("conv_ind", value=conv_ind, envir=globalenv())
+     return()
+   } else if(conv_ind == 1){
+     assign("conv_ind", value=conv_ind, envir=globalenv())
+   }
+ } 
 
+    
   variables  <- length(fit.mle@ParTable$est)
   M = matrix(0, nrow = length(fit.mle@optim$x) + 1, ncol = iterations_bin)
   iters_assign <- 1
@@ -116,8 +138,8 @@ ps_index <- function(model               =  NULL,
     results <- as.data.frame(t(results))
 
     fixed_params <- which(fit@ParTable$free == 0)
-    estim_params <- which(fit@ParTable$free !=0)
-    fixed2<- length(fixed_params)
+
+        fixed2<- length(fixed_params)
     iters_emp <- dim(results)[1]
     fx_vals <- results[,1]
 
@@ -186,7 +208,7 @@ ps_index <- function(model               =  NULL,
 
   assign("fpe_long", value=results_main_long1, envir=globalenv())
   assign("mle_long", value=results_array_mle_long, envir=globalenv())
-
+  
   rm(data_iterations_temp, results_main_long1)
   }
 

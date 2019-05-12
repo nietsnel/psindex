@@ -9,7 +9,7 @@ ps_index(model = NULL, data_set = NULL, group = NULL,
   plot_fpe = FALSE, output_long = FALSE, frac_plot = 1,
   iterations_bin = 40000, suppress_message = FALSE,
   control_genSA = NULL, index_method = "rmsea", lower = -10,
-  upper = 10, starting_val_MLE = FALSE)
+  upper = 10, starting_val_MLE = FALSE, dev_options = NULL)
 }
 \arguments{
 \item{model}{user-specified SEM that using \pkg{lavaan} syntax.}
@@ -37,6 +37,8 @@ ps_index(model = NULL, data_set = NULL, group = NULL,
 \item{upper}{Numeric. Upper bound of the parameter search space to be optimized over. Defaults to \code{10}}
 
 \item{starting_val_MLE}{a logical value indicating whether the MLEs should be used as starting values for the SA algorithm. Defaults to \code{FALSE}}
+
+\item{dev_options}{list. used to control special functions. not for regular usage.}
 }
 \description{
 A function used to calculate fungible parameter estimates.

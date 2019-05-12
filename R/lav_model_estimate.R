@@ -200,7 +200,25 @@ lav_model_estimate <- function(lavmodel       = NULL,
               
 
             
-
+            # print(f)
+            # print(upper_function_thresh)
+            
+            # f <- ifelse(exists("f"), f, Inf)
+            # f <- ifelse(is.na(f), Inf, f)
+            # 
+            # 
+            # if (is.na(f) | class(f)!="numeric"){
+            #   browser()
+            #   print("something..")
+            #   print("is...")
+            #   print("wrong")
+            # }
+            # if (is.na(upper_function_thresh) | class(upper_function_thresh)!="numeric"){
+            #   browser()
+            #   print("something..")
+            #   print("is...")
+            #   print("wrong")
+            # }
 
             if(f < upper_function_thresh){ ## Main
 
@@ -218,9 +236,12 @@ lav_model_estimate <- function(lavmodel       = NULL,
               
           
               fx_and_estimates <- as.vector(c(fx,x))
-              set(fpe_wide, i=NULL, j=paste0("V",counter_one()), value=fx_and_estimates)
+              
+              
+              try(set(fpe_wide, i=NULL, j=paste0("V",counter_one()), value=fx_and_estimates), silent = TRUE) #continue--even if there isn't enough space to save results. Stops program from crashing here. 
 
-
+              # try(log("not a number"), silent = TRUE)
+              # print("errors can't stop me")
 
 
 
