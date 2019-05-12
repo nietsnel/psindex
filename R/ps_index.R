@@ -138,8 +138,9 @@ ps_index <- function(model               =  NULL,
     results <- as.data.frame(t(results))
 
     fixed_params <- which(fit@ParTable$free == 0)
-
-        fixed2<- length(fixed_params)
+    estim_params <- which(fit@ParTable$free !=0) ##Test
+    
+    fixed2<- length(fixed_params)
     iters_emp <- dim(results)[1]
     fx_vals <- results[,1]
 
