@@ -63,7 +63,8 @@ ps_index <- function(model               =  NULL,
                      lower               = -10,
                      upper               = 10,
                      starting_val_MLE    = FALSE,
-                     dev_options         = NULL
+                     dev_options         = NULL,
+                     standardize         = FALSE
                                           ){
 
   
@@ -77,7 +78,7 @@ ps_index <- function(model               =  NULL,
   assign(x = "suppress_message", value = suppress_message, envir = cacheEnv)
   assign(x = "RMSEA_pert", value = RMSEA_pert, envir = cacheEnv)
   assign(x = "dev_options", value = dev_options, envir = cacheEnv)
-  
+  assign(x = "standardize", value = standardize, envir = cacheEnv)
   
 
   library(data.table)
@@ -103,7 +104,7 @@ ps_index <- function(model               =  NULL,
   
   dev_options    <- get("dev_options", envir = cacheEnv)
   mle_convergence_ind_output <- dev_options[["mle_convergence_ind_output"]]
-  
+  if(is.null(mle_convergence_ind_output)) mle_convergence_ind_output <- FALSE
   
  if (mle_convergence_ind_output == TRUE){
    if (conv_ind==0) {
@@ -117,7 +118,8 @@ ps_index <- function(model               =  NULL,
 
     
   variables  <- length(fit.mle@ParTable$est)
-  M = matrix(0, nrow = length(fit.mle@optim$x) + 1, ncol = iterations_bin)
+  M = matrix(0, nrow = length(fit.mle@ParTable$est) + 1, ncol = iterations_bin) 
+  
   iters_assign <- 1
   dt_speed = as.data.table(M) ###data.table for speed.
   
@@ -130,7 +132,7 @@ ps_index <- function(model               =  NULL,
   vars <- (variables+1)
  secondary_optimization_iterations <- genanneal_max_iters  ###GENANNEAL steps.
   # for(ii in 1:reps){ test
-  for(ii in 1:1){
+  # for(ii in 1:1){
 
     fit <- psindex::sem(model=model, data=data_set, verbose = FALSE, debug = FALSE,  estimator="ML", control=list(optim.method = "GENSA"), group=group)
 
@@ -138,33 +140,62 @@ ps_index <- function(model               =  NULL,
     results <- as.data.frame(t(results))
 
     fixed_params <- which(fit@ParTable$free == 0)
-    estim_params <- which(fit@ParTable$free !=0) ##Test
+    estim_params <- which(fit@ParTable$free !=0) 
     
     fixed2<- length(fixed_params)
     iters_emp <- dim(results)[1]
     fx_vals <- results[,1]
 
 
-
     results_main <- as.data.frame(matrix(NA, nrow = iters_emp, ncol=(vars)))
-    for(i in 1:(vars-length(fixed_params)-1)){ #changed to 2.  # to one...test
-      results_main[,(estim_params[i])] <- results[,i+1] #2 extra columns 1. Counter, 2 Function value
-    }
+    # for(i in 1:(vars-length(fixed_params)-1)){ #changed to 2.  # to one...test
+    #   results_main[,(estim_params[i])] <- results[,i+1] #2 extra columns 1. Counter, 2 Function value
+    #   # results_main <- results[,i+1] #2 extra columns 1. Counter, 2 Function value
+    #   
+    # }
+    
+    # results_main[,2:dim(results)[2]+1] <- results
+    
+    results_main[,1:(dim(results)[2]-1)] <- results[,2:(dim(results)[2])]
+    
+  # browser()
+        
     results_main[,dim(results_main)[2]] <- fx_vals
-    results_mle <- as.data.frame(fit.mle@ParTable$est)
-    fixed_params_mle <- which(fit@ParTable$free == 0)
-    estim_params_mle <- which(fit@ParTable$free !=0)
-    fixed2_mle<- length(fixed_params)
+    # browser()
+    if(standardize == "standardize.fpe.lv"){
+      results_mle <- as.data.frame(standardize.est.lv(fit.mle))
+      
+      # x <- standardize.est.lv(lavobject = fit.mle, est=est)        
+      
+    } else if (standardize == "standardize.fpe.all"){
+      results_mle <- as.data.frame(standardize.est.all(fit.mle))
+      
+      # x <- standardize.est.lv(lavobject = fit.mle, est=est) 
+      # x <- standardize.est.all(lavobject = fit.mle, est=est, est.std = x)
+    } else if (standardize == FALSE){
+      results_mle <- as.data.frame(fit.mle@ParTable$est)
+      
+      # x <- est
+    }
+    
+    
+    
+    
+    
+    
+    # fixed_params_mle <- which(fit@ParTable$free == 0)
+    # estim_params_mle <- which(fit@ParTable$free !=0)
+    # fixed2_mle<- length(fixed_params)
 
     results_main_mle <- as.data.frame(matrix(NA, nrow = 1, ncol=(vars-1)))
     results_main_mle[1,] <- results_mle[,1]  #2 extra columns 1. Counter, 2 Function value
     results_main$counter <- as.numeric(iters_emp:1)
-    results_main[is.na(results_main)] <- 1
+    # results_main[is.na(results_main)] <- 1
     results_main <- results_main %>%
       arrange(counter)
 
     answer.array <- results_main
-  }
+  # }
 
 
   names1 <- as.data.frame(matrix(NA, nrow=variables, ncol=2))
@@ -176,18 +207,25 @@ ps_index <- function(model               =  NULL,
   ##Prepare for graphing::
 
   results_array_subset <- answer.array
+
   data_iterations <- as.data.frame(as.matrix(results_array_subset[,]))
 
   data_iterations <- data_iterations %>%
     drop_na()
   names2 <- rbind(names2, "discrepancy fx", "count")
-
+# browser()
   names(data_iterations) <- names2$new
   data_iterations_temp <- subset(data_iterations, `discrepancy fx`!=0) ##removes unused rows.
   data_iterations_temp <- data_iterations_temp %>% ###removes any estimate that is equal to another
     distinct(.keep_all = TRUE)
-  assign("fpe_wide", value=data_iterations_temp, envir=globalenv()) ###Need to address this. -- should not use global variables.
 
+  # data_iterations_temp1 <- data_iterations_temp %>%
+  #   dplyr::select(-count) %>%
+  #   dplyr::select(-`discrepancy fx`)  
+  
+  
+  assign("fpe_wide", value=data_iterations_temp, envir=globalenv()) ###Need to address this. -- should not use global variables.
+  
   data_iterations <- sample_frac(data_iterations_temp, size = frac_plot, replace = FALSE)
 
 

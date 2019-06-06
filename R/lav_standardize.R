@@ -1,5 +1,7 @@
 standardize.est.lv.x <- function(x, lavobject, partable = NULL, cov.std = TRUE) {
     # embed x in est
+  
+  
     est <- lav_object_inspect_est(lavobject)
     free.idx <- which(lavobject@ParTable$free > 0L)
     stopifnot(length(x) == length(free.idx))
@@ -210,7 +212,7 @@ standardize.est.lv <- function(lavobject, partable=NULL, est=NULL, GLIST=NULL,
 
 standardize.est.all <- function(lavobject, partable=NULL, est=NULL, est.std=NULL,
                                 GLIST = NULL, cov.std = TRUE) {
-
+# browser()
     if(is.null(partable)) partable <- lavobject@ParTable
     if(is.null(est)) est <- lav_object_inspect_est(lavobject)
     if(is.null(est.std)) {

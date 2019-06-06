@@ -21,6 +21,8 @@ lav_model_estimate <- function(lavmodel       = NULL,
     lower            <- get("lower", envir = cacheEnv)
     upper            <- get("upper", envir = cacheEnv)
     starting_val_MLE <- get("starting_val_MLE", envir = cacheEnv)
+    standardize      <- get("standardize", envir = cacheEnv)
+    
     # fit.mle          <- get("fit.mle", envir = cacheEnv)
     
     
@@ -136,7 +138,11 @@ lav_model_estimate <- function(lavmodel       = NULL,
               perturb <- get("RMSEA_pert", envir = 1)
 
               upper_function_thresh <- perturb
+              
+              
               f <- as.numeric(fx)
+              
+              
               
               
             }
@@ -150,14 +156,18 @@ lav_model_estimate <- function(lavmodel       = NULL,
             fx_i <- fit.mle@optim$fx
             
             upper_function_thresh <- fx_i+(fx_i*perturb)
-            f <- as.numeric(fx)
             
+            
+            
+            f <- as.numeric(fx)
               
             }
             
             
             
             if(index_method == "rmsea"){
+
+              
               
               fit.mle <- get("fit.mle", cacheEnv)
               fx_i <- fit.mle@optim$fx
@@ -228,7 +238,44 @@ lav_model_estimate <- function(lavmodel       = NULL,
 
 
             }
+              
+              # browser()
+              
+              ##test section
+              # GLIST <- fit@Model@GLIST
+              est   <- psindex::lav_object_inspect_est(fit.mle)
+              # names_of_estim <- names(est)
+              # partable <- fit@ParTable
+              # fixed_params_mle <- which(fit@ParTable$free == 0)
+              estim_params_mle <- which(fit.mle@ParTable$free !=0)
+              # browser()
+              # x <- fit.mle@optim$x
+              empty_vec <- rep(1, length(est))
+              empty_vec[c(estim_params_mle)] <- x
+              est <- empty_vec
+              # names(est) <- names_of_estim
+              
+              # assign(x = "names_of_estim", value = names_of_estim, envir = cacheEnv)
+              
+              
+              if(standardize == "standardize.fpe.lv"){
+                
 
+                x <- standardize.est.lv(lavobject = fit.mle, est=est)        
+                
+              } else if (standardize == "standardize.fpe.all"){
+                
+                x <- standardize.est.lv(lavobject = fit.mle, est=est) 
+                x <- standardize.est.all(lavobject = fit.mle, est=est, est.std = x)
+              } else if (standardize == FALSE){
+                x <- est
+              }
+              
+                     
+              # std_fpe <- standardize.est.lv(partable=par_mle, est=x, GLIST=GLIST,
+              #                                cov.std = TRUE)
+              ##end test section
+                
 
               fpe_wide <- get("fpe_wide", cacheEnv) ##TEMP OUT
               assign('fpe_wide', value = fpe_wide, envir = cacheEnv)
@@ -482,7 +529,7 @@ lav_model_estimate <- function(lavmodel       = NULL,
       control_genSA    <- get("control_genSA", envir = cacheEnv)
       
       
-          lower_bound <- rep(lower, par.length)
+      lower_bound <- rep(lower, par.length)
       upper_bound <- rep(upper, par.length)
       
 

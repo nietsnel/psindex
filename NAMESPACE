@@ -59,7 +59,7 @@ export("psindex",
        # utilities
        "getCov", "char2num", "cor2cov",
        # options,
-       "lavOptions", "ps_index",
+       "lavOptions", "ps_index", "standardize.est.lv", "lav_object_inspect_est",
 
        "modindices", "modificationIndices", "modificationindices",
        "standardizedSolution", "standardizedsolution",
